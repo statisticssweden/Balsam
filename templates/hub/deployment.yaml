@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: balsam-ui
+  labels:
+    app: balsam-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: balsam-ui
+  template:
+    metadata:
+      labels:
+        app: balsam-ui
+    spec:
+      serviceAccountName: balsam-sa
+      securityContext: ##NonRoot
+        runAsUser: 1000
+        fsGroup: 2000
+        runAsGroup: 3000
+      containers:
+      - name: balsam-ui
+        image: statisticssweden/balsam-ui:0.0.2 
+        envFrom:
+        - configMapRef:
+            name: balsam-config
+
+        resources:
+          requests: ##Ska vi sätta request på applikationen?
+            memory: "250Mi"
+            cpu: "500m"
+          limits:
+            memory: "250Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080 #Behöver se över ports
+      

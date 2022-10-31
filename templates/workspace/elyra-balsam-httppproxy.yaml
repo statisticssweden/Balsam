@@ -1,0 +1,19 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: ${WORKSPACE_NAME}-elyra-balsam-httpproxy
+  namespace: ${PROGRAM_NAME}
+spec:
+  virtualhost:
+    fqdn: ${PROGRAM_NAME}-${PROJECT_NAME}-${WORKSPACE_NAME}-${HUB_DOMAIN}
+  routes:
+  - services:
+    - name: ${WORKSPACE_NAME}-elyra-balsam-service
+      port: 80
+    conditions:
+      - prefix: /
+    enableWebsockets: true
+
+
+
+
