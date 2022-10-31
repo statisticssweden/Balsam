@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: balsam-config
+  namespace: balsam-system
+data:
+  balsam__hub_name: ${HUB_NAME}
+  balsam__balsam_repo: ${BALSAM_REPO_PATH}
+  balsam__UserID: ${BALSAM_REPO_USER}
+  balsam__Password: ${BALSAM_REPO_PASSWORD}  
+  balsam__authority: ${AUTHORITY}
+  balsam__clientid: ${CLIENT_ID}
+  balsam__clientsecret: ${CLIENT_SECRET}
+  balsam__keycloakuser: ${KEYCLOAK_USER}
+  balsam__keycloakpassword: ${KEYCLOAK_PASSWORD}
+  balsam__baseurl: ${KEYCLOAK_URL}
+  ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"

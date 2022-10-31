@@ -4,10 +4,12 @@ metadata:
   name: balsam-config
   namespace: balsam-system
 data:
-  balsam__hub_name: ${HUB_NAME}
+  balsam__hub_name: demo
   balsam__balsam_repo: ${BALSAM_REPO_PATH}
+  balsam__UserID: ${BALSAM_REPO_USER}
+  balsam__Password: ${BALSAM_REPO_PASSWORD}
   balsam__authority: ${AUTHORITY}
-  balsam__clientid: ${CLIENT_ID}
+  balsam__clientid: demo
   balsam__clientsecret: ${CLIENT_SECRET}
   balsam__keycloakuser: ${KEYCLOAK_USER}
   balsam__keycloakpassword: ${KEYCLOAK_PASSWORD}
