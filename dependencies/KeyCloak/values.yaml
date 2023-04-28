@@ -1,0 +1,15 @@
+auth:
+  adminUser: user
+  adminPassword: <YOUR-PASSWORD>
+
+ingress:
+  hostname: balsam-keycloak.<YOUR_DNS_WILDCARD_ENTRY>
+
+postgresql:
+  enabled: true
+  auth:
+    username: bn_keycloak
+    password: <YOUR-DB-PASSWORD>
+    database: bitnami_keycloak
+    existingSecret: ""
+  architecture: standalone
