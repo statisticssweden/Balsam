@@ -3,7 +3,7 @@ auth:
   adminPassword: <YOUR-PASSWORD>
 
 ingress:
-  hostname: balsam-keycloak.<YOUR_DNS_WILDCARD_ENTRY>
+  hostname: keycloak.<YOUR-DOMAIN>
 
 postgresql:
   enabled: true

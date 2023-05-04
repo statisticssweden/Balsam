@@ -12,8 +12,8 @@ Klowleadg of Helm Kubernetes etc.
 * A least a cluster of X vCPU:s and Y GB of memory.
 * Helm 3
 
-## Generla instructions
-Replace `<YOUR_DNS_WILDCARD_ENTRY>` with your own DNS-entry
+## General instructions
+Replace `<YOUR-DOMAIN>` with your own DNS-entry
 
 ## Install dependencies
 xxx
@@ -26,8 +26,8 @@ kind: Ingress
 metadata:
   name: argocd-ingress
 spec:
-  rules:
-  - host: argo-cd.<YOUR_DNS_WILDCARD_ENTRY>
+  rules:****
+  - host: argo-cd.<YOUR-DOMAIN>
     http:
       paths:
       - backend:
@@ -44,7 +44,7 @@ auth:
   adminPassword: <YOUR-PASSWORD>
 
 ingress:
-  hostname: balsam-keycloak.<YOUR_DNS_WILDCARD_ENTRY>
+  hostname: balsam-keycloak.<YOUR-DOMAIN>
 
 postgresql:
   enabled: true
@@ -57,21 +57,82 @@ postgresql:
 
 ```
 2. Sign in and verify that it is running.
+3. Add new Realm `Balsam`
+4. Create new Client `demo`
+5. 
 
 ### Install and configure GitLab
-1. Add the GitLab repo to Helm with 
-```
-helm repo add gitlab https://charts.gitlab.io/
-```
-2. Create a values.yaml file for GitLab as follows
-```yaml
 
-```
-3. Install GitLab with Helm 
+1. Configure Keycloak by following these [instructions](https://medium.com/@panda1100/gitlab-sso-using-keycloak-as-saml-2-0-idp-86b75abadaab) in the Keycloak realm of `Balsam`
+   
+2. Add the GitLab repo to Helm with 
 ```
 helm repo add gitlab https://charts.gitlab.io/
 ```
+
+3. Create a values.yaml file for GitLab as follows
+
+```yaml
+global:
+  hosts:
+    domain: <YOUR-DOMAIN>
+    hostSuffix:
+    https: false
+    externalIP:
+    ssh: ~
+    gitlab:
+      name: gitlab.<YOUR-DOMAIN>
+      https: false
+
+  ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
+  ingress:
+    apiVersion: ""
+    configureCertmanager: false
+
+
+    ## https://docs.gitlab.com/charts/charts/globals#omniauth
+    omniauth:
+      enabled: true
+      autoSignInWithProvider:
+      syncProfileFromProvider: []
+      syncProfileAttributes: ['email','first_name','last_name', 'roles']
+      allowSingleSignOn: [saml]
+      blockAutoCreatedUsers: false
+      autoLinkLdapUser: false
+      autoLinkSamlUser: true
+      autoLinkUser: []
+      externalProviders: []
+      allowBypassTwoFactor: []
+      providers:
+        - secret: gitlab-saml
+          key: provider
+
+  ## https://docs.gitlab.com/charts/charts/gitlab/kas/
+  kas:
+    enabled: false
+
+certmanager:
+  install: false
+
+gitlab-runner:
+  install: true
+```
+
+4. Install GitLab with Helm
+
+```bash
+helm install gitlab gitlab/gitlab -f values.yaml --namespace=gitlab
+```
+
 ### Install and configure MinIO
+
+1. Add Bitnami Helm repo
+  
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
+
+2. 
 
 ## Configure and install a Balsam hub
 ### Prepare hub repository
