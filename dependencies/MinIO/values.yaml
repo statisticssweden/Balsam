@@ -121,7 +121,7 @@ apiIngress:
   ingressClassName: ""
   ## @param apiIngress.hostname Default host for the ingress resource
   ##
-  hostname: balsam-minio-pilot-api.tanzu.scb.intra
+  hostname: minio.<YOUR-DOMAIN>
   ## @param apiIngress.path The Path to MinIO&reg;. You may need to set this to '/*' in order to use this with ALB ingress controllers.
   ##
   path: /
