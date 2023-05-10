@@ -1,77 +1,150 @@
 # Installation instructions for installing a demo Balsam hub
+
 Only for demo purposes...
 
-Klowleadg of Helm Kubernetes etc.
+Klowledge of Helm Kubernetes etc.
 
 ## Prerequisites
+
 * Knowledge of Helm Kubernetes etc.
 * A Kubernetes cluster with
-    * storage driver that can provision PV and a default storage class defined.
-    * a could provider that can provide external IP adresses for services in the cluster.
+  * storage driver that can provision PV and a default storage class defined.
+  * a could provider that can provide external IP adresses for services in the cluster.
 * A wild card DNS entry in your local DNS för all services in the cluster. Or a DNS zone in your local DNS and external DNS configured so that it can uppdate DNS entries there.
 * A least a cluster of X vCPU:s and Y GB of memory.
 * Helm 3
 
-## Generla instructions
-Replace `<YOUR_DNS_WILDCARD_ENTRY>` with your own DNS-entry
+## General instructions
+
+Replace `<YOUR-DOMAIN>` with your own DNS-entry
 
 ## Install dependencies
+
 xxx
+
 ### Install and configure ArgoCD
-1. Install ArgoCD following the instrction at (https://argo-cd.readthedocs.io/en/stable/getting_started/)[https://argo-cd.readthedocs.io/en/stable/getting_started/]
+
+1. Install ArgoCD following the instruction at (https://argo-cd.readthedocs.io/en/stable/getting_started/)[https://argo-cd.readthedocs.io/en/stable/getting_started/]
 2. Add an ingress to ArgoCD with the following definition
+
 ```yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: argocd-ingress
 spec:
-  rules:
-  - host: argo-cd.<YOUR_DNS_WILDCARD_ENTRY>
+  rules:****
+  - host: argo-cd.<YOUR-DOMAIN>
     http:
       paths:
       - backend:
           serviceName: argocd-server
           servicePort: http
 ```
+
 3. Sign in to ArgoCD and verify that it is running.
 
 ### Install and configure KeyCloak
+
 1. Install KeyCloak with Helm from Bitnami see (https://bitnami.com/stack/keycloak/helm)[https://bitnami.com/stack/keycloak/helm] and use the following values.yaml file:
-```yaml
-auth:
-  adminUser: user
-  adminPassword: <YOUR-PASSWORD>
 
-ingress:
-  hostname: balsam-keycloak.<YOUR_DNS_WILDCARD_ENTRY>
-
-postgresql:
-  enabled: true
+  ```yaml
   auth:
-    username: bn_keycloak
-    password: <YOUR-DB-PASSWORD>
-    database: bitnami_keycloak
-    existingSecret: ""
-  architecture: standalone
+    adminUser: user
+    adminPassword: <YOUR-PASSWORD>
 
-```
+  ingress:
+    hostname: balsam-keycloak.<YOUR-DOMAIN>
+
+  postgresql:
+    enabled: true
+    auth:
+      username: bn_keycloak
+      password: <YOUR-DB-PASSWORD>
+      database: bitnami_keycloak
+      existingSecret: ""
+    architecture: standalone
+
+  ```
+
 2. Sign in and verify that it is running.
+3. Add new Realm `Balsam`
+4. Create new Client `demo`
+5. 
 
 ### Install and configure GitLab
-1. Add the GitLab repo to Helm with 
-```
-helm repo add gitlab https://charts.gitlab.io/
-```
-2. Create a values.yaml file for GitLab as follows
-```yaml
 
+1. Configure Keycloak by following these [instructions](https://medium.com/@panda1100/gitlab-sso-using-keycloak-as-saml-2-0-idp-86b75abadaab) in the Keycloak realm of `Balsam`
+   
+2. Add the GitLab repo to Helm with 
+
+  ```bash
+  helm repo add gitlab https://charts.gitlab.io/
+  ```
+
+3. Create a values.yaml file for GitLab as follows
+
+```yaml
+global:
+  hosts:
+    domain: <YOUR-DOMAIN>
+    hostSuffix:
+    https: false
+    externalIP:
+    ssh: ~
+    gitlab:
+      name: gitlab.<YOUR-DOMAIN>
+      https: false
+
+  ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
+  ingress:
+    apiVersion: ""
+    configureCertmanager: false
+
+
+    ## https://docs.gitlab.com/charts/charts/globals#omniauth
+    omniauth:
+      enabled: true
+      autoSignInWithProvider:
+      syncProfileFromProvider: []
+      syncProfileAttributes: ['email','first_name','last_name', 'roles']
+      allowSingleSignOn: [saml]
+      blockAutoCreatedUsers: false
+      autoLinkLdapUser: false
+      autoLinkSamlUser: true
+      autoLinkUser: []
+      externalProviders: []
+      allowBypassTwoFactor: []
+      providers:
+        - secret: gitlab-saml
+          key: provider
+
+  ## https://docs.gitlab.com/charts/charts/gitlab/kas/
+  kas:
+    enabled: false
+
+certmanager:
+  install: false
+
+gitlab-runner:
+  install: true
 ```
-3. Install GitLab with Helm 
+
+4. Install GitLab with Helm
+
+```bash
+helm install gitlab gitlab/gitlab -f values.yaml --namespace=gitlab
 ```
-helm repo add gitlab https://charts.gitlab.io/
-```
+
 ### Install and configure MinIO
+
+1. Add Bitnami Helm repo
+  
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
+
+2. 
 
 ## Configure and install a Balsam hub
 ### Prepare hub repository
