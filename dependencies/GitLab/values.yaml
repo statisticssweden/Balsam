@@ -40,4 +40,4 @@ certmanager:
   install: false
 
 gitlab-runner:
-  install: true
+  install: false

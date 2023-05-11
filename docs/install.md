@@ -82,7 +82,22 @@ spec:
   helm repo add gitlab https://charts.gitlab.io/
   ```
 
-3. Create a values.yaml file for GitLab as follows
+3. Create a secret to connect Gitlab to Keycloak via SAML 
+```yaml
+name: saml
+label: 'Keycloak Login'
+args:
+  assertion_consumer_service_url: 'http://gitlab.<YOUR-DOMAIN>/users/auth/saml/callback'
+  idp_cert_fingerprint: '' ## Get the fingerprint using the instructions: https://medium.com/@panda1100/gitlab-sso-using-keycloak-as-saml-2-0-idp-86b75abadaab
+  idp_sso_target_url: 'http://keycloak.<YOUR-DOMAIN>/realms/Balsam/protocol/saml/clients/gitlab.<YOUR-DOMAIN>'
+  issuer: 'gitlab'
+  name_identifier_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
+```
+```bash
+kubectl create secret generic gitlab-saml -n gitlab --from-file=provider=provider.yaml
+```
+
+4. Create a values.yaml file for GitLab as follows
 
 ```yaml
 global:
@@ -133,7 +148,7 @@ gitlab-runner:
 4. Install GitLab with Helm
 
 ```bash
-helm install gitlab gitlab/gitlab -f values.yaml --namespace=gitlab
+helm install gitlab gitlab/gitlab -f GitLab/values.yaml --namespace=gitlab
 ```
 
 ### Install and configure MinIO
@@ -143,8 +158,12 @@ helm install gitlab gitlab/gitlab -f values.yaml --namespace=gitlab
 ```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
 ```
+2. Change the values.yaml for MinIO to match your environment
 
-2. 
+3. Install the helmchart for minio
+```bash
+helm install minio bitnami/minio -f MinIO/values.yaml --namespace=minio
+```
 
 ## Configure and install a Balsam hub
 ### Prepare hub repository
