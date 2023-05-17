@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32901.82
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitLabProvider", "src\GitLabProvider\GitLabProvider.csproj", "{0E738E6B-94E6-47ED-A00A-7FB00495A8D0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitProvider", "src\GitProvider\GitProvider.csproj", "{8A4A6D76-E651-46C8-B9D9-12CD90E1CCAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E738E6B-94E6-47ED-A00A-7FB00495A8D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E738E6B-94E6-47ED-A00A-7FB00495A8D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E738E6B-94E6-47ED-A00A-7FB00495A8D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E738E6B-94E6-47ED-A00A-7FB00495A8D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A4A6D76-E651-46C8-B9D9-12CD90E1CCAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A4A6D76-E651-46C8-B9D9-12CD90E1CCAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A4A6D76-E651-46C8-B9D9-12CD90E1CCAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A4A6D76-E651-46C8-B9D9-12CD90E1CCAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1C65684D-99D0-4B47-86CF-A9D2DD932A27}
+	EndGlobalSection
+EndGlobal
