@@ -1,29 +1,27 @@
 openapi: '3.0.2'
 info:
-  title: GitProvider
+  title: S3Provider
   version: '2.0'
-  description: This a service contract for the GitProvider in Balsam.
+  description: This a service contract for the OicdProvider in Balsam.
 
 servers:
-  - url: http://git-provider.balsam-system.svc.cluster.local/api/v1
+  - url: http://s3-provider.balsam-system.svc.cluster.local/api/v1
 
 tags:
-  - name: Repository
-    description:  Repository methods
-  - name: User
-    description:  User methods
+  - name: Bucket
+    description:  Buckets methods
 
 paths:
-  /repos:
+  /buckets:
     post:
       tags: 
-        - Repository
-      operationId: CreateRepo
-      description: Creates a new repository
+        - Bucket
+      operationId: CreateBucket
+      description: Creates a new Bucket
       parameters:
         - name: preferredName
           in: query
-          description: The preferred name of the repository
+          description: The preferredName of the bucket
           required: true
           schema:
             type: string  
@@ -33,129 +31,106 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RepositoryCreatedResponse'
+                $ref: '#/components/schemas/BucketCreatedResponse'
               
-              example: 
-                  preferedName: Demo repot
-                  name: demo-repot
-                  path: https://mygit.local/demo-repot.git
-                
+              example:
+                  preferredName: Demo_data 
+                  name: demo_data
                  
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
-  /repos/{repository}/branches:
+  /buckets/{id}/folder:
     post:
       tags: 
-        - Repository
-      operationId: CreateBranch
-      description: Create a branch from main branch in a existing repository
+        - Bucket
+      operationId: CreateFolder
+      description: Creates a new virtual folder in the bucket.
       parameters:
-        - name: repository
-          in: path
-          description: The name of the repository where the branch should be created.
-          required: true
-          schema:
-            type: string
         - name: preferredName
           in: query
-          description: The preferred name of the branch.
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BranchCreatedResponse'
-
-                example: |
-                  repository: demo-repot
-                  preferedName: Demo repot
-                  name: demo-repot
-        '400':
-          $ref: '#/components/responses/ErrorResponse400NoRepo'    
-
-  /users/{id}/PAT:
-    post:
-      tags: 
-        - User
-      operationId: CreatePAT
-      description: Creates a personal access token for the user.
-      parameters:
-        - name: id
-          in: path
-          description: The user identifier.
+          description: The preferredName of the bucket
           required: true
           schema:
-            type: string
-   
+            type: string  
       responses:
         '200':
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserPATCreatedResponse'
-
-                example: |
-                  name: olle-path
-                  token: XSscsdsaADCaasdddddfv
+                $ref: '#/components/schemas/FolderCreatedResponse'
+              
+              example:
+                  preferredName: Demo DATA 
+                  name: demo_data
+                 
         '400':
-          $ref: '#/components/responses/ErrorResponse400'        
+          $ref: '#/components/responses/ErrorResponse400'
+
+  /buckets/{id}/acceskey:
+    post:
+      tags: 
+        - Bucket
+      operationId: CreateAccessKey
+      description: Creates a new acces key for the bucket.
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessKeyCreatedResponse'
+              
+              example:
+                  preferredName: Demo DATA 
+                  name: demo_data
+                 
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+  
     
 components:
   schemas:
-    RepositoryCreatedResponse:
+    BucketCreatedResponse:
       type: object
-      description: Repository description
+      description: Bucket description
       required:
         - "preferredName"
         - "name"
-        - "path"
       properties:
         preferredName:
           type: string
-          description: The preferred name for the repository
+          description: The preferred name of the bucket
         name:
           type: string
-          description: The name of the repository
-        path:
-          type: string
-          description: The path to the repository that can be used for clone it.
-
-    BranchCreatedResponse:
+          description: The name of the bucket
+    FolderCreatedResponse:
       type: object
-      description: Branch created description
+      description: Folder created description
       required:
-        - "repository"
         - "preferredName"
         - "name"
       properties:
-        repository:
-          type: string
-          description: The name of the repository.
         preferredName:
           type: string
-          description: The preferred name for the branch
+          description: The preferred name of the virtual folder
         name:
           type: string
-          description: The name of the branch
-
-    UserPATCreatedResponse:
+          description: The name of the virtual folder
+    AccessKeyCreatedResponse:
       type: object
-      description: A PAT description
+      description: Access key created description
       required:
-        - "token"
+        - "accessKey"
+        - "secretKey"
       properties:
-        name:
+        accessKey:
           type: string
-          description: The name of the token.
-          nullable: true
-        token:
+          description: The access key
+        secretKey:
           type: string
-          description: The token that was created.
+          description: The secret key
 
     Problem:
       type: object
@@ -199,17 +174,6 @@ components:
             It may or may not yield further information if dereferenced.
                   
   responses:
-    ErrorResponse400NoRepo:
-      description: Error respsone for 400
-      content:
-        application/problem+json:
-          schema:
-            $ref: '#/components/schemas/Problem'
-          example:
-            title: Bad Request
-            status: 400
-            detail: No such repository
-    
     ErrorResponse400:
       description: Error respsone for 400
       content:

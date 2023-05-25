@@ -1,0 +1,10 @@
+additionalProperties:
+  aspnetCoreVersion: 6.0
+  nullableReferenceTypes: true
+  buildTarget: library
+  useSwashbuckle: true
+  packageName: S3Provider
+  packageTitle: S3Provider
+  packageDescription: S3Provider class library
+  licenseName: MIT
+  packageAuthors: SCB
