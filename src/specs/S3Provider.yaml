@@ -47,6 +47,12 @@ paths:
       operationId: CreateFolder
       description: Creates a new virtual folder in the bucket.
       parameters:
+        - name: id
+          in: path
+          description: the name of the bucket
+          required: true
+          schema:
+            type: string
         - name: preferredName
           in: query
           description: The preferredName of the bucket
@@ -74,6 +80,13 @@ paths:
         - Bucket
       operationId: CreateAccessKey
       description: Creates a new acces key for the bucket.
+      parameters:
+        - name: id
+          in: path
+          description: the name of the bucket
+          required: true
+          schema:
+            type: string      
       responses:
         '200':
           description: Success
