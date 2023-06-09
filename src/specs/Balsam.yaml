@@ -1,0 +1,312 @@
+openapi: '3.0.2'
+info:
+  title: BalsamApi
+  version: '2.0'
+  description: This is the API for createing Baslam artifcats.
+
+servers:
+  - url: http://balsam-api.balsam-system.svc.cluster.local/api/v1
+
+tags:
+  - name: Program
+    description:  Program methods
+  - name: Project
+    description:  User methods
+  - name: Workspace
+    description: A workspace for the project
+
+paths:
+  /programs:
+    get:
+      tags: 
+        - Program
+      operationId: ListProgram
+      description: Gets a list of available programs
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProgramsListResponse'
+              
+              example: 
+                  preferedName: Demo repot
+                  name: demo-repot
+                  path: https://mygit.local/demo-repot.git
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'  
+    post:
+      tags: 
+        - Program
+      operationId: CreateProgram
+      description: Creates a new repository
+      parameters:
+        - name: preferredName
+          in: query
+          description: The preferred name of the program
+          required: true
+          schema:
+            type: string  
+        - name: test
+          in: query
+          description: The preferred name of the program
+          required: true
+          schema:
+            type: string              
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedResponse'
+
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
+  /programs/{programId}/projects:
+    post:
+      tags: 
+        - Program
+      operationId: CreateProject
+      description: Create a new project for a program
+      parameters:
+        - name: programId
+          in: path
+          description: the identity of the program.
+          required: true
+          schema:
+            type: string
+        - name: preferredName
+          in: query
+          description: The preferred name of the project
+          required: true
+          schema:
+            type: string              
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'    
+
+
+  /programs/{programId}/projects/{projectId}/workspaces:
+    post:
+      tags: 
+        - Program
+      operationId: CreateWorkspace
+      description: Create a new project for a program
+      parameters:
+        - name: programId
+          in: path
+          description: the identity of the program.
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: the identity of the project.
+          required: true
+          schema:
+            type: string              
+        - name: preferredName
+          in: query
+          description: The preferred name for the workspace
+          required: true
+          schema:
+            type: string          
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
+  /programs/{programId}/projects/{projectId}/workspaces/{workspaceId}:
+    delete:
+      tags: 
+        - Program
+      operationId: CreateWorkspace
+      description: Create a new project for a program
+      parameters:
+        - name: programId
+          in: path
+          description: the identity of the program.
+          required: true
+          schema:
+            type: string
+        - name: projectId
+          in: path
+          description: the identity of the project.
+          required: true
+          schema:
+            type: string              
+        - name: workspaceId
+          in: path
+          description: id id for the workspace
+          required: true
+          schema:
+            type: string          
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
+  /templates:
+    delete:
+      tags: 
+        - Program
+      operationId: ListTemplates
+      description: List available workspace templates
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplatesListResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
+    
+components:
+  schemas:
+    CreatedResponse:
+      type: object
+      description: Project crated response
+      required:
+        - "id"
+        - "name"
+      properties:
+        id:
+          type: string
+          description: The identifier
+        name:
+          type: string
+          description: The name
+
+    TemplatesListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/Template' 
+
+    Template:
+      type: object
+      description: Workspace template
+      required:
+        - "id"
+        - "name"
+      properties:
+        id:
+          type: string
+          description: The identifier
+        name:
+          type: string
+          description: The name
+        description:
+          type: string
+          description: Description of the template
+    ProgramsListResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The identifier
+        name:
+          type: string
+          description: The name
+        projects:         
+          type: array
+          items: 
+            $ref: '#/components/schemas/Project' 
+    
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The identifier
+        name:
+          type: string
+          description: The name
+        workspaces:         
+          type: array
+          items: 
+            $ref: '#/components/schemas/Workspace' 
+
+    Workspace:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The identifier
+        name:
+          type: string
+          description: The name
+        basedOn:
+          type: string
+          description: The id of the template that the workspace is based on.
+
+
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the problem type.  When dereferenced,
+            it SHOULD provide human-readable documentation for the problem type
+            (e.g., using HTML).
+          default: about:blank
+          example: https://zalando.github.io/problem/constraint-violation
+        title:
+          type: string
+          description: |
+            A short, summary of the problem type. Written in english and readable
+            for engineers (usually not suited for non technical stakeholders and
+            not localized); example: Service Unavailable
+        status:
+          type: integer
+          format: int32
+          description: |
+            The HTTP status code generated by the origin server for this occurrence
+            of the problem.
+          minimum: 100
+          maximum: 600
+          exclusiveMaximum: true
+          example: 503
+        detail:
+          type: string
+          description: |
+            A human readable explanation specific to this occurrence of the
+            problem.
+          example: Connection to database timed out
+        instance:
+          type: string
+          format: uri
+          description: |
+            An absolute URI that identifies the specific occurrence of the problem.
+            It may or may not yield further information if dereferenced.
+                  
+  responses:
+    ErrorResponse400:
+      description: Error respsone for 400
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+          example:
+            title: Bad Request
+            status: 400
+            detail: Generic error
+ 

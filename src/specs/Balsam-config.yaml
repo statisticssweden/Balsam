@@ -1,0 +1,10 @@
+additionalProperties:
+  aspnetCoreVersion: 6.0
+  nullableReferenceTypes: true
+  buildTarget: library
+  useSwashbuckle: true
+  packageName: BalsamApi.Server
+  packageTitle: BalsamApi.Server
+  packageDescription: BalsamAPI server generated code
+  licenseName: MIT
+  packageAuthors: SCB
