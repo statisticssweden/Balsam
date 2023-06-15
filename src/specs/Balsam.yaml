@@ -134,7 +134,7 @@ paths:
     delete:
       tags: 
         - Program
-      operationId: CreateWorkspace
+      operationId: DeleteWorkspace
       description: Create a new project for a program
       parameters:
         - name: programId
@@ -218,6 +218,14 @@ components:
     ProgramsListResponse:
       type: object
       properties:
+        programs:         
+          type: array
+          items: 
+            $ref: '#/components/schemas/Program' 
+    
+    Program:
+      type: object
+      properties:
         id:
           type: string
           description: The identifier
@@ -228,7 +236,7 @@ components:
           type: array
           items: 
             $ref: '#/components/schemas/Project' 
-    
+
     Project:
       type: object
       properties:
