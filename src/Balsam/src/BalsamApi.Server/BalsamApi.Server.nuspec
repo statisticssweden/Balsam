@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>1.0.0</version>
+    <title>BalsamApi.Server</title>
+    <authors>SCB</authors>
+    <owners>SCB</owners>
+    <licenseUrl>http://localhost</licenseUrl>
+    <!--
+    <projectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</projectUrl>
+    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
+    -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>BalsamAPI server generated code</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>No Copyright</copyright>
+    <tags>BalsamApi.Server</tags>
+  </metadata>
+</package>

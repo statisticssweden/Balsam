@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BalsamApi.Server", "src\BalsamApi.Server\BalsamApi.Server.csproj", "{95CC534B-7E89-4FFB-8F6E-E9E524E8601B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balsam.Api", "src\Balsam.Api\Balsam.Api.csproj", "{A3C29474-5025-4B34-9FFE-C9A660737087}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95CC534B-7E89-4FFB-8F6E-E9E524E8601B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95CC534B-7E89-4FFB-8F6E-E9E524E8601B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95CC534B-7E89-4FFB-8F6E-E9E524E8601B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95CC534B-7E89-4FFB-8F6E-E9E524E8601B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3C29474-5025-4B34-9FFE-C9A660737087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3C29474-5025-4B34-9FFE-C9A660737087}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3C29474-5025-4B34-9FFE-C9A660737087}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3C29474-5025-4B34-9FFE-C9A660737087}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA6C3CAC-F195-49D7-8ED1-39B6295F74F3}
+	EndGlobalSection
+EndGlobal

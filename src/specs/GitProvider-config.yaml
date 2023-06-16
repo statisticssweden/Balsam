@@ -1,0 +1,10 @@
+additionalProperties:
+  aspnetCoreVersion: 6.0
+  nullableReferenceTypes: true
+  buildTarget: library
+  useSwashbuckle: true
+  packageName: GitProvider
+  packageTitle: GitProvider
+  packageDescription: GitProvider class library
+  licenseName: MIT
+  packageAuthors: SCB
