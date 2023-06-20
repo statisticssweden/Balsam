@@ -1,6 +1,8 @@
-﻿using BalsamApi.Server.Models;
+﻿using Balsam.Api.Models;
+using BalsamApi.Server.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 
 namespace Balsam.Api.Controllers
@@ -11,15 +13,39 @@ namespace Balsam.Api.Controllers
     {
         private static List<BalsamApi.Server.Models.Program> _programs;
 
+        private readonly CapabilityOptions _git;
+        private readonly CapabilityOptions _s3;
+        private readonly CapabilityOptions _authentication;
+
         static ProgramController()
         {
             _programs = new List<BalsamApi.Server.Models.Program>();
             _programs.Add(new BalsamApi.Server.Models.Program() { Id = "P1", Name = "Demo", Projects = new List<Project>() });
         }
 
+        public ProgramController(IOptionsSnapshot<CapabilityOptions> capabilityOptions)
+        {
+            _git = capabilityOptions.Get(Capabilities.Git);
+            _s3 = capabilityOptions.Get(Capabilities.S3);
+            _authentication = capabilityOptions.Get(Capabilities.Authentication);
+        }
+
         public override IActionResult CreateProgram([FromQuery(Name = "preferredName"), Required] string preferredName, [FromQuery(Name = "test"), Required] string test)
         {
             //TODO Implement
+            if (_authentication.Enabled) { 
+                //TODO call CreateRole in the OicdProvider
+            }
+
+            if (_git.Enabled)
+            {
+                //TODO call CreateRepository in GitProvider
+            }
+
+            if (_s3.Enabled)
+            {
+                //TODO call CreateBucket in S3Provider
+            }
 
             //Mock implementation
             var program = new BalsamApi.Server.Models.Program();
