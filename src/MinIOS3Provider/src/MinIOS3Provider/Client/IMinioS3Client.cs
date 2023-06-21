@@ -5,7 +5,7 @@
         Task CreateBucket(string bucketName);
         void CreatePolicy(string programName);
         void CreateUser(string programName);
-        Task CreateDirectoryStructure(string program, string project);
+        Task CreateDirectory(string bucket, string directory);
         KeyPair CreateAccessKey(string programName);
     }
 }

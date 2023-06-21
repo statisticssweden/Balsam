@@ -34,6 +34,11 @@ namespace MinIOS3Provider.Client
             }
         }
 
+        /// <summary>
+        /// Creates a new bucket with the name of bucketName asynchronous . Before creatinf the bucket it checks that a bucket with the same name does not exist
+        /// </summary>
+        /// <param name="bucketName">The name of the bucket</param>
+        /// <returns>A task</returns>
         public async Task CreateBucket(string bucketName)
         {
             try
@@ -63,11 +68,14 @@ namespace MinIOS3Provider.Client
             }
         }
 
-        public async Task CreateDirectoryStructure(string program, string project)
+        /// <summary>
+        /// Creates a virtual directory in a bucket and places a readme.txt as dummy file.
+        /// </summary>
+        /// <param name="bucket">name of the bucket</param>
+        /// <param name="directory">name of the virtual directory</param>
+        /// <returns></returns>
+        public async Task CreateDirectory(string bucket, string directory)
         {
-            var bucket = program.ToLower();
-            var template = _directoryStructure;
-
             var fileName = "readme.txt";
             try
             {
@@ -83,26 +91,24 @@ namespace MinIOS3Provider.Client
                     _logger.LogError("{Bucket} does not exists!", bucket);
                     return;
                 }
-                var directories = template.Split(',');
-                foreach (var directory in directories)
+
+                var directoryName = directory; //.Replace(@"{PROJECT_NAME}", project);
+                try
                 {
-                    var directoryName = directory.Replace(@"{PROJECT_NAME}", project);
-                    try
-                    {
-                        var putObjectArgs = new PutObjectArgs()
-                            .WithBucket(bucket)
-                            .WithObject($"{directoryName}/{fileName}")
-                            .WithFileName(fileName)
-                            .WithContentType("application/octet-stream");
-                        await client.PutObjectAsync(putObjectArgs);
-                        _logger.LogInformation("Folder template created for {Bucket} {Directory}", bucket, directoryName);
-                    }
-                    catch (MinioException e)
-                    {
-                        Console.WriteLine("Error occurred: " + e);
-                        _logger.LogError(e, "Failed to create bucket template folder: '{DirectoryName}' for bucket: '{Bucket}'", directoryName, bucket);
-                    }
+                    var putObjectArgs = new PutObjectArgs()
+                        .WithBucket(bucket)
+                        .WithObject($"{directoryName}/{fileName}")
+                        .WithFileName(fileName)
+                        .WithContentType("application/octet-stream");
+                    await client.PutObjectAsync(putObjectArgs);
+                    _logger.LogInformation("Folder template created for {Bucket} {Directory}", bucket, directoryName);
                 }
+                catch (MinioException e)
+                {
+                    Console.WriteLine("Error occurred: " + e);
+                    _logger.LogError(e, "Failed to create bucket template folder: '{DirectoryName}' for bucket: '{Bucket}'", directoryName, bucket);
+                }
+                
 
             }
             catch (Exception ex)
@@ -161,14 +167,17 @@ namespace MinIOS3Provider.Client
             return source.Task;
         }
 
-
-        public void CreatePolicy(string programName)
+        /// <summary>
+        /// Creates a policy for full access to a bucket.
+        /// </summary>
+        /// <param name="bucketName">name of the bucket</param>
+        public void CreatePolicy(string bucketName)
         {
-            var jsonPolicy = GetJsonPolicy(programName);
+            var jsonPolicy = GetJsonPolicy(bucketName);
             var policyPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             File.WriteAllText(policyPath, jsonPolicy);
 
-            var cmd = $"admin policy add balsam {programName}-users {policyPath}";
+            var cmd = $"admin policy add balsam {bucketName}-users {policyPath}";
             var i = MC(cmd).Result;
 
             if (i != 0)
@@ -177,18 +186,28 @@ namespace MinIOS3Provider.Client
             }
         }
 
-        public void CreateUser(string programName)
+        /// <summary>
+        /// Creates a service account and adds that user to the bucket policy.
+        /// Note that a bucket policy with the name bucketname-users must exisit
+        /// </summary>
+        /// <param name="bucketName"></param>
+        public void CreateUser(string bucketName)
         {
             var secret = TokenGenerate();
-            var cmd = $"admin user add balsam svc-{programName} {secret}";
+            var userName = $"svc-{bucketName}";
+            var cmd = $"admin user add balsam {userName} {secret}";
             var i = MC(cmd).Result;
 
-            AddPolicyUser(programName);
+            AddPolicyUser(bucketName, userName);
         }
 
-        public void AddPolicyUser(string programName)
+        /// <summary>
+        /// Adds a user to a existing policy by the naming rule of the policy as <bucketName>-user
+        /// </summary>
+        /// <param name="bucketName">Name of the bucket</param>
+        private void AddPolicyUser(string bucketName, string userName)
         {
-            var cmd = $"admin policy set balsam {programName}-users user=svc-{programName}";
+            var cmd = $"admin policy set balsam {bucketName}-users user={userName}";
             var i = MC(cmd).Result;
         }
 
