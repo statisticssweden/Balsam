@@ -34,6 +34,9 @@ namespace MinIOS3Provider.Test
         [Test]
         [TestCase("this-is-NOT-a-valid-name")]
         [TestCase("this_is_ALSO_NOT_a-valid-name-and-this")]
+        [TestCase("-666")]
+        [TestCase("6")]
+        [TestCase("xn--test")]
         public void Bucket_names_changed(string name)
         {
             //var name = "this-is-a-valid-name";
@@ -44,6 +47,10 @@ namespace MinIOS3Provider.Test
         [Test]
         [TestCase("this-is-NOT-a-valid-name")]
         [TestCase("this_is_ALSO_NOT_a-valid-name-and-this")]
+        [TestCase("1 this_is_ALSO_NOT_a-valid-name-and-this")]
+        [TestCase("-666")]
+        [TestCase("6")]
+        [TestCase("xn--test")]
         public void Bucket_names_ShouldPassSecondTime(string name)
         {
             //var name = "this-is-a-valid-name";
