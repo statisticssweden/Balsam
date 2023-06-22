@@ -32,7 +32,7 @@ namespace MinIOS3Provider.Controllers
         public override IActionResult CreateBucket([FromQuery(Name = "preferredName"), Required] string preferredName)
         {
             
-            var name = SanitizeBucketName(preferredName);
+            var name = NameUtil.SanitizeBucketName(preferredName);
             
             _client.CreateBucket(name);
             _client.CreatePolicy(name);
@@ -45,7 +45,7 @@ namespace MinIOS3Provider.Controllers
         public override IActionResult CreateFolder([FromRoute(Name = "id"), Required] string id, [FromQuery(Name = "preferredName"), Required] string preferredName)
         {
 
-            if (!CheckDirectoryName(preferredName))
+            if (!NameUtil.CheckObjectName(preferredName))
             {
                 return BadRequest(new Problem() { Status = 400, Title = "Invalid directory name" });
             }
@@ -56,43 +56,6 @@ namespace MinIOS3Provider.Controllers
             return Ok(new FolderCreatedResponse() { Name = name, PreferredName = preferredName });
         }
 
-        //See https://min.io/docs/minio/container/operations/checklists/thresholds.html for naming rules
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public string SanitizeBucketName(string name)
-        {
-            name = name.ToLower(); //Only lower charachters allowed
-            name = name.PadLeft(3, '0'); //At least 3 charachters long otherwise padd with zeros in the begining
-            name = Regex.Replace(name,"[^a-z0-9]", "-"); // make sure that only a-z or digit or hypen repleces all other to hypen 
-            name = name.StartsWith("-") || name.StartsWith("xn--") ? "x" + name:name; //make sure it starts with a character or a number and not xn--
-
-            if (name.Length > 63) // Make sure that the name is not longer than 63 characters
-            {
-                System.IO.Hashing.Crc32 crc32 = new System.IO.Hashing.Crc32();
-
-                crc32.Append(System.Text.Encoding.ASCII.GetBytes(name));
-                var hash = crc32.GetCurrentHash();
-                var crcHash = string.Join("", hash.Select(b => b.ToString("x2").ToLower()).Reverse());
-                name = name.Substring(0, 63 - crcHash.Length) + crcHash;
-            }
-            return name;
-
-        }
-
-        private bool CheckDirectoryName(string name)
-        {
-            if (name.Length > 1024) return false;
-            foreach (var token in name.Split("/", StringSplitOptions.RemoveEmptyEntries))
-            {
-                if (token.Length > 255) return false;
-            }
-            
-            return true;
-
-        }
     }
 }

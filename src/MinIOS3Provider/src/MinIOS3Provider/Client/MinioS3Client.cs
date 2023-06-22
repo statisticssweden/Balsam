@@ -26,7 +26,15 @@ namespace MinIOS3Provider.Client
 
             var cmd = $"alias set balsam {s3Mc} {_accessKey} {_secretKey}";
 
-            var i = MC(cmd).Result;
+            var t = MC(cmd);
+
+            if (t.Status == TaskStatus.Faulted)
+            {
+                _logger.LogError("Can not initialize mc");
+                return;
+            }
+
+            var i = t.Result;
 
             if (i != 0)
             {
@@ -211,15 +219,21 @@ namespace MinIOS3Provider.Client
             var i = MC(cmd).Result;
         }
 
-        public KeyPair CreateAccessKey(string programName)
+        /// <summary>
+        /// Creates access keys for a service account named svc-<bucket>.
+        /// The service account must exist beforehand.
+        /// </summary>
+        /// <param name="bucket">name of the bucket</param>
+        /// <returns></returns>
+        public KeyPair CreateAccessKey(string bucket)
         {
-            var jsonPolicy = GetJsonPolicy(programName);
+            var jsonPolicy = GetJsonPolicy(bucket);
             var policyPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             File.WriteAllText(policyPath, jsonPolicy);
 
             var secretKey = TokenGenerate();
             var accessKey = TokenGenerate();
-            var cmd = $"admin user svcacct add --access-key {accessKey} --secret-key {secretKey} balsam svc-{programName}";
+            var cmd = $"admin user svcacct add --access-key {accessKey} --secret-key {secretKey} balsam svc-{bucket}";
             var i = MC(cmd).Result;
 
             if (i != 0)
