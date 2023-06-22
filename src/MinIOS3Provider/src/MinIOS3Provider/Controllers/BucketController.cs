@@ -26,12 +26,12 @@ namespace MinIOS3Provider.Controllers
 
         public override IActionResult CreateAccessKey([FromRoute(Name = "id"), Required] string id)
         {
-            throw new NotImplementedException();
+            var keyPair = _client.CreateAccessKey(id);
+            return Ok(new AccessKeyCreatedResponse(){ AccessKey = keyPair.AccessKey, SecretKey = keyPair.SecretKey}); 
         }
 
         public override IActionResult CreateBucket([FromQuery(Name = "preferredName"), Required] string preferredName)
         {
-            
             var name = NameUtil.SanitizeBucketName(preferredName);
             
             _client.CreateBucket(name);
@@ -39,7 +39,6 @@ namespace MinIOS3Provider.Controllers
             _client.CreateUser(name);
 
             return Ok(new BucketCreatedResponse() { Name = name, PreferredName = preferredName });
-
         }
 
         public override IActionResult CreateFolder([FromRoute(Name = "id"), Required] string id, [FromQuery(Name = "preferredName"), Required] string preferredName)
