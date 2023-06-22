@@ -15,10 +15,10 @@ namespace MinIOS3Provider.Controllers
     public class BucketController : BucketApiController
     {
 
-        private ILogger<MinioS3Client> _logger;
+        private ILogger<BucketController> _logger;
         private IMinioS3Client _client;
 
-        public BucketController(ILogger<MinioS3Client> logger, IMinioS3Client client)
+        public BucketController(ILogger<BucketController> logger, IMinioS3Client client)
         {
             _logger = logger;
             _client = client;
@@ -63,7 +63,7 @@ namespace MinIOS3Provider.Controllers
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        private string SanitizeBucketName(string name)
+        public string SanitizeBucketName(string name)
         {
             name = name.ToLower(); //Only lower charachters allowed
             name = name.PadLeft(3, '0'); //At least 3 charachters long otherwise padd with zeros in the begining
