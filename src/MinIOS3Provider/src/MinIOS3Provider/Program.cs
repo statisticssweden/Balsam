@@ -1,6 +1,17 @@
+using Microsoft.AspNetCore.Builder.Extensions;
+using Microsoft.Extensions.Configuration;
+using MinIOS3Provider.Client;
+using MinIOS3Provider.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
+//builder.Logging.ClearProviders();
+//builder.Logging.AddConsole();
+
 // Add services to the container.
+builder.Services.Configure<ApiOptions>(builder.Configuration.GetSection(ApiOptions.SectionName));
+
+builder.Services.AddSingleton<IMinioS3Client, MinioS3Client>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -16,7 +27,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
