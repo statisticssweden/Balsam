@@ -15,20 +15,20 @@ RUN curl https://dl.min.io/client/mc/release/linux-amd64/archive/mc.RELEASE.2023
 RUN chmod +x /usr/local/bin/mc
 
 # DEV SETTINGS
-EXPOSE 80
-EXPOSE 443
+#EXPOSE 80
+#EXPOSE 443
 
-#EXPOSE 8080
-#ENV ASPNETCORE_URLS=http://*:8080
-#
-#RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser /app
-#USER appuser
+EXPOSE 8080
+ENV ASPNETCORE_URLS=http://*:8080
+
+RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0.400-1-alpine3.16-amd64 AS build
 WORKDIR /src
-COPY ["MinIOS3Provider/MinIOS3Provider.csproj", "MinIOS3Provider/"]
-RUN dotnet restore "MinIOS3Provider/MinIOS3Provider.csproj"
 COPY . .
+RUN dotnet restore "MinIOS3Provider/MinIOS3Provider.csproj"
+
 WORKDIR "/src/MinIOS3Provider"
 RUN dotnet build "MinIOS3Provider.csproj" -c Release -o /app/build
 

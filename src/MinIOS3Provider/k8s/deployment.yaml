@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-s3-provider
+  labels:
+    app: minio-s3-provider
+  namespace: balsam-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: minio-s3-provider
+  template:
+    metadata:
+      labels:
+        app: minio-s3-provider
+    spec:
+      serviceAccountName: balsam-sa
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 2000
+        runAsGroup: 3000
+      containers:
+      - name: minio-s3-provider
+        image: harbor-dev.scb.intra/balsam/minio-s3-provider:0.1
+        envFrom:
+        - secretRef:
+            name: minio-s3-provider-config
+        resources:
+          requests:
+            memory: "250Mi"
+            cpu: "500m"
+          limits:
+            memory: "250Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080
