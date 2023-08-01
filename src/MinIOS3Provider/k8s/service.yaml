@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: s3-provider
+  namespace: balsam-system
+spec:
+  type: ClusterIP
+  selector:
+    app: minio-s3-provider
+  ports:
+    - protocol: TCP
+      port: 80 ##HTTP
+      targetPort: 8080 ##Kopplat till containerport i deploymenten
