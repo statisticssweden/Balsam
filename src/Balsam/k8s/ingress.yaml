@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1 ##Enklare variant, http
+kind: Ingress
+metadata:
+  name: balsam-api-ingress
+  namespace: balsam-system
+  annotations:
+    kubernetes.io/ingress.class: "contour"
+    cert-manager.io/cluster-issuer: ca-issuer
+    kubernetes.io/ingress.allow-http: "false"
+spec:  
+  tls:
+  - hosts:
+      - balsam-api.tanzu.scb.intra
+    secretName: balsam-api-certificate
+  rules:
+  - host: balsam-api.tanzu.scb.intra
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: balsam-api
+            port:
+              number: 80
