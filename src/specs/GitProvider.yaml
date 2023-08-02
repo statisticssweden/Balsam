@@ -111,10 +111,14 @@ components:
       type: object
       description: Repository description
       required:
+        - "id"
         - "preferredName"
         - "name"
         - "path"
       properties:
+        id:
+          type: string
+          description: The identity of the repository
         preferredName:
           type: string
           description: The preferred name for the repository

@@ -17,4 +17,8 @@
     <ProjectReference Include="..\GitProvider\GitProvider.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="templates\" />
+  </ItemGroup>
+
 </Project>
