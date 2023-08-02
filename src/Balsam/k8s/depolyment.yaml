@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: balsam-api
+  labels:
+    app: balsam-api
+  namespace: balsam-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: balsam-api
+  template:
+    metadata:
+      labels:
+        app: balsam-api
+    spec:
+      serviceAccountName: balsam-sa
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 2000
+        runAsGroup: 3000
+      containers:
+      - name: balsam-api
+        image: harbor-dev.scb.intra/balsam/balsam-api:dummy
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "500m"
+          limits:
+            memory: "200Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8080

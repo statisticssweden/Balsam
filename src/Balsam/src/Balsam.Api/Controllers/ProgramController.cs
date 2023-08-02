@@ -51,6 +51,7 @@ namespace Balsam.Api.Controllers
             var program = new BalsamApi.Server.Models.Program();
             program.Id = Guid.NewGuid().ToString();
             program.Name = preferredName;
+            program.Projects = new List<Project>();
              _programs.Add(program);
 
             var evt = new CreatedResponse();
@@ -73,11 +74,12 @@ namespace Balsam.Api.Controllers
             var project = new Project();
             project.Id = Guid.NewGuid().ToString();
             project.Name = preferredName;
+            project.Workspaces = new List<Workspace>();
             program.Projects.Add(project);
 
             var evt = new CreatedResponse();
             evt.Id = project.Id;
-            evt.Name = project.Id;
+            evt.Name = project.Name;
 
             return Ok(evt);
         }
