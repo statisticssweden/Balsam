@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab-provider
+  labels:
+    app: gitlab-provider
+  namespace: balsam-system
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: gitlab-provider
+  template:
+    metadata:
+      labels:
+        app: gitlab-provider
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+      containers:
+      - name: gitlab-provider
+        image: "{{ .Values.gitProvider.image.repository }}:{{ .Values.gitProvider.image.tag }}"
+        imagePullPolicy: {{ .Values.gitProvider.image.pullPolicy }}
+        volumeMounts:
+          - name: git-templates
+            mountPath: {{ .Values.gitProvider.configMap.data.API__TemplatePath }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.gitProvider.secret.name }}
+        - configMapRef:
+            name: {{ .Values.gitProvider.configMap.name }}
+        resources:
+          requests:
+            memory: "250Mi"
+            cpu: "500m"
+          limits:
+            memory: "250Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: {{ .Values.gitProvider.containerPort }}
+      volumes:
+        - name: git-templates
+          configMap:
+            name: git-templates
+            defaultMode: 0777

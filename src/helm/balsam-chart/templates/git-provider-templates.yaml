@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: git-templates
+  namespace: balsam-system
+data:
+  .gitattributes: |-
+    *.ipynb filter=jupyternotebook
+  .gitconfig: |-
+    [filter "jupyternotebook"] 
+          clean = "jupyter nbconvert --clear-output --to=notebook --stdin --stdout --log-level=ERROR"
+  .gitignore: |-
+    #Ignore notebook checkpoint files
+    .ipynb_checkpoints/

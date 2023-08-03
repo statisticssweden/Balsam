@@ -1,0 +1,27 @@
+{{- if .Values.balsamApi.ingress.enabled -}}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: balsam-api-ingress
+  namespace: balsam-system
+  annotations:
+{{ toYaml .Values.balsamApi.ingress.annotations | indent 4 }}
+spec:  
+  tls:
+  - hosts:
+      - {{ .Values.balsamApi.ingress.hosts.host }}
+    secretName: balsam-api-certificate
+  rules:
+  - host: {{ .Values.balsamApi.ingress.hosts.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: balsam-api
+            port:
+              number: 80
+
+{{- end }}

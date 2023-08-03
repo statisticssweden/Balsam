@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-s3-provider
+  labels:
+    app: minio-s3-provider
+  namespace: balsam-system
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: minio-s3-provider
+  template:
+    metadata:
+      labels:
+        app: minio-s3-provider
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+      containers:
+      - name: minio-s3-provider
+        image: "{{ .Values.s3Provider.image.repository }}:{{ .Values.s3Provider.image.tag }}"
+        imagePullPolicy: {{ .Values.s3Provider.image.pullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.s3Provider.secret.name }}
+        - configMapRef:
+            name: {{ .Values.s3Provider.configMap.name }}
+        resources:
+          requests:
+            memory: "250Mi"
+            cpu: "500m"
+          limits:
+            memory: "250Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: {{ .Values.s3Provider.containerPort }}

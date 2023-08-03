@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: balsam-api
+  labels:
+    app: balsam-api
+  namespace: balsam-system
+spec:
+  replicas: {{ .Values.replicaCount }} #En gemensam replicaCount för att styra alla api:er, kan ändras
+  selector:
+    matchLabels:
+      app: balsam-api
+  template:
+    metadata:
+      labels:
+        app: balsam-api
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+      containers:
+      - name: balsam-api
+        image: "{{ .Values.balsamApi.image.repository }}:{{ .Values.balsamApi.image.tag }}"
+        imagePullPolicy: {{ .Values.balsamApi.image.pullPolicy }}
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "500m"
+          limits:
+            memory: "200Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: {{ .Values.balsamApi.containerPort }}
