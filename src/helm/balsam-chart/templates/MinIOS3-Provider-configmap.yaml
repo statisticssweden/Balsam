@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.s3Provider.configMap.name }}
+  namespace: balsam-system
+data: 
+  API__DOMAIN: {{ .Values.s3Provider.configMap.data.API__DOMAIN }} 
+  API__PROTOCOL: {{ .Values.s3Provider.configMap.data.API__PROTOCOL }}
