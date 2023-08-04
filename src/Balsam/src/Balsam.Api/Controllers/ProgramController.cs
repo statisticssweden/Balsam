@@ -14,38 +14,27 @@ namespace Balsam.Api.Controllers
         private static List<BalsamApi.Server.Models.Program> _programs;
 
         private readonly CapabilityOptions _git;
-        private readonly CapabilityOptions _s3;
         private readonly CapabilityOptions _authentication;
+        private readonly HubClient _hubClient;
 
         static ProgramController()
         {
+
             _programs = new List<BalsamApi.Server.Models.Program>();
             _programs.Add(new BalsamApi.Server.Models.Program() { Id = "P1", Name = "Demo", Projects = new List<Project>() });
         }
 
-        public ProgramController(IOptionsSnapshot<CapabilityOptions> capabilityOptions)
+        public ProgramController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, HubClient hubClient)
         {
+            _hubClient = hubClient;
+
             _git = capabilityOptions.Get(Capabilities.Git);
-            _s3 = capabilityOptions.Get(Capabilities.S3);
             _authentication = capabilityOptions.Get(Capabilities.Authentication);
         }
 
         public override IActionResult CreateProgram([FromQuery(Name = "preferredName"), Required] string preferredName, [FromQuery(Name = "test"), Required] string test)
         {
-            //TODO Implement
-            if (_authentication.Enabled) { 
-                //TODO call CreateRole in the OicdProvider
-            }
-
-            if (_git.Enabled)
-            {
-                //TODO call CreateRepository in GitProvider
-            }
-
-            if (_s3.Enabled)
-            {
-                //TODO call CreateBucket in S3Provider
-            }
+            _hubClient.CreateProgram(preferredName).Wait();
 
             //Mock implementation
             var program = new BalsamApi.Server.Models.Program();
@@ -53,6 +42,7 @@ namespace Balsam.Api.Controllers
             program.Name = preferredName;
             program.Projects = new List<Project>();
              _programs.Add(program);
+            //end if mock
 
             var evt = new CreatedResponse();
             evt.Id = program.Id;
