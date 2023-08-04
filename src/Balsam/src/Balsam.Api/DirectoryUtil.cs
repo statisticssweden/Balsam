@@ -3,19 +3,19 @@
     internal static class DirectoryUtil
     {
 
-        //Removes all content in the directory
-        public static void EmptyDirectory(string directory)
-        {
-            var di = new DirectoryInfo(directory);
-            foreach (var file in di.GetFiles())
-            {
-                file.Delete();
-            }
-            foreach (var dir in di.GetDirectories())
-            {
-                dir.Delete(true);
-            }
-        }
+        ////Removes all content in the directory
+        //public static void EmptyDirectory(string directory)
+        //{
+        //    var di = new DirectoryInfo(directory);
+        //    foreach (var file in di.GetFiles())
+        //    {
+        //        file.Delete();
+        //    }
+        //    foreach (var dir in di.GetDirectories())
+        //    {
+        //        dir.Delete(true);
+        //    }
+        //}
 
 
         /// <summary>

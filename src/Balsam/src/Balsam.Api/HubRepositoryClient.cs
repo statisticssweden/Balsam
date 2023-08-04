@@ -32,7 +32,7 @@ namespace Balsam.Api
             string basePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "balsam");
             if (!DirectoryUtil.AssureDirectoryExists(basePath))
             {
-                DirectoryUtil.EmptyDirectory(basePath);
+                Directory.Delete(basePath, true);
             }
 
             //Clone repo
