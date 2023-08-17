@@ -14,6 +14,7 @@ builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddTransient<HubClient>();
 builder.Services.AddSingleton<HubRepositoryClient>();
 builder.Services.AddTransient<S3Client>();
+builder.Services.AddTransient<GitClient>();
 
 builder.Services.Configure<CapabilityOptions>(Capabilities.Git, builder.Configuration.GetSection($"Capabilities:{Capabilities.Git}"));
 builder.Services.Configure<CapabilityOptions>(Capabilities.S3, builder.Configuration.GetSection($"Capabilities:{Capabilities.S3}"));

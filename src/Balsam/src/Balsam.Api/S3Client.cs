@@ -12,7 +12,7 @@ namespace Balsam.Api
         private HttpClient _httpClient;
 
         //private string _baseUrl = "http://s3-provider.balsam-system.svc.cluster.local/api/v1/buckets";
-        private string _baseUrl = "http://localhost:8080/api/v1/buckets";
+        private string _baseUrl = "http://localhost:8080/api/v1";
         public S3Client(HttpClient httpClient) {
             _httpClient = httpClient;
 
@@ -23,9 +23,9 @@ namespace Balsam.Api
         }
 
 
-        public async Task<S3Data> CreateRepository(string repositoryName)
+        public async Task<S3Data> CreateBucket(string bucketName)
         {
-            HttpResponseMessage response = await _httpClient.PostAsync($"{_baseUrl}?preferredName={repositoryName}", null);
+            HttpResponseMessage response = await _httpClient.PostAsync($"{_baseUrl}/buckets?preferredName={bucketName}", null);
             response.EnsureSuccessStatusCode();
 
             S3Data data = new S3Data();

@@ -11,6 +11,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -41,7 +43,7 @@ namespace BalsamApi.Server.Controllers
         [SwaggerOperation("CreateProgram")]
         [SwaggerResponse(statusCode: 200, type: typeof(CreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult CreateProgram([FromQuery (Name = "preferredName")][Required()]string preferredName, [FromQuery (Name = "test")][Required()]string test);
+        public abstract Task<IActionResult> CreateProgram([FromQuery (Name = "preferredName")][Required()]string preferredName, [FromQuery (Name = "test")][Required()]string test);
 
         /// <summary>
         /// 
@@ -57,7 +59,7 @@ namespace BalsamApi.Server.Controllers
         [SwaggerOperation("CreateProject")]
         [SwaggerResponse(statusCode: 200, type: typeof(CreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult CreateProject([FromRoute (Name = "programId")][Required]string programId, [FromQuery (Name = "preferredName")][Required()]string preferredName);
+        public abstract Task<IActionResult> CreateProject([FromRoute (Name = "programId")][Required]string programId, [FromQuery (Name = "preferredName")][Required()]string preferredName);
 
         /// <summary>
         /// 
@@ -74,7 +76,7 @@ namespace BalsamApi.Server.Controllers
         [SwaggerOperation("CreateWorkspace")]
         [SwaggerResponse(statusCode: 200, type: typeof(CreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult CreateWorkspace([FromRoute (Name = "programId")][Required]string programId, [FromRoute (Name = "projectId")][Required]string projectId, [FromQuery (Name = "preferredName")][Required()]string preferredName);
+        public abstract Task<IActionResult> CreateWorkspace([FromRoute (Name = "programId")][Required]string programId, [FromRoute (Name = "projectId")][Required]string projectId, [FromQuery (Name = "preferredName")][Required()]string preferredName);
 
         /// <summary>
         /// 
@@ -90,7 +92,7 @@ namespace BalsamApi.Server.Controllers
         [ValidateModelState]
         [SwaggerOperation("DeleteWorkspace")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult DeleteWorkspace([FromRoute (Name = "programId")][Required]string programId, [FromRoute (Name = "projectId")][Required]string projectId, [FromRoute (Name = "workspaceId")][Required]string workspaceId);
+        public abstract Task<IActionResult> DeleteWorkspace([FromRoute (Name = "programId")][Required]string programId, [FromRoute (Name = "projectId")][Required]string projectId, [FromRoute (Name = "workspaceId")][Required]string workspaceId);
 
         /// <summary>
         /// 
@@ -104,7 +106,7 @@ namespace BalsamApi.Server.Controllers
         [SwaggerOperation("ListProgram")]
         [SwaggerResponse(statusCode: 200, type: typeof(ProgramsListResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult ListProgram();
+        public abstract Task<IActionResult> ListProgram();
 
         /// <summary>
         /// 
@@ -118,6 +120,6 @@ namespace BalsamApi.Server.Controllers
         [SwaggerOperation("ListTemplates")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Template>), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult ListTemplates();
+        public abstract Task<IActionResult> ListTemplates();
     }
 }

@@ -32,17 +32,15 @@ namespace Balsam.Api.Controllers
             _authentication = capabilityOptions.Get(Capabilities.Authentication);
         }
 
-        public override IActionResult CreateProgram([FromQuery(Name = "preferredName"), Required] string preferredName, [FromQuery(Name = "test"), Required] string test)
+        public override async Task<IActionResult> CreateProgram([FromQuery(Name = "preferredName"), Required] string preferredName, [FromQuery(Name = "test"), Required] string test)
         {
-            _hubClient.CreateProgram(preferredName).Wait();
 
-            //Mock implementation
-            var program = new BalsamApi.Server.Models.Program();
-            program.Id = Guid.NewGuid().ToString();
-            program.Name = preferredName;
-            program.Projects = new List<Project>();
-             _programs.Add(program);
-            //end if mock
+            BalsamProgram program = await _hubClient.CreateProgram(preferredName);
+
+            if (program == null)
+            {
+                return BadRequest(new Problem() { Title = "Project with that name already exists", Status = 400, Type = "Program duplication" });
+            }
 
             var evt = new CreatedResponse();
             evt.Id = program.Id;
@@ -51,7 +49,7 @@ namespace Balsam.Api.Controllers
             return Ok(evt);
         }
 
-        public override IActionResult CreateProject([FromRoute(Name = "programId"), Required] string programId, [FromQuery(Name = "preferredName"), Required] string preferredName)
+        public override async Task<IActionResult> CreateProject([FromRoute(Name = "programId"), Required] string programId, [FromQuery(Name = "preferredName"), Required] string preferredName)
         {
             //TODO Implement
 
@@ -74,7 +72,7 @@ namespace Balsam.Api.Controllers
             return Ok(evt);
         }
 
-        public override IActionResult CreateWorkspace([FromRoute(Name = "programId"), Required] string programId, [FromRoute(Name = "projectId"), Required] string projectId, [FromQuery(Name = "preferredName"), Required] string preferredName)
+        public override async Task<IActionResult> CreateWorkspace([FromRoute(Name = "programId"), Required] string programId, [FromRoute(Name = "projectId"), Required] string projectId, [FromQuery(Name = "preferredName"), Required] string preferredName)
         {
             //TODO Implement
 
@@ -103,7 +101,7 @@ namespace Balsam.Api.Controllers
             return Ok(evt);
         }
 
-        public override IActionResult DeleteWorkspace([FromRoute(Name = "programId"), Required] string programId, [FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "workspaceId"), Required] string workspaceId)
+        public override async Task<IActionResult> DeleteWorkspace([FromRoute(Name = "programId"), Required] string programId, [FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "workspaceId"), Required] string workspaceId)
         {
             //TODO Implement
 
@@ -133,7 +131,7 @@ namespace Balsam.Api.Controllers
 
         }
 
-        public override IActionResult ListProgram()
+        public override async Task<IActionResult> ListProgram()
         {
             //TODO Implement
 
@@ -145,7 +143,7 @@ namespace Balsam.Api.Controllers
             
         }
 
-        public override IActionResult ListTemplates()
+        public override async Task<IActionResult> ListTemplates()
         {
             var templates = new List<Template>();
 
