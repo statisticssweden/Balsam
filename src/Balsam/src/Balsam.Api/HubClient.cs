@@ -66,7 +66,6 @@ namespace Balsam.Api
                 return null;
             }
 
-
             var program = new BalsamProgram();
             program.Id = Guid.NewGuid().ToString();
             program.Name = preferredName;
