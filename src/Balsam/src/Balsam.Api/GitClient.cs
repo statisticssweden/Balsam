@@ -1,4 +1,5 @@
 ﻿using Balsam.Api.Models;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
@@ -10,8 +11,10 @@ namespace Balsam.Api
 
         //private string _baseUrl = "http://git-provider.balsam-system.svc.cluster.local/api/v1";
         private string _baseUrl = "http://localhost:8081/api/v1";
-        public GitClient(HttpClient httpClient)
+        public GitClient(IOptionsSnapshot<CapabilityOptions> capabilityOptions, HttpClient httpClient)
         {
+            var gitOptions = capabilityOptions.Get(Capabilities.Git);
+            _baseUrl = gitOptions.ServiceLocation;
             _httpClient = httpClient;
 
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
