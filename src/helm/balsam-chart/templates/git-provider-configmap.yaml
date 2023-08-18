@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.gitProvider.configMap.name }}
+  namespace: balsam-system
+data: 
+  API__GroupID: "{{ .Values.gitProvider.configMap.data.API__GroupID }}"
+  API__BaseUrl: {{ .Values.gitProvider.configMap.data.API__BaseUrl }}
+  API__TemplatePath: {{ .Values.gitProvider.configMap.data.API__TemplatePath }}
