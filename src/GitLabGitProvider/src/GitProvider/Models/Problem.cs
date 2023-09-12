@@ -30,7 +30,7 @@ namespace GitProvider.Models
         /// An absolute URI that identifies the problem type.  When dereferenced, it SHOULD provide human-readable documentation for the problem type (e.g., using HTML). 
         /// </summary>
         /// <value>An absolute URI that identifies the problem type.  When dereferenced, it SHOULD provide human-readable documentation for the problem type (e.g., using HTML). </value>
-        /// <example>&quot;https://zalando.github.io/problem/constraint-violation&quot;</example>
+        /// <example>https://zalando.github.io/problem/constraint-violation</example>
         [DataMember(Name="type", EmitDefaultValue=false)]
         public string Type { get; set; } = "about:blank";
 
@@ -54,7 +54,7 @@ namespace GitProvider.Models
         /// A human readable explanation specific to this occurrence of the problem. 
         /// </summary>
         /// <value>A human readable explanation specific to this occurrence of the problem. </value>
-        /// <example>&quot;Connection to database timed out&quot;</example>
+        /// <example>Connection to database timed out</example>
         [DataMember(Name="detail", EmitDefaultValue=false)]
         public string Detail { get; set; }
 

@@ -27,6 +27,14 @@ namespace GitProvider.Models
     public class RepositoryCreatedResponse : IEquatable<RepositoryCreatedResponse>
     {
         /// <summary>
+        /// The identity of the repository
+        /// </summary>
+        /// <value>The identity of the repository</value>
+        [Required]
+        [DataMember(Name="id", EmitDefaultValue=false)]
+        public string Id { get; set; }
+
+        /// <summary>
         /// The preferred name for the repository
         /// </summary>
         /// <value>The preferred name for the repository</value>
@@ -58,6 +66,7 @@ namespace GitProvider.Models
         {
             var sb = new StringBuilder();
             sb.Append("class RepositoryCreatedResponse {\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  PreferredName: ").Append(PreferredName).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Path: ").Append(Path).Append("\n");
@@ -98,6 +107,11 @@ namespace GitProvider.Models
 
             return 
                 (
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
+                ) && 
+                (
                     PreferredName == other.PreferredName ||
                     PreferredName != null &&
                     PreferredName.Equals(other.PreferredName)
@@ -124,6 +138,8 @@ namespace GitProvider.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
+                    if (Id != null)
+                    hashCode = hashCode * 59 + Id.GetHashCode();
                     if (PreferredName != null)
                     hashCode = hashCode * 59 + PreferredName.GetHashCode();
                     if (Name != null)
