@@ -1,0 +1,34 @@
+image:
+  registry: docker.io
+  repository: bitnami/minio
+  tag: 2022.12.7-debian-11-r0
+
+clientImage:
+  registry: docker.io
+  repository: bitnami/minio-client
+  tag: 2022.12.2-debian-11-r1
+  digest: ""
+
+extraEnvVars:
+  - name: MINIO_IDENTITY_OPENID_CONFIG_URL
+    value: http://keycloak.<YOUR-DOMAIN>/realms/Balsam/.well-known/openid-configuration
+  - name: MINIO_IDENTITY_OPENID_CLIENT_ID
+    value: demo
+  - name: MINIO_IDENTITY_OPENID_CLIENT_SECRET
+    value: <YOUR-KEYCLOAK-SECRET>
+  - name: MINIO_IDENTITY_OPENID_CLAIM_NAME
+    value: roles
+  - name: MINIO_IDENTITY_OPENID_SCOPES
+    value: balsamscope
+  - name: MINIO_IDENTITY_OPENID_REDIRECT_URI
+    value: http://minio.<YOUR-DOMAIN>/oauth_callback
+  
+ingress:
+  enabled: true
+  hostname: minio.<YOUR-DOMAIN>
+  tls: false
+apiIngress:
+  enabled: true
+  hostname: minio.<YOUR-DOMAIN>
+persistence:
+  size: 5Gi

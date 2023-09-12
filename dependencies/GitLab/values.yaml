@@ -1,0 +1,43 @@
+global:
+  hosts:
+    domain: <YOUR-DOMAIN>
+    hostSuffix:
+    https: false
+    externalIP:
+    ssh: ~
+    gitlab:
+      name: gitlab.<YOUR-DOMAIN>
+      https: false
+
+  ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
+  ingress:
+    apiVersion: ""
+    configureCertmanager: false
+
+
+    ## https://docs.gitlab.com/charts/charts/globals#omniauth
+    omniauth:
+      enabled: true
+      autoSignInWithProvider:
+      syncProfileFromProvider: []
+      syncProfileAttributes: ['email','first_name','last_name', 'roles']
+      allowSingleSignOn: [saml]
+      blockAutoCreatedUsers: false
+      autoLinkLdapUser: false
+      autoLinkSamlUser: true
+      autoLinkUser: []
+      externalProviders: []
+      allowBypassTwoFactor: []
+      providers:
+        - secret: gitlab-saml
+          key: provider
+
+  ## https://docs.gitlab.com/charts/charts/gitlab/kas/
+  kas:
+    enabled: false
+
+certmanager:
+  install: false
+
+gitlab-runner:
+  install: false
