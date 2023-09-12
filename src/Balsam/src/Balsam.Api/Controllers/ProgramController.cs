@@ -1,6 +1,8 @@
-﻿using BalsamApi.Server.Models;
+﻿using Balsam.Api.Models;
+using BalsamApi.Server.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 
 namespace Balsam.Api.Controllers
@@ -11,22 +13,34 @@ namespace Balsam.Api.Controllers
     {
         private static List<BalsamApi.Server.Models.Program> _programs;
 
+        private readonly CapabilityOptions _git;
+        private readonly CapabilityOptions _authentication;
+        private readonly HubClient _hubClient;
+
         static ProgramController()
         {
+
             _programs = new List<BalsamApi.Server.Models.Program>();
             _programs.Add(new BalsamApi.Server.Models.Program() { Id = "P1", Name = "Demo", Projects = new List<Project>() });
         }
 
-        public override IActionResult CreateProgram([FromQuery(Name = "preferredName"), Required] string preferredName, [FromQuery(Name = "test"), Required] string test)
+        public ProgramController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, HubClient hubClient)
         {
-            //TODO Implement
+            _hubClient = hubClient;
 
-            //Mock implementation
-            var program = new BalsamApi.Server.Models.Program();
-            program.Id = Guid.NewGuid().ToString();
-            program.Name = preferredName;
-            program.Projects = new List<Project>();
-             _programs.Add(program);
+            _git = capabilityOptions.Get(Capabilities.Git);
+            _authentication = capabilityOptions.Get(Capabilities.Authentication);
+        }
+
+        public override async Task<IActionResult> CreateProgram([FromQuery(Name = "preferredName"), Required] string preferredName, [FromQuery(Name = "test"), Required] string test)
+        {
+
+            BalsamProgram program = await _hubClient.CreateProgram(preferredName);
+
+            if (program == null)
+            {
+                return BadRequest(new Problem() { Title = "Project with that name already exists", Status = 400, Type = "Program duplication" });
+            }
 
             var evt = new CreatedResponse();
             evt.Id = program.Id;
@@ -35,7 +49,7 @@ namespace Balsam.Api.Controllers
             return Ok(evt);
         }
 
-        public override IActionResult CreateProject([FromRoute(Name = "programId"), Required] string programId, [FromQuery(Name = "preferredName"), Required] string preferredName)
+        public override async Task<IActionResult> CreateProject([FromRoute(Name = "programId"), Required] string programId, [FromQuery(Name = "preferredName"), Required] string preferredName)
         {
             //TODO Implement
 
@@ -58,7 +72,7 @@ namespace Balsam.Api.Controllers
             return Ok(evt);
         }
 
-        public override IActionResult CreateWorkspace([FromRoute(Name = "programId"), Required] string programId, [FromRoute(Name = "projectId"), Required] string projectId, [FromQuery(Name = "preferredName"), Required] string preferredName)
+        public override async Task<IActionResult> CreateWorkspace([FromRoute(Name = "programId"), Required] string programId, [FromRoute(Name = "projectId"), Required] string projectId, [FromQuery(Name = "preferredName"), Required] string preferredName)
         {
             //TODO Implement
 
@@ -87,7 +101,7 @@ namespace Balsam.Api.Controllers
             return Ok(evt);
         }
 
-        public override IActionResult DeleteWorkspace([FromRoute(Name = "programId"), Required] string programId, [FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "workspaceId"), Required] string workspaceId)
+        public override async Task<IActionResult> DeleteWorkspace([FromRoute(Name = "programId"), Required] string programId, [FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "workspaceId"), Required] string workspaceId)
         {
             //TODO Implement
 
@@ -117,7 +131,7 @@ namespace Balsam.Api.Controllers
 
         }
 
-        public override IActionResult ListProgram()
+        public override async Task<IActionResult> ListProgram()
         {
             //TODO Implement
 
@@ -129,7 +143,7 @@ namespace Balsam.Api.Controllers
             
         }
 
-        public override IActionResult ListTemplates()
+        public override async Task<IActionResult> ListTemplates()
         {
             var templates = new List<Template>();
 
