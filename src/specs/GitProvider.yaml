@@ -27,6 +27,12 @@ paths:
           required: true
           schema:
             type: string  
+        - name: defaultBranchName
+          in: query
+          description: The default branch name
+          required: true
+          schema:
+            type: string  
       responses:
         '200':
           description: Success
