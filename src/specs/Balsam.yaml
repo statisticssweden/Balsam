@@ -12,6 +12,8 @@ tags:
     description:  User methods
   - name: Workspace
     description: A workspace for the project
+  - name: KnowledgeLibrary
+    description: Knowledge library 
 
 paths:
   /projects:
@@ -227,7 +229,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/TemplatesListResponse'
 
-    
+  /knowledge-libraries:
+    get:
+      tags: 
+        - KnowledgeLibrary
+      operationId: ListKnowledgeLibaries
+      description: List available knowledge Libraries
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeLibraryListResponse'
+
+  /knowledge-libraries/{libraryId}:
+    delete:
+      tags: 
+        - KnowledgeLibrary
+      operationId: DeleteKnowledgeLibary
+      description: Removes knowledge library
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
 components:
   schemas:
     CreateProjectRequest:
@@ -386,11 +413,32 @@ components:
         $ref: '#/components/schemas/Workspace'
 
 
-
     TemplatesListResponse:
       type: array
       items:
         $ref: '#/components/schemas/Template' 
+    
+    KnowledgeLibraryListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/KnowledgeLibrary' 
+    
+    KnowledgeLibrary:
+      type: object
+      description: Information about a knowledge library
+      required:
+        - "id"
+        - "name"
+      properties:
+        id:
+          type: string
+          description: The identifier
+        name:
+          type: string
+          description: The name
+        description:
+          type: string
+          description: Description of the knowledge library
 
     Template:
       type: object
