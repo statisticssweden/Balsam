@@ -34,43 +34,43 @@ namespace Balsam.Api
             _authentication = capabilityOptions.Get(Capabilities.Authentication);
         }
 
-        private List<BalsamProgram> GetPrograms()
+        private List<BalsamProject> GetProjects()
         {
-            var programs = new List<BalsamProgram>();
+            var projects = new List<BalsamProject>();
             var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
 
             foreach (var programPath in Directory.GetDirectories(hubPath))
             {
                 var propsFile = Path.Combine(programPath, "properties.json");
-                var program = JsonConvert.DeserializeObject<BalsamProgram>(File.ReadAllText(propsFile));
-                programs.Add(program);
+                var project = JsonConvert.DeserializeObject<BalsamProject>(System.IO.File.ReadAllText(propsFile));
+                projects.Add(project);
             }
-            return programs;
+            return projects;
         }
 
-        private bool ProgramExisits(string programName)
+        private bool ProjectExisits(string projectName)
         {
-            var programs = GetPrograms();
-            if (programs.FirstOrDefault(p => p.Name == programName) == null)
+            var projects = GetProjects();
+            if (projects.FirstOrDefault(p => p.Name == projectName) == null)
             {
                 return false;
             }
             return true;
         }
 
-        public async Task<BalsamProgram> CreateProgram(string preferredName)
+        public async Task<BalsamProject> CreateProject(string preferredName)
         {
             //Check if there is a program with the same name.
-            if (ProgramExisits(preferredName))
+            if (ProjectExisits(preferredName))
             {
                 return null;
             }
 
-            var program = new BalsamProgram();
-            program.Id = Guid.NewGuid().ToString();
-            program.Name = preferredName;
+            var project = new BalsamProject();
+            project.Id = Guid.NewGuid().ToString();
+            project.Name = preferredName;
 
-            string programPath = Path.Combine(_hubRepositoryClient.Path, "hub", program.Id);
+            string programPath = Path.Combine(_hubRepositoryClient.Path, "hub", project.Id);
             DirectoryUtil.AssureDirectoryExists(programPath);
 
             var tasks = new List<Task>();
@@ -80,7 +80,8 @@ namespace Balsam.Api
             //TODO Implement
             if (_authentication.Enabled)
             {
-                //TODO call CreateRole in the OicdProvider
+                //TODO call CreateRole in the OidcProvider
+                //TODO call AddUserToRolein the OidcProvider
             }
 
             if (_git.Enabled)
@@ -101,21 +102,21 @@ namespace Balsam.Api
             //fetch and sstore the results for each provider
             if (s3Task != null)
             {
-                program.S3 = s3Task.Result;
+                project.S3 = s3Task.Result;
             }
 
             if (gitTask != null)
             {
-                program.Git = gitTask.Result;
+                project.Git = gitTask.Result;
             }
 
             string propPath = Path.Combine(programPath, "properties.json");
 
             _hubRepositoryClient.PullChanges();
             // serialize JSON to a string and then write string to a file
-            await File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(program));
-            _hubRepositoryClient.PersistChanges($"New program with id {program.Id}");
-            return program;
+            await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(project));
+            _hubRepositoryClient.PersistChanges($"New program with id {project.Id}");
+            return project;
         }
     }
 }

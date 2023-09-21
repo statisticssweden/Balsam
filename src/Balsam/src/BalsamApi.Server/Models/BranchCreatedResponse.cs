@@ -21,37 +21,34 @@ using BalsamApi.Server.Converters;
 namespace BalsamApi.Server.Models
 { 
     /// <summary>
-    /// 
+    /// Branch created response
     /// </summary>
     [DataContract]
-    public class Project : IEquatable<Project>
+    public class BranchCreatedResponse : IEquatable<BranchCreatedResponse>
     {
         /// <summary>
         /// The identifier
         /// </summary>
         /// <value>The identifier</value>
+        [Required]
         [DataMember(Name="id", EmitDefaultValue=false)]
         public string Id { get; set; }
 
         /// <summary>
-        /// The name
+        /// The identifier for the project
         /// </summary>
-        /// <value>The name</value>
+        /// <value>The identifier for the project</value>
+        [Required]
+        [DataMember(Name="projectId", EmitDefaultValue=false)]
+        public string ProjectId { get; set; }
+
+        /// <summary>
+        /// The branch name
+        /// </summary>
+        /// <value>The branch name</value>
+        [Required]
         [DataMember(Name="name", EmitDefaultValue=false)]
         public string Name { get; set; }
-
-        /// <summary>
-        /// Description of the project
-        /// </summary>
-        /// <value>Description of the project</value>
-        [DataMember(Name="description", EmitDefaultValue=false)]
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Branches
-        /// </summary>
-        [DataMember(Name="branches", EmitDefaultValue=false)]
-        public List<Branch> Branches { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -60,11 +57,10 @@ namespace BalsamApi.Server.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class Project {\n");
+            sb.Append("class BranchCreatedResponse {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("  ProjectId: ").Append(ProjectId).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
-            sb.Append("  Description: ").Append(Description).Append("\n");
-            sb.Append("  Branches: ").Append(Branches).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -87,15 +83,15 @@ namespace BalsamApi.Server.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Project)obj);
+            return obj.GetType() == GetType() && Equals((BranchCreatedResponse)obj);
         }
 
         /// <summary>
-        /// Returns true if Project instances are equal
+        /// Returns true if BranchCreatedResponse instances are equal
         /// </summary>
-        /// <param name="other">Instance of Project to be compared</param>
+        /// <param name="other">Instance of BranchCreatedResponse to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(Project other)
+        public bool Equals(BranchCreatedResponse other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -107,20 +103,14 @@ namespace BalsamApi.Server.Models
                     Id.Equals(other.Id)
                 ) && 
                 (
+                    ProjectId == other.ProjectId ||
+                    ProjectId != null &&
+                    ProjectId.Equals(other.ProjectId)
+                ) && 
+                (
                     Name == other.Name ||
                     Name != null &&
                     Name.Equals(other.Name)
-                ) && 
-                (
-                    Description == other.Description ||
-                    Description != null &&
-                    Description.Equals(other.Description)
-                ) && 
-                (
-                    Branches == other.Branches ||
-                    Branches != null &&
-                    other.Branches != null &&
-                    Branches.SequenceEqual(other.Branches)
                 );
         }
 
@@ -136,12 +126,10 @@ namespace BalsamApi.Server.Models
                 // Suitable nullity checks etc, of course :)
                     if (Id != null)
                     hashCode = hashCode * 59 + Id.GetHashCode();
+                    if (ProjectId != null)
+                    hashCode = hashCode * 59 + ProjectId.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
-                    if (Description != null)
-                    hashCode = hashCode * 59 + Description.GetHashCode();
-                    if (Branches != null)
-                    hashCode = hashCode * 59 + Branches.GetHashCode();
                 return hashCode;
             }
         }
@@ -149,12 +137,12 @@ namespace BalsamApi.Server.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(Project left, Project right)
+        public static bool operator ==(BranchCreatedResponse left, BranchCreatedResponse right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Project left, Project right)
+        public static bool operator !=(BranchCreatedResponse left, BranchCreatedResponse right)
         {
             return !Equals(left, right);
         }

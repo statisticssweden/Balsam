@@ -21,15 +21,24 @@ using BalsamApi.Server.Converters;
 namespace BalsamApi.Server.Models
 { 
     /// <summary>
-    /// 
+    /// Project created response
     /// </summary>
     [DataContract]
-    public class Project : IEquatable<Project>
+    public class ProjectResponse : IEquatable<ProjectResponse>
     {
+        /// <summary>
+        /// URL to the git repository
+        /// </summary>
+        /// <value>URL to the git repository</value>
+        [Required]
+        [DataMember(Name="gitUrl", EmitDefaultValue=false)]
+        public string GitUrl { get; set; }
+
         /// <summary>
         /// The identifier
         /// </summary>
         /// <value>The identifier</value>
+        [Required]
         [DataMember(Name="id", EmitDefaultValue=false)]
         public string Id { get; set; }
 
@@ -37,6 +46,7 @@ namespace BalsamApi.Server.Models
         /// The name
         /// </summary>
         /// <value>The name</value>
+        [Required]
         [DataMember(Name="name", EmitDefaultValue=false)]
         public string Name { get; set; }
 
@@ -60,7 +70,8 @@ namespace BalsamApi.Server.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class Project {\n");
+            sb.Append("class ProjectResponse {\n");
+            sb.Append("  GitUrl: ").Append(GitUrl).Append("\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
@@ -87,20 +98,25 @@ namespace BalsamApi.Server.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Project)obj);
+            return obj.GetType() == GetType() && Equals((ProjectResponse)obj);
         }
 
         /// <summary>
-        /// Returns true if Project instances are equal
+        /// Returns true if ProjectResponse instances are equal
         /// </summary>
-        /// <param name="other">Instance of Project to be compared</param>
+        /// <param name="other">Instance of ProjectResponse to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(Project other)
+        public bool Equals(ProjectResponse other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
+                (
+                    GitUrl == other.GitUrl ||
+                    GitUrl != null &&
+                    GitUrl.Equals(other.GitUrl)
+                ) && 
                 (
                     Id == other.Id ||
                     Id != null &&
@@ -134,6 +150,8 @@ namespace BalsamApi.Server.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
+                    if (GitUrl != null)
+                    hashCode = hashCode * 59 + GitUrl.GetHashCode();
                     if (Id != null)
                     hashCode = hashCode * 59 + Id.GetHashCode();
                     if (Name != null)
@@ -149,12 +167,12 @@ namespace BalsamApi.Server.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(Project left, Project right)
+        public static bool operator ==(ProjectResponse left, ProjectResponse right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Project left, Project right)
+        public static bool operator !=(ProjectResponse left, ProjectResponse right)
         {
             return !Equals(left, right);
         }

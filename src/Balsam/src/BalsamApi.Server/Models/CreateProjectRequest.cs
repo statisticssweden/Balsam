@@ -21,16 +21,33 @@ using BalsamApi.Server.Converters;
 namespace BalsamApi.Server.Models
 { 
     /// <summary>
-    /// 
+    /// Payload for creating new project
     /// </summary>
     [DataContract]
-    public class ProgramsListResponse : IEquatable<ProgramsListResponse>
+    public class CreateProjectRequest : IEquatable<CreateProjectRequest>
     {
         /// <summary>
-        /// Gets or Sets Programs
+        /// The name
         /// </summary>
-        [DataMember(Name="programs", EmitDefaultValue=false)]
-        public List<Program> Programs { get; set; }
+        /// <value>The name</value>
+        [Required]
+        [DataMember(Name="name", EmitDefaultValue=false)]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The description of the project
+        /// </summary>
+        /// <value>The description of the project</value>
+        [DataMember(Name="description", EmitDefaultValue=false)]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Name of the default branch
+        /// </summary>
+        /// <value>Name of the default branch</value>
+        [Required]
+        [DataMember(Name="branchName", EmitDefaultValue=false)]
+        public string BranchName { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -39,8 +56,10 @@ namespace BalsamApi.Server.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class ProgramsListResponse {\n");
-            sb.Append("  Programs: ").Append(Programs).Append("\n");
+            sb.Append("class CreateProjectRequest {\n");
+            sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  BranchName: ").Append(BranchName).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -63,25 +82,34 @@ namespace BalsamApi.Server.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((ProgramsListResponse)obj);
+            return obj.GetType() == GetType() && Equals((CreateProjectRequest)obj);
         }
 
         /// <summary>
-        /// Returns true if ProgramsListResponse instances are equal
+        /// Returns true if CreateProjectRequest instances are equal
         /// </summary>
-        /// <param name="other">Instance of ProgramsListResponse to be compared</param>
+        /// <param name="other">Instance of CreateProjectRequest to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(ProgramsListResponse other)
+        public bool Equals(CreateProjectRequest other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    Programs == other.Programs ||
-                    Programs != null &&
-                    other.Programs != null &&
-                    Programs.SequenceEqual(other.Programs)
+                    Name == other.Name ||
+                    Name != null &&
+                    Name.Equals(other.Name)
+                ) && 
+                (
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
+                ) && 
+                (
+                    BranchName == other.BranchName ||
+                    BranchName != null &&
+                    BranchName.Equals(other.BranchName)
                 );
         }
 
@@ -95,8 +123,12 @@ namespace BalsamApi.Server.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (Programs != null)
-                    hashCode = hashCode * 59 + Programs.GetHashCode();
+                    if (Name != null)
+                    hashCode = hashCode * 59 + Name.GetHashCode();
+                    if (Description != null)
+                    hashCode = hashCode * 59 + Description.GetHashCode();
+                    if (BranchName != null)
+                    hashCode = hashCode * 59 + BranchName.GetHashCode();
                 return hashCode;
             }
         }
@@ -104,12 +136,12 @@ namespace BalsamApi.Server.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(ProgramsListResponse left, ProgramsListResponse right)
+        public static bool operator ==(CreateProjectRequest left, CreateProjectRequest right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(ProgramsListResponse left, ProgramsListResponse right)
+        public static bool operator !=(CreateProjectRequest left, CreateProjectRequest right)
         {
             return !Equals(left, right);
         }

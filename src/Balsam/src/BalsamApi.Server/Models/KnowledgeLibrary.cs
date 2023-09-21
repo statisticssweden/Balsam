@@ -21,15 +21,16 @@ using BalsamApi.Server.Converters;
 namespace BalsamApi.Server.Models
 { 
     /// <summary>
-    /// 
+    /// Information about a knowledge library
     /// </summary>
     [DataContract]
-    public class Project : IEquatable<Project>
+    public class KnowledgeLibrary : IEquatable<KnowledgeLibrary>
     {
         /// <summary>
         /// The identifier
         /// </summary>
         /// <value>The identifier</value>
+        [Required]
         [DataMember(Name="id", EmitDefaultValue=false)]
         public string Id { get; set; }
 
@@ -37,21 +38,16 @@ namespace BalsamApi.Server.Models
         /// The name
         /// </summary>
         /// <value>The name</value>
+        [Required]
         [DataMember(Name="name", EmitDefaultValue=false)]
         public string Name { get; set; }
 
         /// <summary>
-        /// Description of the project
+        /// Description of the knowledge library
         /// </summary>
-        /// <value>Description of the project</value>
+        /// <value>Description of the knowledge library</value>
         [DataMember(Name="description", EmitDefaultValue=false)]
         public string Description { get; set; }
-
-        /// <summary>
-        /// Gets or Sets Branches
-        /// </summary>
-        [DataMember(Name="branches", EmitDefaultValue=false)]
-        public List<Branch> Branches { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -60,11 +56,10 @@ namespace BalsamApi.Server.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class Project {\n");
+            sb.Append("class KnowledgeLibrary {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
-            sb.Append("  Branches: ").Append(Branches).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -87,15 +82,15 @@ namespace BalsamApi.Server.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Project)obj);
+            return obj.GetType() == GetType() && Equals((KnowledgeLibrary)obj);
         }
 
         /// <summary>
-        /// Returns true if Project instances are equal
+        /// Returns true if KnowledgeLibrary instances are equal
         /// </summary>
-        /// <param name="other">Instance of Project to be compared</param>
+        /// <param name="other">Instance of KnowledgeLibrary to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(Project other)
+        public bool Equals(KnowledgeLibrary other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -115,12 +110,6 @@ namespace BalsamApi.Server.Models
                     Description == other.Description ||
                     Description != null &&
                     Description.Equals(other.Description)
-                ) && 
-                (
-                    Branches == other.Branches ||
-                    Branches != null &&
-                    other.Branches != null &&
-                    Branches.SequenceEqual(other.Branches)
                 );
         }
 
@@ -140,8 +129,6 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + Name.GetHashCode();
                     if (Description != null)
                     hashCode = hashCode * 59 + Description.GetHashCode();
-                    if (Branches != null)
-                    hashCode = hashCode * 59 + Branches.GetHashCode();
                 return hashCode;
             }
         }
@@ -149,12 +136,12 @@ namespace BalsamApi.Server.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(Project left, Project right)
+        public static bool operator ==(KnowledgeLibrary left, KnowledgeLibrary right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Project left, Project right)
+        public static bool operator !=(KnowledgeLibrary left, KnowledgeLibrary right)
         {
             return !Equals(left, right);
         }

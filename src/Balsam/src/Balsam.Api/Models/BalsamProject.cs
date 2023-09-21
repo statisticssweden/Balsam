@@ -1,6 +1,6 @@
 ﻿namespace Balsam.Api.Models
 {
-    public class BalsamProgram
+    public class BalsamProject
     {
         public string Id { get; set; }
         public string Name { get; set; }

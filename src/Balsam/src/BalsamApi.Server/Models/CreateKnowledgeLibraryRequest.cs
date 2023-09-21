@@ -21,30 +21,33 @@ using BalsamApi.Server.Converters;
 namespace BalsamApi.Server.Models
 { 
     /// <summary>
-    /// 
+    /// Payload for creating new branch
     /// </summary>
     [DataContract]
-    public class Program : IEquatable<Program>
+    public class CreateKnowledgeLibraryRequest : IEquatable<CreateKnowledgeLibraryRequest>
     {
         /// <summary>
-        /// The identifier
+        /// The name of the knowledge library
         /// </summary>
-        /// <value>The identifier</value>
-        [DataMember(Name="id", EmitDefaultValue=false)]
-        public string Id { get; set; }
-
-        /// <summary>
-        /// The name
-        /// </summary>
-        /// <value>The name</value>
+        /// <value>The name of the knowledge library</value>
+        [Required]
         [DataMember(Name="name", EmitDefaultValue=false)]
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or Sets Projects
+        /// The desciption of the knowledge library
         /// </summary>
-        [DataMember(Name="projects", EmitDefaultValue=false)]
-        public List<Project> Projects { get; set; }
+        /// <value>The desciption of the knowledge library</value>
+        [DataMember(Name="description", EmitDefaultValue=false)]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// The url to the git repository
+        /// </summary>
+        /// <value>The url to the git repository</value>
+        [Required]
+        [DataMember(Name="repositoryUrl", EmitDefaultValue=false)]
+        public string RepositoryUrl { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -53,10 +56,10 @@ namespace BalsamApi.Server.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class Program {\n");
-            sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("class CreateKnowledgeLibraryRequest {\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
-            sb.Append("  Projects: ").Append(Projects).Append("\n");
+            sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  RepositoryUrl: ").Append(RepositoryUrl).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -79,35 +82,34 @@ namespace BalsamApi.Server.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((Program)obj);
+            return obj.GetType() == GetType() && Equals((CreateKnowledgeLibraryRequest)obj);
         }
 
         /// <summary>
-        /// Returns true if Program instances are equal
+        /// Returns true if CreateKnowledgeLibraryRequest instances are equal
         /// </summary>
-        /// <param name="other">Instance of Program to be compared</param>
+        /// <param name="other">Instance of CreateKnowledgeLibraryRequest to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(Program other)
+        public bool Equals(CreateKnowledgeLibraryRequest other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    Id == other.Id ||
-                    Id != null &&
-                    Id.Equals(other.Id)
-                ) && 
-                (
                     Name == other.Name ||
                     Name != null &&
                     Name.Equals(other.Name)
                 ) && 
                 (
-                    Projects == other.Projects ||
-                    Projects != null &&
-                    other.Projects != null &&
-                    Projects.SequenceEqual(other.Projects)
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
+                ) && 
+                (
+                    RepositoryUrl == other.RepositoryUrl ||
+                    RepositoryUrl != null &&
+                    RepositoryUrl.Equals(other.RepositoryUrl)
                 );
         }
 
@@ -121,12 +123,12 @@ namespace BalsamApi.Server.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (Id != null)
-                    hashCode = hashCode * 59 + Id.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
-                    if (Projects != null)
-                    hashCode = hashCode * 59 + Projects.GetHashCode();
+                    if (Description != null)
+                    hashCode = hashCode * 59 + Description.GetHashCode();
+                    if (RepositoryUrl != null)
+                    hashCode = hashCode * 59 + RepositoryUrl.GetHashCode();
                 return hashCode;
             }
         }
@@ -134,12 +136,12 @@ namespace BalsamApi.Server.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(Program left, Program right)
+        public static bool operator ==(CreateKnowledgeLibraryRequest left, CreateKnowledgeLibraryRequest right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Program left, Program right)
+        public static bool operator !=(CreateKnowledgeLibraryRequest left, CreateKnowledgeLibraryRequest right)
         {
             return !Equals(left, right);
         }
