@@ -3,8 +3,8 @@ additionalProperties:
   nullableReferenceTypes: true
   buildTarget: library
   useSwashbuckle: true
-  packageName: OicdProvider
-  packageTitle: OicdProvider
-  packageDescription: OicdProvider class library
+  packageName: OidcProvider
+  packageTitle: OidcProvider
+  packageDescription: OidcProvider class library
   licenseName: MIT
   packageAuthors: SCB
