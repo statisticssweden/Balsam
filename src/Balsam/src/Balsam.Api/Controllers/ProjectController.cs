@@ -33,16 +33,16 @@ namespace Balsam.Api.Controllers
 
         public async override Task<IActionResult> CreateProject([FromBody] CreateProjectRequest? createProjectRequest)
         {
-            BalsamProject program = await _hubClient.CreateProject(createProjectRequest.Name);
+            BalsamProject project = await _hubClient.CreateProject(createProjectRequest.Name);
 
-            if (program == null)
+            if (project == null)
             {
-                return BadRequest(new Problem() { Title = "Project with that name already exists", Status = 400, Type = "Program duplication" });
+                return BadRequest(new Problem() { Title = "Project with that name already exists", Status = 400, Type = "Project duplication" });
             }
 
             var evt = new ProjectCreatedResponse();
-            evt.Id = program.Id;
-            evt.Name = program.Name;
+            evt.Id = project.Id;
+            evt.Name = project.Name;
 
             return Ok(evt);
         }

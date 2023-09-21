@@ -39,9 +39,9 @@ namespace Balsam.Api
             var projects = new List<BalsamProject>();
             var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
 
-            foreach (var programPath in Directory.GetDirectories(hubPath))
+            foreach (var projectPath in Directory.GetDirectories(hubPath))
             {
-                var propsFile = Path.Combine(programPath, "properties.json");
+                var propsFile = Path.Combine(projectPath, "properties.json");
                 var project = JsonConvert.DeserializeObject<BalsamProject>(System.IO.File.ReadAllText(propsFile));
                 projects.Add(project);
             }
