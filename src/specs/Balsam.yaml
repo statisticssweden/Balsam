@@ -269,6 +269,13 @@ paths:
         - KnowledgeLibrary
       operationId: DeleteKnowledgeLibary
       description: Removes knowledge library
+      parameters:
+        - name: libraryId
+          in: path
+          description: id for the knowledge library
+          required: true
+          schema:
+            type: string  
       responses:
         '200':
           description: Success
