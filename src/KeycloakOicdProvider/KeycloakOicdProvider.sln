@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OicdProvider", "src\OicdPro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keycloak.OicdProvider", "src\KeycloakOicdProvider\Keycloak.OicdProvider.csproj", "{4FBE1E84-F397-4BDF-A8E1-29CAEF43D52C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keycloak.OicdProvider.Test", "Keycloak.OicdProvider.Test\Keycloak.OicdProvider.Test.csproj", "{91DF73FB-E5CB-465B-A1E9-56CB430D5FC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4FBE1E84-F397-4BDF-A8E1-29CAEF43D52C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FBE1E84-F397-4BDF-A8E1-29CAEF43D52C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FBE1E84-F397-4BDF-A8E1-29CAEF43D52C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91DF73FB-E5CB-465B-A1E9-56CB430D5FC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91DF73FB-E5CB-465B-A1E9-56CB430D5FC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91DF73FB-E5CB-465B-A1E9-56CB430D5FC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91DF73FB-E5CB-465B-A1E9-56CB430D5FC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

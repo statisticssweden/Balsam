@@ -2,16 +2,18 @@
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json.Serialization;
+using Keycloak.OicdProvider.Controllers;
 
 namespace Keycloak.OicdProvider.Client;
 
 public class KeyCloakClient : IKeyCloakClient
 {
     private readonly ILogger _logger;
-    private readonly string _baseUrl;
-    private readonly string _userName;
-    private readonly string _password;
-    private readonly string _clientSecret;
+    private readonly string? _baseUrl;
+    private readonly string? _userName;
+    private readonly string? _password;
+    private readonly string? _clientSecret;
     private readonly string? _realm;
     private readonly string? _clientId;
     private static HttpClient _httpClient;
@@ -28,35 +30,48 @@ public class KeyCloakClient : IKeyCloakClient
         _clientSecret = options.Value.ClientSecret;
     }
 
-
     public async Task<string> CreateRole(string program)
     {
-        var accesstoken = await GetAccessToken();
-        var id = await GetIdForClient(accesstoken, _clientId);
-        var roleName = $"{program}-users";
 
-        //TODO: is name of role best suited? Programname-users, balsam-programname
-        var myObject = new { name = roleName, description = "Balsam programanvändare för program " + program };
-        
-        var test = JsonConvert.SerializeObject(myObject);
-
-        var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/admin/realms/{_realm}/clients/{id}/roles")
+        var role = new Role(program);
+        try
         {
 
-            Content = new StringContent(test, Encoding.UTF8, "application/json"),
-            Headers = { Authorization = new AuthenticationHeaderValue("Bearer", accesstoken) }
-        };
+            var accesstoken = await GetAccessToken();
+            var id = await GetIdForClient(accesstoken, _clientId);
+            var roleName = $"{program}-users";
 
-        //request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
+            //TODO: is name of role best suited? Programname-users, balsam-programname
+            var jsonBody = new {name = roleName, description = "Balsam users for project " + program};
 
-        using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            var request =
+                new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/admin/realms/{_realm}/clients/{id}/roles")
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json"),
+                    Headers = {Authorization = new AuthenticationHeaderValue("Bearer", accesstoken)}
+                };
 
-        //try
-        response.EnsureSuccessStatusCode();
+            try
+            {
+                using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
 
-        var responseContentStream = response.Content.ReadAsStringAsync().Result;
-        _logger.LogInformation("User Role created for program: {program}", program);
-        return "Role";
+                var responseContentStream = response.Content.ReadAsStringAsync().Result;
+                _logger.LogInformation("User Role created for program: {program}", program);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to POST role on Keycloak API");
+            }
+
+           
+            return "Role";
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create role with name {role}", role.PreferredName);
+        }
     }
 
     private async Task<string> GetAccessToken()
@@ -73,34 +88,55 @@ public class KeyCloakClient : IKeyCloakClient
             })
         };
 
-        using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            //TODO: catch faulty respons
+            response.EnsureSuccessStatusCode();
 
-        var responseContentStream = response.Content.ReadAsStringAsync().Result;
+            var responseContentStream = response.Content.ReadAsStringAsync().Result;
 
-        var accessToken = JsonConvert.DeserializeObject<AccessToken>(responseContentStream);
-        return accessToken.access_token;
+            var accessToken = JsonConvert.DeserializeObject<AccessToken>(responseContentStream);
+            return accessToken.access_token;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to retrieve accessToken for ");
+            throw;
+        }
     }
 
-    private async Task<string> GetIdForClient(string accesstoken, string id)
+    private async Task<string> GetIdForClient(string accesstoken, string clientId)
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/admin/realms/{_realm}/clients?clientId={id}");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/admin/realms/{_realm}/clients?clientId={clientId}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accesstoken);
 
-        using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-        response.EnsureSuccessStatusCode();
-        var responseContentStream = response.Content.ReadAsStringAsync().Result;
+        try
+        {
+            using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            
+            response.EnsureSuccessStatusCode();
 
-        var clientId = JsonConvert.DeserializeObject<List<ID>>(responseContentStream);
+            var responseContentStream = response.Content.ReadAsStringAsync().Result;
 
-        return clientId.FirstOrDefault().id;
+            var id = JsonConvert.DeserializeObject<List<Id>>(responseContentStream);
+            return id.First().id;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get client Id from Keycloak api for client: {clientId}", clientId);
+            throw;
+        }
     }
 
     private class AccessToken
     {
+        //[JsonPropertyName("access_token")]
         public string access_token { get; set; }
     }
-    private class ID
+
+    private class Id
     {
         public string id { get; set; }
     }
