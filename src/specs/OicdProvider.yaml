@@ -12,19 +12,18 @@ tags:
     description:  Roles methods
 
 paths:
-  /repos:
+  /roles:
     post:
       tags: 
         - Role
       operationId: CreateRole
       description: Creates a new role
-      parameters:
-        - name: name
-          in: query
-          description: The name of the role
-          required: true
-          schema:
-            type: string  
+      requestBody:
+        description: Definition of a new role
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRoleRequest'    
       responses:
         '200':
           description: Success
@@ -40,10 +39,55 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
+  /roles/{roleId}/users:
+    post:
+      tags: 
+        - Role
+      operationId: AddUserToRole
+      description: Adds a user to the role
+      requestBody:
+        description: Definition of the user to add to the role
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddUserToRoleRequest'    
+      parameters:
+        - name: roleId
+          in: path
+          description: The id for the repository
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+                
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
   
     
 components:
   schemas:
+    CreateRoleRequest:
+      type: object
+      description: Role name
+      required:
+        - "name"
+      properties:
+        name:
+          type: string
+          description: The name of the role
+
+    AddUserToRoleRequest:
+      type: object
+      description: Role name
+      required:
+        - "userName"
+      properties:
+        userName:
+          type: string
+          description: The name of the user
+
     RoleCreatedResponse:
       type: object
       description: Repository description
