@@ -18,13 +18,12 @@ paths:
         - Bucket
       operationId: CreateBucket
       description: Creates a new Bucket
-      parameters:
-        - name: preferredName
-          in: query
-          description: The preferredName of the bucket
-          required: true
-          schema:
-            type: string  
+      requestBody:
+        description: Definition of a new role
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBucketRequest'  
       responses:
         '200':
           description: Success
@@ -32,33 +31,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BucketCreatedResponse'
-              
-              example:
-                  preferredName: Demo_data 
-                  name: demo_data
-                 
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
-  /buckets/{id}/folder:
+  /buckets/{bucketId}/folder:
     post:
       tags: 
         - Bucket
       operationId: CreateFolder
       description: Creates a new virtual folder in the bucket.
+      requestBody:
+        description: Definition of a new role
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFolderRequest'  
       parameters:
-        - name: id
+        - name: bucketId
           in: path
           description: the name of the bucket
           required: true
           schema:
             type: string
-        - name: preferredName
-          in: query
-          description: The preferredName of the bucket
-          required: true
-          schema:
-            type: string  
       responses:
         '200':
           description: Success
@@ -66,22 +60,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FolderCreatedResponse'
-              
-              example:
-                  preferredName: Demo DATA 
-                  name: demo_data
                  
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
-  /buckets/{id}/acceskey:
+  /buckets/{bucketId}/acceskey:
     post:
       tags: 
         - Bucket
       operationId: CreateAccessKey
       description: Creates a new acces key for the bucket.
       parameters:
-        - name: id
+        - name: bucketId
           in: path
           description: the name of the bucket
           required: true
@@ -94,43 +84,61 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AccessKeyCreatedResponse'
-              
-              example:
-                  preferredName: Demo DATA 
-                  name: demo_data
-                 
         '400':
           $ref: '#/components/responses/ErrorResponse400'
   
     
 components:
   schemas:
+    CreateBucketRequest:
+      type: object
+      description: Bucket name
+      required:
+        - "name"
+      properties:
+        name:
+          type: string
+          description: The name of the bucket
+
+    CreateFolderRequest:
+      type: object
+      description: Folder name
+      required:
+        - "name"
+      properties:
+        name:
+          type: string
+          description: The name of the folder
+
     BucketCreatedResponse:
       type: object
       description: Bucket description
       required:
-        - "preferredName"
+        - "requestedName"
         - "name"
       properties:
-        preferredName:
+        requestedName:
           type: string
-          description: The preferred name of the bucket
+          description: The requested name of the bucket
         name:
           type: string
           description: The name of the bucket
+
     FolderCreatedResponse:
       type: object
       description: Folder created description
       required:
-        - "preferredName"
+        - "requestedName"
         - "name"
       properties:
-        preferredName:
+        requestedName:
           type: string
-          description: The preferred name of the virtual folder
+          description: The requested name of the virtual folder
         name:
           type: string
           description: The name of the virtual folder
+
+
     AccessKeyCreatedResponse:
       type: object
       description: Access key created description
