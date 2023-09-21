@@ -242,6 +242,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeLibraryListResponse'
+    post:
+      tags: 
+        - Workspace
+      operationId: CreateKnowledgeLibrary
+      description: Create a new connection to a knowledge library
+      requestBody:
+        description: Definition of a new Knowledge library connection
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateKnowledgeLibraryRequest'                 
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KnowledgeLibraryCreatedResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
 
   /knowledge-libraries/{libraryId}:
     delete:
@@ -312,6 +332,23 @@ components:
           type: string
           description: The id of the branch
 
+    CreateKnowledgeLibraryRequest:
+      type: object
+      description: Payload for creating new branch
+      required:
+        - "name"
+        - "repositoryUrl"
+      properties:
+        name:
+          type: string
+          description: The name of the knowledge library
+        description:
+          type: string
+          description: The desciption of the knowledge library 
+        repositoryUrl:
+          type: string
+          description: The url to the git repository
+
     ProjectResponse:
       type: object
       description: Project created response
@@ -379,6 +416,21 @@ components:
         name:
           type: string
           description: The branch name
+
+    KnowledgeLibraryCreatedResponse:
+      type: object
+      description: Connection to a knowledge library created response
+      required:
+        - "id"
+        - "name"
+      properties:
+        id:
+          type: string
+          description: The identifier
+        name:
+          type: string
+          description: The name of the knowledge library
+
     FileListResponse:
       type: array
       items:
