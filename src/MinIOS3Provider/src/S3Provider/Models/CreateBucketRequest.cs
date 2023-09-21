@@ -21,23 +21,15 @@ using S3Provider.Converters;
 namespace S3Provider.Models
 { 
     /// <summary>
-    /// Folder created description
+    /// Bucket name
     /// </summary>
     [DataContract]
-    public class FolderCreatedResponse : IEquatable<FolderCreatedResponse>
+    public class CreateBucketRequest : IEquatable<CreateBucketRequest>
     {
         /// <summary>
-        /// The requested name of the virtual folder
+        /// The name of the bucket
         /// </summary>
-        /// <value>The requested name of the virtual folder</value>
-        [Required]
-        [DataMember(Name="requestedName", EmitDefaultValue=false)]
-        public string RequestedName { get; set; }
-
-        /// <summary>
-        /// The name of the virtual folder
-        /// </summary>
-        /// <value>The name of the virtual folder</value>
+        /// <value>The name of the bucket</value>
         [Required]
         [DataMember(Name="name", EmitDefaultValue=false)]
         public string Name { get; set; }
@@ -49,8 +41,7 @@ namespace S3Provider.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class FolderCreatedResponse {\n");
-            sb.Append("  RequestedName: ").Append(RequestedName).Append("\n");
+            sb.Append("class CreateBucketRequest {\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -74,25 +65,20 @@ namespace S3Provider.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((FolderCreatedResponse)obj);
+            return obj.GetType() == GetType() && Equals((CreateBucketRequest)obj);
         }
 
         /// <summary>
-        /// Returns true if FolderCreatedResponse instances are equal
+        /// Returns true if CreateBucketRequest instances are equal
         /// </summary>
-        /// <param name="other">Instance of FolderCreatedResponse to be compared</param>
+        /// <param name="other">Instance of CreateBucketRequest to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(FolderCreatedResponse other)
+        public bool Equals(CreateBucketRequest other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
-                (
-                    RequestedName == other.RequestedName ||
-                    RequestedName != null &&
-                    RequestedName.Equals(other.RequestedName)
-                ) && 
                 (
                     Name == other.Name ||
                     Name != null &&
@@ -110,8 +96,6 @@ namespace S3Provider.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (RequestedName != null)
-                    hashCode = hashCode * 59 + RequestedName.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
                 return hashCode;
@@ -121,12 +105,12 @@ namespace S3Provider.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(FolderCreatedResponse left, FolderCreatedResponse right)
+        public static bool operator ==(CreateBucketRequest left, CreateBucketRequest right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(FolderCreatedResponse left, FolderCreatedResponse right)
+        public static bool operator !=(CreateBucketRequest left, CreateBucketRequest right)
         {
             return !Equals(left, right);
         }

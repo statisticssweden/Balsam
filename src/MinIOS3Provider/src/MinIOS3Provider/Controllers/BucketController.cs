@@ -31,31 +31,29 @@ namespace MinIOS3Provider.Controllers
             return Ok(new AccessKeyCreatedResponse(){ AccessKey = keyPair.AccessKey, SecretKey = keyPair.SecretKey}); 
         }
 
-        public override IActionResult CreateBucket([FromQuery(Name = "preferredName"), Required] string preferredName)
+           public override IActionResult CreateBucket([FromBody] CreateBucketRequest? createBucketRequest)
         {
-            var name = NameUtil.SanitizeBucketName(preferredName);
-            
+            var name = NameUtil.SanitizeBucketName(createBucketRequest.Name);
+
             _client.CreateBucket(name);
             _client.CreatePolicy(name);
             _client.CreateUser(name);
 
-            return Ok(new BucketCreatedResponse() { Name = name, PreferredName = preferredName });
+            return Ok(new BucketCreatedResponse() { Name = name, RequestedName = createBucketRequest.Name });
         }
 
-        public override IActionResult CreateFolder([FromRoute(Name = "id"), Required] string id, [FromQuery(Name = "preferredName"), Required] string preferredName)
+        public override IActionResult CreateFolder([FromRoute(Name = "bucketId"), Required] string bucketId, [FromBody] CreateFolderRequest? createFolderRequest)
         {
 
-            if (!NameUtil.CheckObjectName(preferredName))
+            if (!NameUtil.CheckObjectName(createFolderRequest.Name))
             {
                 return BadRequest(new Problem() { Status = 400, Title = "Invalid directory name" });
             }
 
-            var name = preferredName;
-            _client.CreateDirectory(id, name);
+            var name = createFolderRequest.Name;
+            _client.CreateDirectory(bucketId, name);
 
-            return Ok(new FolderCreatedResponse() { Name = name, PreferredName = preferredName });
+            return Ok(new FolderCreatedResponse() { Name = name, RequestedName = createFolderRequest.Name });
         }
-
-
     }
 }
