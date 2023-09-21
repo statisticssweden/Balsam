@@ -31,31 +31,33 @@ namespace GitProvider.Controllers
         /// 
         /// </summary>
         /// <remarks>Create a branch from main branch in a existing repository</remarks>
-        /// <param name="repository">The name of the repository where the branch should be created.</param>
-        /// <param name="preferredName">The preferred name of the branch.</param>
+        /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
+        /// <param name="createBranchRequest">Definition of a new repository</param>
         /// <response code="200">Success</response>
         /// <response code="400">Error respsone for 400</response>
         [HttpPost]
-        [Route("/api/v1/repos/{repository}/branches")]
+        [Route("/api/v1/repos/{repositoryId}/branches")]
+        [Consumes("application/json")]
         [ValidateModelState]
         [SwaggerOperation("CreateBranch")]
         [SwaggerResponse(statusCode: 200, type: typeof(BranchCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult CreateBranch([FromRoute (Name = "repository")][Required]string repository, [FromQuery (Name = "preferredName")]string? preferredName);
+        public abstract IActionResult CreateBranch([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromBody]CreateBranchRequest? createBranchRequest);
 
         /// <summary>
         /// 
         /// </summary>
         /// <remarks>Creates a new repository</remarks>
-        /// <param name="preferredName">The preferred name of the repository</param>
+        /// <param name="createRepositoryRequest">Definition of a new repository</param>
         /// <response code="200">Success</response>
         /// <response code="400">Error respsone for 400</response>
         [HttpPost]
         [Route("/api/v1/repos")]
+        [Consumes("application/json")]
         [ValidateModelState]
-        [SwaggerOperation("CreateRepo")]
+        [SwaggerOperation("CreateRepository")]
         [SwaggerResponse(statusCode: 200, type: typeof(RepositoryCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult CreateRepo([FromQuery (Name = "preferredName")][Required()]string preferredName);
+        public abstract IActionResult CreateRepository([FromBody]CreateRepositoryRequest? createRepositoryRequest);
     }
 }

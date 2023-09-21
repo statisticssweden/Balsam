@@ -41,10 +41,17 @@ namespace BalsamApi.Server.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or Sets Workspaces
+        /// Description of the project
         /// </summary>
-        [DataMember(Name="workspaces", EmitDefaultValue=false)]
-        public List<Workspace> Workspaces { get; set; }
+        /// <value>Description of the project</value>
+        [DataMember(Name="description", EmitDefaultValue=false)]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Branches
+        /// </summary>
+        [DataMember(Name="branches", EmitDefaultValue=false)]
+        public List<Branch> Branches { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -56,7 +63,8 @@ namespace BalsamApi.Server.Models
             sb.Append("class Project {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
-            sb.Append("  Workspaces: ").Append(Workspaces).Append("\n");
+            sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  Branches: ").Append(Branches).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -104,10 +112,15 @@ namespace BalsamApi.Server.Models
                     Name.Equals(other.Name)
                 ) && 
                 (
-                    Workspaces == other.Workspaces ||
-                    Workspaces != null &&
-                    other.Workspaces != null &&
-                    Workspaces.SequenceEqual(other.Workspaces)
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
+                ) && 
+                (
+                    Branches == other.Branches ||
+                    Branches != null &&
+                    other.Branches != null &&
+                    Branches.SequenceEqual(other.Branches)
                 );
         }
 
@@ -125,8 +138,10 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + Id.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
-                    if (Workspaces != null)
-                    hashCode = hashCode * 59 + Workspaces.GetHashCode();
+                    if (Description != null)
+                    hashCode = hashCode * 59 + Description.GetHashCode();
+                    if (Branches != null)
+                    hashCode = hashCode * 59 + Branches.GetHashCode();
                 return hashCode;
             }
         }

@@ -1,4 +1,3 @@
-.openapi-generator-ignore
 README.md
 S3Provider.sln
 build.bat
@@ -13,6 +12,8 @@ src/S3Provider/Filters/GeneratePathParamsValidationFilter.cs
 src/S3Provider/Formatters/InputFormatterStream.cs
 src/S3Provider/Models/AccessKeyCreatedResponse.cs
 src/S3Provider/Models/BucketCreatedResponse.cs
+src/S3Provider/Models/CreateBucketRequest.cs
+src/S3Provider/Models/CreateFolderRequest.cs
 src/S3Provider/Models/FolderCreatedResponse.cs
 src/S3Provider/Models/Problem.cs
 src/S3Provider/OpenApi/TypeExtensions.cs

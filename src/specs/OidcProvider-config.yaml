@@ -1,0 +1,10 @@
+additionalProperties:
+  aspnetCoreVersion: 6.0
+  nullableReferenceTypes: true
+  buildTarget: library
+  useSwashbuckle: true
+  packageName: OidcProvider
+  packageTitle: OidcProvider
+  packageDescription: OidcProvider class library
+  licenseName: MIT
+  packageAuthors: SCB

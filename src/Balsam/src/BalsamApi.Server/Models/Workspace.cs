@@ -44,8 +44,22 @@ namespace BalsamApi.Server.Models
         /// The id of the template that the workspace is based on.
         /// </summary>
         /// <value>The id of the template that the workspace is based on.</value>
-        [DataMember(Name="basedOn", EmitDefaultValue=false)]
-        public string BasedOn { get; set; }
+        [DataMember(Name="templateId", EmitDefaultValue=false)]
+        public string TemplateId { get; set; }
+
+        /// <summary>
+        /// The id of the project
+        /// </summary>
+        /// <value>The id of the project</value>
+        [DataMember(Name="projectId", EmitDefaultValue=false)]
+        public string ProjectId { get; set; }
+
+        /// <summary>
+        /// The id of the branch
+        /// </summary>
+        /// <value>The id of the branch</value>
+        [DataMember(Name="branchId", EmitDefaultValue=false)]
+        public string BranchId { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -57,7 +71,9 @@ namespace BalsamApi.Server.Models
             sb.Append("class Workspace {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
-            sb.Append("  BasedOn: ").Append(BasedOn).Append("\n");
+            sb.Append("  TemplateId: ").Append(TemplateId).Append("\n");
+            sb.Append("  ProjectId: ").Append(ProjectId).Append("\n");
+            sb.Append("  BranchId: ").Append(BranchId).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -105,9 +121,19 @@ namespace BalsamApi.Server.Models
                     Name.Equals(other.Name)
                 ) && 
                 (
-                    BasedOn == other.BasedOn ||
-                    BasedOn != null &&
-                    BasedOn.Equals(other.BasedOn)
+                    TemplateId == other.TemplateId ||
+                    TemplateId != null &&
+                    TemplateId.Equals(other.TemplateId)
+                ) && 
+                (
+                    ProjectId == other.ProjectId ||
+                    ProjectId != null &&
+                    ProjectId.Equals(other.ProjectId)
+                ) && 
+                (
+                    BranchId == other.BranchId ||
+                    BranchId != null &&
+                    BranchId.Equals(other.BranchId)
                 );
         }
 
@@ -125,8 +151,12 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + Id.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
-                    if (BasedOn != null)
-                    hashCode = hashCode * 59 + BasedOn.GetHashCode();
+                    if (TemplateId != null)
+                    hashCode = hashCode * 59 + TemplateId.GetHashCode();
+                    if (ProjectId != null)
+                    hashCode = hashCode * 59 + ProjectId.GetHashCode();
+                    if (BranchId != null)
+                    hashCode = hashCode * 59 + BranchId.GetHashCode();
                 return hashCode;
             }
         }

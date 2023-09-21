@@ -18,15 +18,14 @@ paths:
     post:
       tags: 
         - Repository
-      operationId: CreateRepo
+      operationId: CreateRepository
       description: Creates a new repository
-      parameters:
-        - name: preferredName
-          in: query
-          description: The preferred name of the repository
-          required: true
-          schema:
-            type: string  
+      requestBody:
+        description: Definition of a new repository
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRepositoryRequest'    
       responses:
         '200':
           description: Success
@@ -39,29 +38,29 @@ paths:
                   preferedName: Demo repot
                   name: demo-repot
                   path: https://mygit.local/demo-repot.git
-                
-                 
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
-  /repos/{repository}/branches:
+  /repos/{repositoryId}/branches:
     post:
       tags: 
         - Repository
       operationId: CreateBranch
       description: Create a branch from main branch in a existing repository
+      requestBody:
+        description: Definition of a new repository
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBranchRequest'    
       parameters:
-        - name: repository
+        - name: repositoryId
           in: path
           description: The name of the repository where the branch should be created.
           required: true
           schema:
             type: string
-        - name: preferredName
-          in: query
-          description: The preferred name of the branch.
-          schema:
-            type: string
+
       responses:
         '200':
           description: Success
@@ -100,13 +99,44 @@ paths:
                 $ref: '#/components/schemas/UserPATCreatedResponse'
 
                 example: |
-                  name: olle-path
+                  name: olle-PAT
                   token: XSscsdsaADCaasdddddfv
         '400':
           $ref: '#/components/responses/ErrorResponse400'        
     
 components:
   schemas:
+    CreateRepositoryRequest:
+      type: object
+      description: Payload for creating new repository
+      required:
+        - "name"
+        - "defaultBranchName"
+      properties:
+        name:
+          type: string
+          description: The name of the branch
+        description:
+          type: string
+          description: The description of the branch
+        defaultBranchName:
+          type: string
+          description: The branch from which this branch will be created. The default branch for the project will be used if not specified.
+
+    CreateBranchRequest:
+      type: object
+      description: Payload for creating new branch
+      required:
+        - "name"
+        - "fromBranch"
+      properties:
+        name:
+          type: string
+          description: The name of the branch
+        fromBranch:
+          type: string
+          description: The branch from which this branch will be created. The default branch for the project will be used if not specified.
+
     RepositoryCreatedResponse:
       type: object
       description: Repository description
@@ -133,16 +163,16 @@ components:
       type: object
       description: Branch created description
       required:
-        - "repository"
-        - "preferredName"
+        - "repositoryId"
+        - "id"
         - "name"
       properties:
-        repository:
+        repositoryId:
           type: string
           description: The name of the repository.
-        preferredName:
+        id:
           type: string
-          description: The preferred name for the branch
+          description: The id for the branch
         name:
           type: string
           description: The name of the branch

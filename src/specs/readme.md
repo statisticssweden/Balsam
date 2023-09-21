@@ -16,12 +16,12 @@ Use the following command to generate the souces from the spec.
 docker run --rm -v ${PWD}:/localin -v ${PWD}\..\GitLabGitProvider:/localout openapitools/openapi-generator-cli generate -i /localin/GitProvider.yaml -g aspnetcore -o /localout/ -c /localin/GitProvider-config.yaml
 ```
 
-## OicdProvider
-Provides Balsam hubs to create roles for configured OICD Provider.
+## OidcProvider
+Provides Balsam hubs to create roles for configured OIDC Provider.
 
 Use the following command to generate the souces from the spec.
 ```
-docker run --rm -v ${PWD}:/localin -v ${PWD}\..\KeycloakOicdProvider:/localout openapitools/openapi-generator-cli generate -i /localin/OicdProvider.yaml -g aspnetcore -o /localout/ -c /localin/OicdProvider-config.yaml
+docker run --rm -v ${PWD}:/localin -v ${PWD}\..\KeycloakOidcProvider:/localout openapitools/openapi-generator-cli generate -i /localin/OidcProvider.yaml -g aspnetcore -o /localout/ -c /localin/OidcProvider-config.yaml
 ```
 
 ## S3Provider

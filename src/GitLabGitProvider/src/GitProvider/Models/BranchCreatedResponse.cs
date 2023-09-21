@@ -31,16 +31,16 @@ namespace GitProvider.Models
         /// </summary>
         /// <value>The name of the repository.</value>
         [Required]
-        [DataMember(Name="repository", EmitDefaultValue=false)]
-        public string Repository { get; set; }
+        [DataMember(Name="repositoryId", EmitDefaultValue=false)]
+        public string RepositoryId { get; set; }
 
         /// <summary>
-        /// The preferred name for the branch
+        /// The id for the branch
         /// </summary>
-        /// <value>The preferred name for the branch</value>
+        /// <value>The id for the branch</value>
         [Required]
-        [DataMember(Name="preferredName", EmitDefaultValue=false)]
-        public string PreferredName { get; set; }
+        [DataMember(Name="id", EmitDefaultValue=false)]
+        public string Id { get; set; }
 
         /// <summary>
         /// The name of the branch
@@ -58,8 +58,8 @@ namespace GitProvider.Models
         {
             var sb = new StringBuilder();
             sb.Append("class BranchCreatedResponse {\n");
-            sb.Append("  Repository: ").Append(Repository).Append("\n");
-            sb.Append("  PreferredName: ").Append(PreferredName).Append("\n");
+            sb.Append("  RepositoryId: ").Append(RepositoryId).Append("\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -98,14 +98,14 @@ namespace GitProvider.Models
 
             return 
                 (
-                    Repository == other.Repository ||
-                    Repository != null &&
-                    Repository.Equals(other.Repository)
+                    RepositoryId == other.RepositoryId ||
+                    RepositoryId != null &&
+                    RepositoryId.Equals(other.RepositoryId)
                 ) && 
                 (
-                    PreferredName == other.PreferredName ||
-                    PreferredName != null &&
-                    PreferredName.Equals(other.PreferredName)
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
                 ) && 
                 (
                     Name == other.Name ||
@@ -124,10 +124,10 @@ namespace GitProvider.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (Repository != null)
-                    hashCode = hashCode * 59 + Repository.GetHashCode();
-                    if (PreferredName != null)
-                    hashCode = hashCode * 59 + PreferredName.GetHashCode();
+                    if (RepositoryId != null)
+                    hashCode = hashCode * 59 + RepositoryId.GetHashCode();
+                    if (Id != null)
+                    hashCode = hashCode * 59 + Id.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
                 return hashCode;

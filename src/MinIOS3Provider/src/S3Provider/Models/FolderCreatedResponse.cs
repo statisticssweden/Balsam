@@ -27,12 +27,12 @@ namespace S3Provider.Models
     public class FolderCreatedResponse : IEquatable<FolderCreatedResponse>
     {
         /// <summary>
-        /// The preferred name of the virtual folder
+        /// The requested name of the virtual folder
         /// </summary>
-        /// <value>The preferred name of the virtual folder</value>
+        /// <value>The requested name of the virtual folder</value>
         [Required]
-        [DataMember(Name="preferredName", EmitDefaultValue=false)]
-        public string PreferredName { get; set; }
+        [DataMember(Name="requestedName", EmitDefaultValue=false)]
+        public string RequestedName { get; set; }
 
         /// <summary>
         /// The name of the virtual folder
@@ -50,7 +50,7 @@ namespace S3Provider.Models
         {
             var sb = new StringBuilder();
             sb.Append("class FolderCreatedResponse {\n");
-            sb.Append("  PreferredName: ").Append(PreferredName).Append("\n");
+            sb.Append("  RequestedName: ").Append(RequestedName).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -89,9 +89,9 @@ namespace S3Provider.Models
 
             return 
                 (
-                    PreferredName == other.PreferredName ||
-                    PreferredName != null &&
-                    PreferredName.Equals(other.PreferredName)
+                    RequestedName == other.RequestedName ||
+                    RequestedName != null &&
+                    RequestedName.Equals(other.RequestedName)
                 ) && 
                 (
                     Name == other.Name ||
@@ -110,8 +110,8 @@ namespace S3Provider.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (PreferredName != null)
-                    hashCode = hashCode * 59 + PreferredName.GetHashCode();
+                    if (RequestedName != null)
+                    hashCode = hashCode * 59 + RequestedName.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
                 return hashCode;
