@@ -1,11 +1,11 @@
 openapi: '3.0.2'
 info:
-  title: OicdProvider
+  title: OidcProvider
   version: '2.0'
-  description: This a service contract for the OicdProvider in Balsam.
+  description: This a service contract for the OidcProvider in Balsam.
 
 servers:
-  - url: http://oicd-provider.balsam-system.svc.cluster.local/api/v1
+  - url: http://oidc-provider.balsam-system.svc.cluster.local/api/v1
 
 tags:
   - name: Role
