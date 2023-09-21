@@ -21,27 +21,11 @@ using GitProvider.Converters;
 namespace GitProvider.Models
 { 
     /// <summary>
-    /// Branch created description
+    /// Payload for creating new repository
     /// </summary>
     [DataContract]
-    public class BranchCreatedResponse : IEquatable<BranchCreatedResponse>
+    public class CreateRepositoryRequest : IEquatable<CreateRepositoryRequest>
     {
-        /// <summary>
-        /// The name of the repository.
-        /// </summary>
-        /// <value>The name of the repository.</value>
-        [Required]
-        [DataMember(Name="repositoryId", EmitDefaultValue=false)]
-        public string RepositoryId { get; set; }
-
-        /// <summary>
-        /// The id for the branch
-        /// </summary>
-        /// <value>The id for the branch</value>
-        [Required]
-        [DataMember(Name="id", EmitDefaultValue=false)]
-        public string Id { get; set; }
-
         /// <summary>
         /// The name of the branch
         /// </summary>
@@ -51,16 +35,31 @@ namespace GitProvider.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// The description of the branch
+        /// </summary>
+        /// <value>The description of the branch</value>
+        [DataMember(Name="description", EmitDefaultValue=false)]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// The branch from which this branch will be created. The default branch for the project will be used if not specified.
+        /// </summary>
+        /// <value>The branch from which this branch will be created. The default branch for the project will be used if not specified.</value>
+        [Required]
+        [DataMember(Name="defaultBranchName", EmitDefaultValue=false)]
+        public string DefaultBranchName { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class BranchCreatedResponse {\n");
-            sb.Append("  RepositoryId: ").Append(RepositoryId).Append("\n");
-            sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("class CreateRepositoryRequest {\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  DefaultBranchName: ").Append(DefaultBranchName).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -83,34 +82,34 @@ namespace GitProvider.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((BranchCreatedResponse)obj);
+            return obj.GetType() == GetType() && Equals((CreateRepositoryRequest)obj);
         }
 
         /// <summary>
-        /// Returns true if BranchCreatedResponse instances are equal
+        /// Returns true if CreateRepositoryRequest instances are equal
         /// </summary>
-        /// <param name="other">Instance of BranchCreatedResponse to be compared</param>
+        /// <param name="other">Instance of CreateRepositoryRequest to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(BranchCreatedResponse other)
+        public bool Equals(CreateRepositoryRequest other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    RepositoryId == other.RepositoryId ||
-                    RepositoryId != null &&
-                    RepositoryId.Equals(other.RepositoryId)
-                ) && 
-                (
-                    Id == other.Id ||
-                    Id != null &&
-                    Id.Equals(other.Id)
-                ) && 
-                (
                     Name == other.Name ||
                     Name != null &&
                     Name.Equals(other.Name)
+                ) && 
+                (
+                    Description == other.Description ||
+                    Description != null &&
+                    Description.Equals(other.Description)
+                ) && 
+                (
+                    DefaultBranchName == other.DefaultBranchName ||
+                    DefaultBranchName != null &&
+                    DefaultBranchName.Equals(other.DefaultBranchName)
                 );
         }
 
@@ -124,12 +123,12 @@ namespace GitProvider.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (RepositoryId != null)
-                    hashCode = hashCode * 59 + RepositoryId.GetHashCode();
-                    if (Id != null)
-                    hashCode = hashCode * 59 + Id.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
+                    if (Description != null)
+                    hashCode = hashCode * 59 + Description.GetHashCode();
+                    if (DefaultBranchName != null)
+                    hashCode = hashCode * 59 + DefaultBranchName.GetHashCode();
                 return hashCode;
             }
         }
@@ -137,12 +136,12 @@ namespace GitProvider.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(BranchCreatedResponse left, BranchCreatedResponse right)
+        public static bool operator ==(CreateRepositoryRequest left, CreateRepositoryRequest right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(BranchCreatedResponse left, BranchCreatedResponse right)
+        public static bool operator !=(CreateRepositoryRequest left, CreateRepositoryRequest right)
         {
             return !Equals(left, right);
         }

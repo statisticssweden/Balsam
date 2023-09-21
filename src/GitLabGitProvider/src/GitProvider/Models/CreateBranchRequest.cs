@@ -21,27 +21,11 @@ using GitProvider.Converters;
 namespace GitProvider.Models
 { 
     /// <summary>
-    /// Branch created description
+    /// Payload for creating new branch
     /// </summary>
     [DataContract]
-    public class BranchCreatedResponse : IEquatable<BranchCreatedResponse>
+    public class CreateBranchRequest : IEquatable<CreateBranchRequest>
     {
-        /// <summary>
-        /// The name of the repository.
-        /// </summary>
-        /// <value>The name of the repository.</value>
-        [Required]
-        [DataMember(Name="repositoryId", EmitDefaultValue=false)]
-        public string RepositoryId { get; set; }
-
-        /// <summary>
-        /// The id for the branch
-        /// </summary>
-        /// <value>The id for the branch</value>
-        [Required]
-        [DataMember(Name="id", EmitDefaultValue=false)]
-        public string Id { get; set; }
-
         /// <summary>
         /// The name of the branch
         /// </summary>
@@ -51,16 +35,23 @@ namespace GitProvider.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// The branch from which this branch will be created. The default branch for the project will be used if not specified.
+        /// </summary>
+        /// <value>The branch from which this branch will be created. The default branch for the project will be used if not specified.</value>
+        [Required]
+        [DataMember(Name="fromBranch", EmitDefaultValue=false)]
+        public string FromBranch { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class BranchCreatedResponse {\n");
-            sb.Append("  RepositoryId: ").Append(RepositoryId).Append("\n");
-            sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("class CreateBranchRequest {\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  FromBranch: ").Append(FromBranch).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -83,34 +74,29 @@ namespace GitProvider.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((BranchCreatedResponse)obj);
+            return obj.GetType() == GetType() && Equals((CreateBranchRequest)obj);
         }
 
         /// <summary>
-        /// Returns true if BranchCreatedResponse instances are equal
+        /// Returns true if CreateBranchRequest instances are equal
         /// </summary>
-        /// <param name="other">Instance of BranchCreatedResponse to be compared</param>
+        /// <param name="other">Instance of CreateBranchRequest to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(BranchCreatedResponse other)
+        public bool Equals(CreateBranchRequest other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    RepositoryId == other.RepositoryId ||
-                    RepositoryId != null &&
-                    RepositoryId.Equals(other.RepositoryId)
-                ) && 
-                (
-                    Id == other.Id ||
-                    Id != null &&
-                    Id.Equals(other.Id)
-                ) && 
-                (
                     Name == other.Name ||
                     Name != null &&
                     Name.Equals(other.Name)
+                ) && 
+                (
+                    FromBranch == other.FromBranch ||
+                    FromBranch != null &&
+                    FromBranch.Equals(other.FromBranch)
                 );
         }
 
@@ -124,12 +110,10 @@ namespace GitProvider.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (RepositoryId != null)
-                    hashCode = hashCode * 59 + RepositoryId.GetHashCode();
-                    if (Id != null)
-                    hashCode = hashCode * 59 + Id.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
+                    if (FromBranch != null)
+                    hashCode = hashCode * 59 + FromBranch.GetHashCode();
                 return hashCode;
             }
         }
@@ -137,12 +121,12 @@ namespace GitProvider.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(BranchCreatedResponse left, BranchCreatedResponse right)
+        public static bool operator ==(CreateBranchRequest left, CreateBranchRequest right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(BranchCreatedResponse left, BranchCreatedResponse right)
+        public static bool operator !=(CreateBranchRequest left, CreateBranchRequest right)
         {
             return !Equals(left, right);
         }
