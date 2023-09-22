@@ -63,7 +63,7 @@ namespace Balsam.Api.Controllers
         [Authorize]
         public override Task<IActionResult> ListProjects([FromQuery(Name = "all")] bool? all)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<IActionResult>(Ok("its working"));
         }
 
 
