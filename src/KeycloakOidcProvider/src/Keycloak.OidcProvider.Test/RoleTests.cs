@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Keycloak.OicdProvider.Client;
+using Keycloak.OidcProvider.Client;
 
 namespace Keycloak.OicdProvider.Test
 {

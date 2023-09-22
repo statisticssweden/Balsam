@@ -1,11 +1,9 @@
-﻿using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json.Serialization;
-using Keycloak.OicdProvider.Controllers;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
-namespace Keycloak.OicdProvider.Client;
+namespace Keycloak.OidcProvider.Client;
 
 public class KeyCloakClient : IKeyCloakClient
 {
@@ -37,18 +35,16 @@ public class KeyCloakClient : IKeyCloakClient
         try
         {
 
-            var accesstoken = await GetAccessToken();
-            var id = await GetIdForClient(accesstoken, _clientId);
-            var roleName = $"{program}-users";
-
-            //TODO: is name of role best suited? Programname-users, balsam-programname
-            var jsonBody = new {name = roleName, description = "Balsam users for project " + program};
+            var accessToken = await GetAccessToken();
+            var id = await GetIdForClient(accessToken, _clientId);
+            
+            var jsonBody = new {name = role.Name, description = "Balsam users for project " + role.PreferredName};
 
             var request =
                 new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/admin/realms/{_realm}/clients/{id}/roles")
                 {
                     Content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json"),
-                    Headers = {Authorization = new AuthenticationHeaderValue("Bearer", accesstoken)}
+                    Headers = {Authorization = new AuthenticationHeaderValue("Bearer", accessToken)}
                 };
 
             try
@@ -58,15 +54,14 @@ public class KeyCloakClient : IKeyCloakClient
 
                 var responseContentStream = response.Content.ReadAsStringAsync().Result;
                 _logger.LogInformation("User Role created for program: {program}", program);
+
+                return role.Name;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to POST role on Keycloak API");
+                throw;
             }
-
-           
-            return "Role";
-
         }
         catch (Exception ex)
         {
@@ -92,7 +87,6 @@ public class KeyCloakClient : IKeyCloakClient
         try
         {
             using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-            //TODO: catch faulty respons
             response.EnsureSuccessStatusCode();
 
             var responseContentStream = response.Content.ReadAsStringAsync().Result;
@@ -103,7 +97,7 @@ public class KeyCloakClient : IKeyCloakClient
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to retrieve accessToken for ");
+            _logger.LogError(ex, "Failed to retrieve accessToken");
             throw;
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace Keycloak.OicdProvider.Client;
+﻿namespace Keycloak.OidcProvider.Client;
 
 public class KeyCloakOptions
 {

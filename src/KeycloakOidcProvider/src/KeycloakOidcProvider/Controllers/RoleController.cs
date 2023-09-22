@@ -1,11 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+using Keycloak.OidcProvider.Client;
 using Microsoft.AspNetCore.Mvc;
 using OidcProvider.Controllers;
-using System.ComponentModel.DataAnnotations;
-using Keycloak.OicdProvider.Client;
 using OidcProvider.Models;
-using System.Xml.Linq;
 
-namespace Keycloak.OicdProvider.Controllers
+namespace Keycloak.OidcProvider.Controllers
 {
     [ApiController]
     [Route("[controller]")]
