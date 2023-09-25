@@ -11,59 +11,101 @@ namespace Balsam.Api.Controllers
     
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProjectController : BalsamApi.Server.Controllers.ProjectApiController
     {
 
-        private readonly CapabilityOptions _git;
-        private readonly CapabilityOptions _authentication;
-        private readonly HubClient _hubClient;
+        private static ProjectListResponse projects;
 
 
-        public ProjectController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, HubClient hubClient)
+        static ProjectController()
         {
-            _hubClient = hubClient;
+            projects = new ProjectListResponse();
 
-            _git = capabilityOptions.Get(Capabilities.Git);
-            _authentication = capabilityOptions.Get(Capabilities.Authentication);
+            projects.Projects = new List<Project>();
+
+            var project = new Project() { Id = "001", Name = "Projekt 1", Description = "Lore Ipsum", Branches = new List<Branch>() };
+            project.Branches.Add(new Branch() { Id = "main", Name = "main", Description = "Lore Ipsum", IsDefault = true });
+            projects.Projects.Add(project);
         }
 
         public override Task<IActionResult> CreateBranch([FromRoute(Name = "projectId"), Required] string projectId, [FromBody] CreateBranchRequest? createBranchRequest)
         {
-            throw new NotImplementedException();
+            var project = projects.Projects.FirstOrDefault(p => p.Id == projectId);
+            if (project is null)
+            {
+                return Task.FromResult<IActionResult>(BadRequest(new Problem() { Status = 400, Title = "Project not found" }));
+            }
+            if (createBranchRequest is null)
+            {
+                return Task.FromResult<IActionResult>(BadRequest(new Problem() { Status = 400, Title = "Parameter error" }));
+            }
+            project.Branches.Add(new Branch() { Id = createBranchRequest.Name, Name = createBranchRequest.Name, Description = createBranchRequest.Description, IsDefault = false });
+
+            var resp = new BranchCreatedResponse() { Id = createBranchRequest.Name, Name = createBranchRequest.Name, ProjectId = project.Id };
+
+
+            return Task.FromResult<IActionResult>(Ok(resp));
+
         }
 
 
-        public async override Task<IActionResult> CreateProject([FromBody] CreateProjectRequest? createProjectRequest)
+        public override Task<IActionResult> CreateProject([FromBody] CreateProjectRequest? createProjectRequest)
         {
-            BalsamProject project = await _hubClient.CreateProject(createProjectRequest.Name);
-
-            if (project == null)
+            if (createProjectRequest is null)
             {
-                return BadRequest(new Problem() { Title = "Project with that name already exists", Status = 400, Type = "Project duplication" });
+                return Task.FromResult<IActionResult>(BadRequest(new Problem() { Status = 400, Title = "Parameter error" }));
             }
 
-            var evt = new ProjectCreatedResponse();
-            evt.Id = project.Id;
-            evt.Name = project.Name;
+            var project = projects.Projects.FirstOrDefault(p => p.Name == createProjectRequest.Name);
+            if (!(project is null))
+            {
+                return Task.FromResult<IActionResult>(BadRequest(new Problem() { Status = 400, Title = "Duplicate name" }));
+            }
 
-            return Ok(evt);
+            project = new Project() { Id = Guid.NewGuid().ToString(), Name = createProjectRequest.Name, Description = createProjectRequest.Description, Branches = new List<Branch>() { new Branch() { Id = createProjectRequest.BranchName, Name = createProjectRequest.Name, IsDefault = true, Description = "Default branch" } }  };
+
+            projects.Projects.Add(project);
+
+            var resp = new ProjectCreatedResponse() { Id = project.Id, Name = project.Name };
+
+
+            return Task.FromResult<IActionResult>(Ok(resp));
         }
 
         public override Task<IActionResult> GetFiles([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId)
         {
-            throw new NotImplementedException();
+            var files = new List<BalsamApi.Server.Models.File>();
+            files.Add(new BalsamApi.Server.Models.File()
+            {
+                Type = BalsamApi.Server.Models.File.TypeEnum.FileEnum,
+                Name = "README.md",
+                Path = "/README.md",
+                ContentUrl = "https://raw.githubusercontent.com/statisticssweden/Balsam/main/README.md"
+            });
+
+            return Task.FromResult<IActionResult>(Ok(files.ToArray()));
         }
 
-        [Authorize]
+        //[Authorize]
         public override Task<IActionResult> GetProject([FromRoute(Name = "projectId"), Required] string projectId)
         {
-            throw new NotImplementedException();
+
+            var project = projects.Projects.FirstOrDefault(p => p.Id == projectId);
+            if (project is null)
+            {
+                return Task.FromResult<IActionResult>(BadRequest(new Problem() { Status = 400, Title = "Project not found" }));
+            }
+
+            var projectResponse = new ProjectResponse() { Id = project.Id, Name = project.Name, Branches = project.Branches, Description = project.Description, GitUrl = "https://github.com/statisticssweden/Balsam.git" };
+
+            return Task.FromResult<IActionResult>(Ok(projectResponse));
         }
 
-        [Authorize]
+        //[Authorize]
         public override Task<IActionResult> ListProjects([FromQuery(Name = "all")] bool? all)
         {
-            return Task.FromResult<IActionResult>(Ok("its working"));
+            return Task.FromResult<IActionResult>(Ok(projects));
         }
 
 
