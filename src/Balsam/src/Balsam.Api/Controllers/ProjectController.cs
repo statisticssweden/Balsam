@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Balsam.Api.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class ProjectController : BalsamApi.Server.Controllers.ProjectApiController
@@ -52,15 +54,16 @@ namespace Balsam.Api.Controllers
             throw new NotImplementedException();
         }
 
+        [Authorize]
         public override Task<IActionResult> GetProject([FromRoute(Name = "projectId"), Required] string projectId)
         {
             throw new NotImplementedException();
         }
 
-
+        [Authorize]
         public override Task<IActionResult> ListProjects([FromQuery(Name = "all")] bool? all)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<IActionResult>(Ok("its working"));
         }
 
 
