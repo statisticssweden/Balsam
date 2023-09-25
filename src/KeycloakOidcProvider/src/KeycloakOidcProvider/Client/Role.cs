@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Keycloak.OicdProvider.Client;
+namespace Keycloak.OidcProvider.Client;
 
 public class Role
 {

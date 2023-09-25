@@ -7,16 +7,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["KeycloakOicdProvider/KeycloakOicdProvider.csproj", "KeycloakOicdProvider/"]
-RUN dotnet restore "KeycloakOicdProvider/KeycloakOicdProvider.csproj"
+COPY ["KeycloakOidcProvider/KeycloakOidcProvider.csproj", "KeycloakOidcProvider/"]
+RUN dotnet restore "KeycloakOidcProvider/KeycloakOidcProvider.csproj"
 COPY . .
-WORKDIR "/src/KeycloakOicdProvider"
-RUN dotnet build "KeycloakOicdProvider.csproj" -c Release -o /app/build
+WORKDIR "/src/KeycloakOidcProvider"
+RUN dotnet build "KeycloakOidcProvider.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "KeycloakOicdProvider.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "KeycloakOidcProvider.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "KeycloakOicdProvider.dll"]
+ENTRYPOINT ["dotnet", "KeycloakOidcProvider.dll"]

@@ -1,4 +1,4 @@
-using Keycloak.OicdProvider.Client;
+using Keycloak.OidcProvider.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
