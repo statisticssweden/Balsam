@@ -35,7 +35,12 @@ namespace Balsam.Api.Controllers
 
         public async override Task<IActionResult> CreateProject([FromBody] CreateProjectRequest? createProjectRequest)
         {
-            BalsamProject project = await _hubClient.CreateProject(createProjectRequest.Name);
+            if (createProjectRequest is null)
+            {
+                return BadRequest(new Problem() { Title = "Parameters missing", Status = 400, Type = "Missing parameters" });
+            }
+
+            BalsamProject project = await _hubClient.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName);
 
             if (project == null)
             {
