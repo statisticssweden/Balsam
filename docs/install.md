@@ -45,25 +45,48 @@ spec:
 3. Sign in to ArgoCD and verify that it is running.
 
 ### Install and configure KeyCloak
-
+Prerequisites: To be able to get a demo functionality in keycloak you will have to create a realm named Balsam. We have prepared this for you in the realm.json file. For the helm deployment to work you will
+have to create a ConfigMap to import the realm to the keycloak installation. You do this with the following command: 
+```bash
+kubectl create cm keycloak-realm --namespace=keycloak --from-file=realm.json
+```
 1. Install KeyCloak with Helm from Bitnami see (https://bitnami.com/stack/keycloak/helm)[https://bitnami.com/stack/keycloak/helm] and use the following values.yaml file:
 
   ```yaml
+auth:
+  adminUser: ##add admin user
+  adminPassword: ##add admin password
+
+ingress:
+  enabled: false ##enable by setting this to true
+  hostname: ##add hostname
+
+postgresql:
+  enabled: true
   auth:
-    adminUser: user
-    adminPassword: <YOUR-PASSWORD>
+    username: bn_keycloak
+    password: ##add password
+    database: bitnami_keycloak
+    existingSecret: ""
+  architecture: standalone
 
-  ingress:
-    hostname: balsam-keycloak.<YOUR-DOMAIN>
 
-  postgresql:
-    enabled: true
-    auth:
-      username: bn_keycloak
-      password: <YOUR-DB-PASSWORD>
-      database: bitnami_keycloak
-      existingSecret: ""
-    architecture: standalone
+extraStartupArgs: "--import-realm"
+
+extraVolumeMounts:
+  - name: config
+    mountPath: "/opt/bitnami/keycloak/data/import"
+    readOnly: true
+extraVolumes:
+  - name: config
+    configMap:
+      name: keycloak-realm
+      items:
+      - key: "realm.json"
+        path: "realm.json"
+extraEnvVars:
+  - name: MY_CLIENT_SECRET
+    value: ""##add Clientsecret
 
   ```
 
@@ -164,6 +187,17 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 ```bash
 helm install minio bitnami/minio -f MinIO/values.yaml --namespace=minio
 ```
+
+### Install and configure RocketChat
+1. helm repo add rocketchat https://rocketchat.github.io/helm-charts
+2. Under dependencies, change the values.yaml to match your environment
+3. Install the helmchart for minio
+```bash
+helm install rocketchat rocketchat/rocketchat -f RocketChat/values.yaml --namespace=rocketchat
+```
+4. For Oauth to work, you may need to disable the option of two factor authentication if you have not setup an smtp server to send out a verification code.
+  - You will need to log into RocketChat as an administrator and disable two factor authentication. You can do this by going to the Admin Page > Account > Two Factor Authentication and then disabling it.
+
 
 ## Configure and install a Balsam hub
 ### Prepare hub repository
