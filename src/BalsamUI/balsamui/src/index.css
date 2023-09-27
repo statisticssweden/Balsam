@@ -1,4 +1,50 @@
-:root {
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.project-header {
+    display: flex;
+    flex-direction: column;
+    /*justify-content: space-between;*/
+    margin-bottom:20px;
+}
+
+    .project-header h2 {
+        margin-bottom:0px;
+    }
+
+
+.git-box {
+    /*margin-top: 20px;*/
+    /*background-color:#dbdbdb;*/
+    /*margin-top:-5px;*/
+    /*display:inline-block;*/
+    margin-left:1px;
+    float:left;
+
+}
+
+.git-box-content {
+    /*margin-top: 20px;*/
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}       
+        
+
+
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -66,4 +112,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
