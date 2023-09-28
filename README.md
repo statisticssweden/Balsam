@@ -40,6 +40,7 @@ The platform for dataprocessing is composed by the folowing components.
 1. Install Kubernetes
 [read more](https://microk8s.io/docs/addon-hostpath-storage)
 
+
 ```code
   sudo apt install snapd 
   
@@ -67,4 +68,4 @@ To be continued...
 
 ## Documentation
 
-Documentation and installation instructions can be found [here](docs/readme.md).
+Documentation and installation instructions can be found [here](docs/install.md).

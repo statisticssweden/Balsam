@@ -710,7 +710,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "${MY_CLIENT_SECRET}",
       "redirectUris": [
         "",
         "http://*"
