@@ -8,6 +8,7 @@ import ProjectsPage from './ProjectsPage/ProjectsPage';
 
 //import { useState } from 'react'
 import './App.css'
+import Alerter  from './Alerter/Alerter';
 
 
 
@@ -32,6 +33,7 @@ function App() {
                     <Route path="/" element={<ProjectsPage />} />
                  </Routes>
              </div>
+             <Alerter />
         </React.Fragment>
         
     )

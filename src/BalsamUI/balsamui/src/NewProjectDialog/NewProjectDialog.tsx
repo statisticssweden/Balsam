@@ -12,6 +12,8 @@ import { Form } from 'react-router-dom';
 import BalsamApi from '../services/BalsamAPIServices';
 import { CreateProjectRequest } from '../Model/ApiModels';
 import { Box, TextField } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { postAlert} from '../Alerts/alertsSlice';
 
 
 export interface NewProjectDialogProperties
@@ -28,12 +30,13 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const [nameHelperText, setNameHelperText] = useState("")
     const [branchNameError, setBranchNameError] = useState(false);
     const [branchNameHelperText, setBranchNameHelperText] = useState("")
-    
+    const dispatch = useDispatch();
 
 
     const showAlert = (message: string) => 
     {
-        alert(message);
+        //alert(message);
+        dispatch(postAlert(message));
         // setAlertMessage(message);
         // setSnackbarOpen(true);
     }
@@ -106,6 +109,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
             setOpen(false);
             props.onClosing();
             showAlert(`Projekt "${response.name}" är skapat`);
+            
         }));
     
     };
