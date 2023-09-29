@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from 'react';
+import React, {useState, Fragment, useEffect} from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -6,9 +6,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
-//import slugify from 'slugify'
-import { Form } from 'react-router-dom';
-// import { SxProps } from '@material-ui/system';
 import BalsamApi from '../services/BalsamAPIServices';
 import { CreateProjectRequest } from '../Model/ApiModels';
 import { Box, TextField } from '@mui/material';
@@ -26,22 +23,29 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const [projectName, setProjectName] = useState("");
     const [projectDescription, setProjectDescription] = useState("");
     const [branchName, setBranchName] = useState("main");
-    const [nameError, setNameError] = useState(false);
-    const [nameHelperText, setNameHelperText] = useState("")
+    const [projectNameError, setProjectNameError] = useState(false);
+    const [projectNameHelperText, setProjectNameHelperText] = useState("")
     const [branchNameError, setBranchNameError] = useState(false);
     const [branchNameHelperText, setBranchNameHelperText] = useState("")
+    const [okEnabled, setOkEnabled] = useState(false);
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        updateOkEnabled(projectName, branchName);
 
+    }, [branchName, projectName]);
+
+    const updateOkEnabled = (projectName: string, branchName: string) => 
+    {
+        let projectNameValid = validateProjectName(projectName).length == 0;
+        let branchNameValid = validateBranchName(branchName).length == 0;
+        setOkEnabled(projectNameValid && branchNameValid)
+
+    }
     const showAlert = (message: string) => 
     {
-        //alert(message);
         dispatch(postAlert(message));
-        // setAlertMessage(message);
-        // setSnackbarOpen(true);
     }
-
-    
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -56,45 +60,75 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const projectNameChanged = (name: string) => {
         name = name.trim();
         setProjectName(name);
-        if(name === "")
+        let errors = validateProjectName(name);
+
+        if (errors.length > 0)
         {
-            setNameError(true);
-            setNameHelperText("Projektet måste ha ett namn")
-            return;
+            let errorMessage : string = "";
+            errors.map((error) => {
+                errorMessage = errorMessage + " " + error;
+            })
+
+            errorMessage = errorMessage.trim();
+
+            setProjectNameError(true);
+            setProjectNameHelperText(errorMessage);
         }
-        setNameError(false);
-        setNameHelperText("");
-        //var safeName = slugify(name);
-        //repoNameChanged(safeName);
+        else{
+            setProjectNameError(false);
+            setProjectNameHelperText("")
+        }
     }
 
     const projectDescriptionChanged = (description: string) => {
         setProjectDescription(description);
-        //var safeName = slugify(name);
-        //repoNameChanged(safeName);
     }
 
     const branchNameChanged = (name: string) => {
+        name = name.trim();
         setBranchName(name);
-        if(name === "")
-        {
-            setBranchNameError(true);
-            setBranchNameHelperText("Defaultbranchen måste ha ett namn")
-            return;
-        }
+        let errors = validateBranchName(name);
 
-        setBranchNameError(false);
-        setBranchNameHelperText("")
-        //var safeName = slugify(name);
-        //repoNameChanged(safeName);
+        if (errors.length > 0)
+        {
+            let errorMessage : string = "";
+            errors.map((error) => {
+                errorMessage = errorMessage + " " + error;
+            })
+
+            errorMessage = errorMessage.trim();
+
+            setBranchNameError(true);
+            setBranchNameHelperText(errorMessage);
+        }
+        else{
+            setBranchNameError(false);
+            setBranchNameHelperText("")
+        }
     }
 
-    // const repoNameChanged = (name) => {
-    //     name = name.toLowerCase();
-    //     setRepoName(name);
-    //     var safeName = slugify(name);
-    //     setUrlSafeName(safeName);
-    // };
+    const validateProjectName = (name: string) : Array<string> => {
+        let errors : Array<string> = [];
+
+        if(name === "")
+        {
+            errors.push("Projektet måste ha ett namn");
+        }
+
+        return errors;
+    };
+
+    const validateBranchName = (name: string) : Array<string> => {
+        let errors : Array<string> = [];
+
+        if(name === "")
+        {
+            errors.push("Defaultbranchen måste ha ett namn");
+        }
+
+        return errors;
+    };
+
 
     const handleCreate = () => {
 
@@ -140,7 +174,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                         component='form'>
                             
                         <FormControl sx={{ mt: 4}}>
-                            <TextField id="name-input" error={nameError} helperText={nameHelperText} label="Namn" variant='standard' required value={projectName} onChange={e => projectNameChanged(e.target.value)} aria-describedby="Projektets namn" />
+                            <TextField id="name-input" error={projectNameError} helperText={projectNameHelperText} label="Namn" variant='standard' required value={projectName} onChange={e => projectNameChanged(e.target.value)} aria-describedby="Projektets namn" />
                         </FormControl>
                         <FormControl sx={{ mt: 4}}>
                             <TextField id="description-input" variant='standard' label="Beskrivning" value={projectDescription} onChange={e => projectDescriptionChanged(e.target.value)} aria-describedby="Beskrivning av projekt" />
@@ -151,8 +185,8 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCancel}>Avbryt</Button>
-                    <Button onClick={handleCreate}>Skapa</Button>
+                    <Button onClick={handleCancel} >Avbryt</Button>
+                    <Button onClick={handleCreate} disabled={!okEnabled}>Skapa</Button>
                 </DialogActions>
             </Dialog>
         </Fragment>
