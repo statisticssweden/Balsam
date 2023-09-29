@@ -3,7 +3,7 @@ import CardActions from '@mui/material/CardActions';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-// import Button from '@mui/material/Button';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import projectimage from '../assets/project.jpg'
 import { OpenInNew } from '@mui/icons-material';
@@ -32,19 +32,14 @@ export default function ProjectCard(properties : ProjectCardProperties) {
                 </CardContent>
             </CardActionArea>
             <CardActions>
-                <Link  
-                    target="_blank" 
-                    
-                    to={'project/' + properties.project.id}>
-                        Öppna
-                        <OpenInNew fontSize='inherit' />
-                    </Link>
-                    {/* <Button component={Link} 
+
+                    <Button component={Link as any} 
                     target="_blank" 
                     underline="hover" 
-                    to={'project/' + project.id}>
-                        Öppna<OpenInNew fontSize="small" />
-                    </Button> */}
+                    to={'project/' + properties.project.id}
+                    >
+                        Öppna<OpenInNew fontSize="inherit" />
+                    </Button>
             </CardActions>
         </Card>
     );

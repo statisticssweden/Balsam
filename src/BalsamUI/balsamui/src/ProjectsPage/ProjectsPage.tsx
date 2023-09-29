@@ -2,18 +2,26 @@ import BalsamApi from '../services/BalsamAPIServices';
 import ProjectCard from '../ProjectCard/ProjectCard';
 import { useState, useEffect } from 'react';
 import NewProjectDialog from '../NewProjectDialog/NewProjectDialog';
+import './ProjectsPage.css';
+import { useDispatch } from 'react-redux';
+import {postAlert } from '../Alerts/alertsSlice';
 
 export default function ProjectsPage() {
     const [projects, setProjects] = useState<Array<any>>();
     const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
 
-    const loadData = () => 
+    const loadData = () =>
     {
         setLoading(true);
 
         const fetchData = async () => {
-
-            let projects = await BalsamApi.getProjects();
+            let promise = BalsamApi.getProjects();
+            promise.catch((reason) => {
+                
+                dispatch(postAlert("Det gick inte att ladda projekt"))
+            })
+            let projects = await promise;
             setProjects(projects);
             setLoading(false);
         }
@@ -26,25 +34,24 @@ export default function ProjectsPage() {
         loadData();
     }, [])
 
-
     const onNewProjectDialogClosing = () => {
-        
+
         loadData();
-        
+
     };
 
     function renderProjectsTable(projs: Array<any>) {
         return (
-            
+
             <div className='cards' aria-labelledby="tabelLabel">
-                <NewProjectDialog onClosing={onNewProjectDialogClosing}></NewProjectDialog>
+                
                 {
                     projs.map((project) => {
                        return <ProjectCard project={project} key={project.id} />
                     })
                 }
-                
-                
+
+
             </div>
         );
     }
@@ -53,9 +60,12 @@ export default function ProjectsPage() {
         ? <p><em>Laddar...</em></p>
         : renderProjectsTable(projects as Array<any>);
 
-    return ( 
+    return (
         <div>
             <h2 id="tabelLabel">Projekt och Undersökningar</h2>
+            <div className='buttonrow'>
+                <NewProjectDialog onClosing={onNewProjectDialogClosing}></NewProjectDialog>
+            </div>
             {contents}
         </div>
         );

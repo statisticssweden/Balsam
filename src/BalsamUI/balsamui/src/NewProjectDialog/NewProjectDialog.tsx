@@ -144,12 +144,17 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
             props.onClosing();
             showAlert(`Projekt "${response.name}" är skapat`);
             
-        }));
+        }), (reason) => {
+                
+            dispatch(postAlert("Det gick inte att skapa projektet"))
+
+        });
     
     };
 
     return (
         <Fragment>
+            {/* TODO: seperate button from dialog */}
             <Button variant="contained" onClick={handleClickOpen}>
                 +
             </Button>
