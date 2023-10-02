@@ -91,7 +91,7 @@ namespace Balsam.Api
             if (_git.Enabled)
             {
 
-                gitTask = _repositoryApi.CreateRepositoryAsync(new CreateRepositoryRequest() { Name = preferredName, Description = description, DefaultBranchName = defaultBranchName});
+                gitTask = _repositoryApi.CreateRepositoryAsync(new CreateRepositoryRequest( preferredName,description, defaultBranchName));
                 tasks.Add(gitTask);
             }
 
