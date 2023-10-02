@@ -82,8 +82,8 @@ extraVolumes:
     configMap:
       name: keycloak-realm
       items:
-      - key: "realm.json"
-        path: "realm.json"
+      - key: "realm-export.json"
+        path: "realm-export.json"
 extraEnvVars:
   - name: MY_CLIENT_SECRET
     value: ""##add Clientsecret
@@ -141,6 +141,7 @@ global:
 
 
     ## https://docs.gitlab.com/charts/charts/globals#omniauth
+  appConfig:
     omniauth:
       enabled: true
       autoSignInWithProvider:
