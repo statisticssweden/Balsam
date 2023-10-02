@@ -63,7 +63,7 @@ namespace Balsam.Api
         {
             var branches = new List<BalsamBranch>();
 
-            if (System.IO.Directory.Exists(projectPath))
+            if (!System.IO.Directory.Exists(projectPath))
             {
                 return branches;
             }
