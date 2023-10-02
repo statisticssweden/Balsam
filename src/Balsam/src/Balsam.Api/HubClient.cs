@@ -7,6 +7,8 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
+using S3ProviderApiClient.Api;
+using S3ProviderApiClient.Model;
 
 namespace Balsam.Api
 {
@@ -15,14 +17,14 @@ namespace Balsam.Api
         private readonly CapabilityOptions _git;
         private readonly CapabilityOptions _s3;
         private readonly CapabilityOptions _authentication;
-        private readonly S3Client _s3Client;
+        private readonly BucketApi _s3Client;
         private readonly GitClient _gitClient;
         private readonly HubRepositoryClient _hubRepositoryClient;
         private readonly IMemoryCache _memoryCache;
 
 
 
-        public HubClient(IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, S3Client s3Client, GitClient gitClient)
+        public HubClient(IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, BucketApi s3Client, GitClient gitClient)
         {
             _memoryCache = memoryCach;
             _s3Client = s3Client;
@@ -74,7 +76,7 @@ namespace Balsam.Api
             DirectoryUtil.AssureDirectoryExists(programPath);
 
             var tasks = new List<Task>();
-            Task<S3Data> s3Task = null;
+            Task<BucketCreatedResponse> s3Task = null;
             Task<GitData> gitTask = null;
 
             //TODO Implement
@@ -92,17 +94,18 @@ namespace Balsam.Api
 
             if (_s3.Enabled)
             {
-                s3Task = _s3Client.CreateBucket(preferredName);
+                s3Task = _s3Client.CreateBucketAsync(new S3ProviderApiClient.Model.CreateBucketRequest(preferredName));
                 tasks.Add(s3Task);
             }
 
             //wait for all task to finish
             await Task.WhenAll(tasks);
 
-            //fetch and sstore the results for each provider
+            //fetch and stores the results for each provider
             if (s3Task != null)
             {
-                project.S3 = s3Task.Result;
+                var s3Data = new S3Data() { BucketName = s3Task.Result.Name };
+                project.S3 = s3Data;
             }
 
             if (gitTask != null)

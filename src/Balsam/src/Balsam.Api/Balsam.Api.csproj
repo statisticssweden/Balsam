@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BalsamApi.Server\BalsamApi.Server.csproj" />
+    <ProjectReference Include="..\S3ProviderApiClient\S3ProviderApiClient.csproj" />
   </ItemGroup>
 
 </Project>
