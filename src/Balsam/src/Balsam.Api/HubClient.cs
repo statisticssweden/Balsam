@@ -27,7 +27,7 @@ namespace Balsam.Api
 
 
 
-        public HubClient(IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, BucketApi s3Client, IRepositoryApi reposiotryApi))
+        public HubClient(IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, BucketApi s3Client, IRepositoryApi reposiotryApi)
         {
             _memoryCache = memoryCach;
             _s3Client = s3Client;
