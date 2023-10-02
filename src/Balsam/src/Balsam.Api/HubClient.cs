@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection.Metadata.Ecma335;
 using System.Xml.Linq;
 
 namespace Balsam.Api
@@ -34,7 +35,7 @@ namespace Balsam.Api
             _authentication = capabilityOptions.Get(Capabilities.Authentication);
         }
 
-        private List<BalsamProject> GetProjects()
+        public async Task<List<BalsamProject>> GetProjects()
         {
             var projects = new List<BalsamProject>();
             var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
@@ -42,15 +43,37 @@ namespace Balsam.Api
             foreach (var projectPath in Directory.GetDirectories(hubPath))
             {
                 var propsFile = Path.Combine(projectPath, "properties.json");
-                var project = JsonConvert.DeserializeObject<BalsamProject>(System.IO.File.ReadAllText(propsFile));
-                projects.Add(project);
+                var project = JsonConvert.DeserializeObject<BalsamProject>(await System.IO.File.ReadAllTextAsync(propsFile));
+                if (project != null)
+                {
+                    project.Branches = await ReadBranches(projectPath);
+                    projects.Add(project);
+                }
             }
             return projects;
         }
 
-        private bool ProjectExisits(string projectName)
+        private async Task<List<BalsamBranch>> ReadBranches(string projectPath)
         {
-            var projects = GetProjects();
+            var branches = new List<BalsamBranch>();
+
+            if (System.IO.Directory.Exists(projectPath))
+            {
+                return branches;
+            }
+
+            foreach (var branchPath in Directory.GetDirectories(projectPath))
+            {
+                var propsFile = Path.Combine(projectPath, "properties.json");
+                var branch = JsonConvert.DeserializeObject<BalsamBranch>(await System.IO.File.ReadAllTextAsync(propsFile));
+                branches.Add(branch);
+            }
+            return branches;
+        }
+
+        private async Task<bool> ProjectExisits(string projectName)
+        {
+            var projects = await GetProjects();
             if (projects.FirstOrDefault(p => p.Name == projectName) == null)
             {
                 return false;
@@ -61,7 +84,7 @@ namespace Balsam.Api
         public async Task<BalsamProject> CreateProject(string preferredName)
         {
             //Check if there is a program with the same name.
-            if (ProjectExisits(preferredName))
+            if (await ProjectExisits(preferredName))
             {
                 return null;
             }

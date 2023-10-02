@@ -61,9 +61,30 @@ namespace Balsam.Api.Controllers
         }
 
         [Authorize]
-        public override Task<IActionResult> ListProjects([FromQuery(Name = "all")] bool? all)
+        public override async Task<IActionResult> ListProjects([FromQuery(Name = "all")] bool? all)
         {
-            return Task.FromResult<IActionResult>(Ok("its working"));
+            var projects = await _hubClient.GetProjects();
+            var projectListResponse = new ProjectListResponse();
+            ///TODO Make sure that Description is set on CreateProject
+            projectListResponse.Projects = MapProject(projects);
+            
+            return Ok(projectListResponse);
+        }
+
+        private List<Project> MapProject(List<BalsamProject> projects)
+        {
+            return projects.Select(project => new Project() {   Id = project.Id, 
+                                                                Name = project.Name, 
+                                                                Description = project.Description, 
+                                                                Branches = MapBranches(project.Branches) }).ToList();
+        }
+
+        private List<Branch> MapBranches(List<BalsamBranch> branches)
+        {
+            return branches.Select(branch => new Branch() { Id = branch.Id, 
+                                                            Description = branch.Description, 
+                                                            Name = branch.Name, 
+                                                            IsDefault = branch.IsDefault }).ToList();
         }
 
 
