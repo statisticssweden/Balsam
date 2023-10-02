@@ -1,3 +1,4 @@
+# S3ProviderApiClient.Model.BranchCreatedResponse
 # GitProviderApiClient.Model.BranchCreatedResponse
 Branch created description
 

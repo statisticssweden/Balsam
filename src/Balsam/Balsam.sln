@@ -7,9 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BalsamApi.Server", "src\Bal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balsam.Api", "src\Balsam.Api\Balsam.Api.csproj", "{A3C29474-5025-4B34-9FFE-C9A660737087}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitProviderApiClient", "src\GitProviderApiClient\GitProviderApiClient.csproj", "{7380A758-FECD-4334-9F58-EA469E6AF1BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "S3ProviderApiClient", "src\S3ProviderApiClient\S3ProviderApiClient.csproj", "{6FB11EA1-513E-433D-A2AD-3F0A83E2A442}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitProviderApiClient.Test", "src\GitProviderApiClient.Test\GitProviderApiClient.Test.csproj", "{E17B95B3-11B0-4447-A468-245180D541D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "S3ProviderApiClient.Test", "src\S3ProviderApiClient.Test\S3ProviderApiClient.Test.csproj", "{C7CF1F5B-42BD-4854-AE68-615A09629E58}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitProviderApiClient", "src\GitProviderApiClient\GitProviderApiClient.csproj", "{A1216AE1-AAEE-4EC5-A8BD-BFCC352E2815}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitProviderApiClient.Test", "src\GitProviderApiClient.Test\GitProviderApiClient.Test.csproj", "{3E040A54-0F81-436A-B1F9-6570F27B46F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +29,22 @@ Global
 		{A3C29474-5025-4B34-9FFE-C9A660737087}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3C29474-5025-4B34-9FFE-C9A660737087}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3C29474-5025-4B34-9FFE-C9A660737087}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7380A758-FECD-4334-9F58-EA469E6AF1BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7380A758-FECD-4334-9F58-EA469E6AF1BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7380A758-FECD-4334-9F58-EA469E6AF1BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7380A758-FECD-4334-9F58-EA469E6AF1BF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E17B95B3-11B0-4447-A468-245180D541D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E17B95B3-11B0-4447-A468-245180D541D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E17B95B3-11B0-4447-A468-245180D541D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E17B95B3-11B0-4447-A468-245180D541D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FB11EA1-513E-433D-A2AD-3F0A83E2A442}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FB11EA1-513E-433D-A2AD-3F0A83E2A442}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FB11EA1-513E-433D-A2AD-3F0A83E2A442}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FB11EA1-513E-433D-A2AD-3F0A83E2A442}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7CF1F5B-42BD-4854-AE68-615A09629E58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7CF1F5B-42BD-4854-AE68-615A09629E58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7CF1F5B-42BD-4854-AE68-615A09629E58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7CF1F5B-42BD-4854-AE68-615A09629E58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1216AE1-AAEE-4EC5-A8BD-BFCC352E2815}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1216AE1-AAEE-4EC5-A8BD-BFCC352E2815}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1216AE1-AAEE-4EC5-A8BD-BFCC352E2815}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1216AE1-AAEE-4EC5-A8BD-BFCC352E2815}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E040A54-0F81-436A-B1F9-6570F27B46F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E040A54-0F81-436A-B1F9-6570F27B46F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E040A54-0F81-436A-B1F9-6570F27B46F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E040A54-0F81-436A-B1F9-6570F27B46F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
