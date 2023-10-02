@@ -1,4 +1,3 @@
-# S3ProviderApiClient.Model.UserPATCreatedResponse
 A PAT description
 
 ## Properties

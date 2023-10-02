@@ -1,5 +1,7 @@
 ﻿using Balsam.Api.Models;
 using BalsamApi.Server.Models;
+using GitProviderApiClient.Api;
+using GitProviderApiClient.Model;
 using LibGit2Sharp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -9,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 using S3ProviderApiClient.Api;
 using S3ProviderApiClient.Model;
+using System.Threading.Tasks;
 
 namespace Balsam.Api
 {
@@ -18,22 +21,23 @@ namespace Balsam.Api
         private readonly CapabilityOptions _s3;
         private readonly CapabilityOptions _authentication;
         private readonly BucketApi _s3Client;
-        private readonly GitClient _gitClient;
         private readonly HubRepositoryClient _hubRepositoryClient;
         private readonly IMemoryCache _memoryCache;
+        private readonly IRepositoryApi _repositoryApi;
 
 
 
-        public HubClient(IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, BucketApi s3Client, GitClient gitClient)
+        public HubClient(IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, BucketApi s3Client, IRepositoryApi reposiotryApi))
         {
             _memoryCache = memoryCach;
             _s3Client = s3Client;
-            _gitClient = gitClient;
+           
             _hubRepositoryClient = hubRepoClient;
 
             _git = capabilityOptions.Get(Capabilities.Git);
             _s3 = capabilityOptions.Get(Capabilities.S3);
             _authentication = capabilityOptions.Get(Capabilities.Authentication);
+            _repositoryApi = reposiotryApi;
         }
 
         private List<BalsamProject> GetProjects()
@@ -60,7 +64,7 @@ namespace Balsam.Api
             return true;
         }
 
-        public async Task<BalsamProject> CreateProject(string preferredName)
+        public async Task<BalsamProject> CreateProject(string preferredName, string description, string defaultBranchName)
         {
             //Check if there is a program with the same name.
             if (ProjectExisits(preferredName))
@@ -77,10 +81,10 @@ namespace Balsam.Api
 
             var tasks = new List<Task>();
             Task<BucketCreatedResponse> s3Task = null;
-            Task<GitData> gitTask = null;
+        Task<RepositoryCreatedResponse> gitTask = null;
 
-            //TODO Implement
-            if (_authentication.Enabled)
+        //TODO Implement
+        if (_authentication.Enabled)
             {
                 //TODO call CreateRole in the OidcProvider
                 //TODO call AddUserToRolein the OidcProvider
@@ -88,7 +92,8 @@ namespace Balsam.Api
 
             if (_git.Enabled)
             {
-                gitTask = _gitClient.CreateRepository(preferredName);
+
+                gitTask = _repositoryApi.CreateRepositoryAsync(new CreateRepositoryRequest( preferredName,description, defaultBranchName));
                 tasks.Add(gitTask);
             }
 
@@ -110,7 +115,8 @@ namespace Balsam.Api
 
             if (gitTask != null)
             {
-                project.Git = gitTask.Result;
+                var data = new GitData() { Name = gitTask.Result.Name, Path = gitTask.Result.Path };
+                project.Git = data;
             }
 
             string propPath = Path.Combine(programPath, "properties.json");

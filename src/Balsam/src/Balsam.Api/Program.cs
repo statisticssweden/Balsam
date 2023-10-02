@@ -17,8 +17,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddTransient<HubClient>();
 builder.Services.AddSingleton<HubRepositoryClient>();
-builder.Services.AddTransient<GitClient>();
+
 builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<GitProviderApiClient.Api.IRepositoryApi>(
+    new GitProviderApiClient.Api.RepositoryApi(
+        builder.Configuration.GetSection($"Capabilities:{Capabilities.Git}:ServiceLocation").Value??"git-provider.balsam-system.svc.cluster.local"));
 
 builder.Services.AddSingleton<S3ProviderApiClient.Api.BucketApi>(
     new S3ProviderApiClient.Api.BucketApi(
@@ -100,3 +103,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+

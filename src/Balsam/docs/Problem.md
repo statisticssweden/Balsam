@@ -1,4 +1,4 @@
-# S3ProviderApiClient.Model.Problem
+# GitProviderApiClient.Model.Problem
 
 ## Properties
 

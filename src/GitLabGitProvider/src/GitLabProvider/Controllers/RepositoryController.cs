@@ -32,7 +32,7 @@ namespace GitLabProvider.Controllers
         public override IActionResult CreateRepository([FromBody] CreateRepositoryRequest? createRepositoryRequest)
         {
             //TODO default branch name 
-            var repoInfo = _gitLabClient.CreateProjectRepo(createRepositoryRequest.Name).Result;
+            var repoInfo = _gitLabClient.CreateProjectRepo(createRepositoryRequest.Name, createRepositoryRequest.Description, createRepositoryRequest.DefaultBranchName).Result;
             if (repoInfo != null)
             {
                 //TODO fix response

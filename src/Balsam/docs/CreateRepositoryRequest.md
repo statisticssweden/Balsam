@@ -1,4 +1,4 @@
-# S3ProviderApiClient.Model.CreateRepositoryRequest
+# GitProviderApiClient.Model.CreateRepositoryRequest
 Payload for creating new repository
 
 ## Properties

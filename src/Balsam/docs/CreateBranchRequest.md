@@ -1,4 +1,4 @@
-# S3ProviderApiClient.Model.CreateBranchRequest
+# GitProviderApiClient.Model.CreateBranchRequest
 Payload for creating new branch
 
 ## Properties

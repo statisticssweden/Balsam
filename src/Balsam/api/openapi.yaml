@@ -23,6 +23,10 @@ paths:
         "200":
           content:
             application/json:
+              example:
+                preferedName: Demo repot
+                name: demo-repot
+                path: https://mygit.local/demo-repot.git
               schema:
                 $ref: '#/components/schemas/BucketCreatedResponse'
           description: Success
@@ -110,6 +114,16 @@ paths:
       - Bucket
 components:
   responses:
+    ErrorResponse400NoRepo:
+      content:
+        application/problem+json:
+          example:
+            title: Bad Request
+            status: 400
+            detail: No such repository
+          schema:
+            $ref: '#/components/schemas/Problem'
+      description: Error respsone for 400
     ErrorResponse400:
       content:
         application/problem+json:
@@ -124,23 +138,39 @@ components:
     CreateBucketRequest:
       description: Bucket name
       example:
+        defaultBranchName: defaultBranchName
         name: name
+        description: description
       properties:
         name:
           description: The name of the bucket
           type: string
+        description:
+          description: The description of the branch
+          type: string
+        defaultBranchName:
+          description: The branch from which this branch will be created. The default
+            branch for the project will be used if not specified.
+          type: string
       required:
+      - defaultBranchName
       - name
       type: object
     CreateFolderRequest:
       description: Folder name
       example:
+        fromBranch: fromBranch
         name: name
       properties:
         name:
           description: The name of the folder
           type: string
+        fromBranch:
+          description: The branch from which this branch will be created. The default
+            branch for the project will be used if not specified.
+          type: string
       required:
+      - fromBranch
       - name
       type: object
     BucketCreatedResponse:
@@ -148,14 +178,23 @@ components:
       example:
         requestedName: requestedName
         name: name
+        id: id
+        preferredName: preferredName
       properties:
         requestedName:
           description: The requested name of the bucket
           type: string
+        preferredName:
+          description: The preferred name for the repository
+          type: string
         name:
           description: The name of the bucket
           type: string
+        path:
+          description: The path to the repository that can be used for clone it.
+          type: string
       required:
+      - id
       - name
       - requestedName
       type: object
@@ -164,6 +203,7 @@ components:
       example:
         requestedName: requestedName
         name: name
+        id: id
       properties:
         requestedName:
           description: The requested name of the virtual folder
@@ -172,6 +212,7 @@ components:
           description: The name of the virtual folder
           type: string
       required:
+      - id
       - name
       - requestedName
       type: object

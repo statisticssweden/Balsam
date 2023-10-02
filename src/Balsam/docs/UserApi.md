@@ -1,4 +1,4 @@
-# S3ProviderApiClient.Api.UserApi
+# GitProviderApiClient.Api.UserApi
 
 All URIs are relative to *http://git-provider.balsam-system.svc.cluster.local/api/v1*
 
@@ -18,9 +18,9 @@ Creates a personal access token for the user.
 ```csharp
 using System.Collections.Generic;
 using System.Diagnostics;
-using S3ProviderApiClient.Api;
-using S3ProviderApiClient.Client;
-using S3ProviderApiClient.Model;
+using GitProviderApiClient.Api;
+using GitProviderApiClient.Client;
+using GitProviderApiClient.Model;
 
 namespace Example
 {

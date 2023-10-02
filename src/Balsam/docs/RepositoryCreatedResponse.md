@@ -1,4 +1,4 @@
-# S3ProviderApiClient.Model.RepositoryCreatedResponse
+# GitProviderApiClient.Model.RepositoryCreatedResponse
 Repository description
 
 ## Properties

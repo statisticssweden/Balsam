@@ -1,4 +1,4 @@
-# S3ProviderApiClient.Api.RepositoryApi
+# GitProviderApiClient.Api.RepositoryApi
 
 All URIs are relative to *http://git-provider.balsam-system.svc.cluster.local/api/v1*
 
@@ -19,9 +19,9 @@ Create a branch from main branch in a existing repository
 ```csharp
 using System.Collections.Generic;
 using System.Diagnostics;
-using S3ProviderApiClient.Api;
-using S3ProviderApiClient.Client;
-using S3ProviderApiClient.Model;
+using GitProviderApiClient.Api;
+using GitProviderApiClient.Client;
+using GitProviderApiClient.Model;
 
 namespace Example
 {
@@ -111,9 +111,9 @@ Creates a new repository
 ```csharp
 using System.Collections.Generic;
 using System.Diagnostics;
-using S3ProviderApiClient.Api;
-using S3ProviderApiClient.Client;
-using S3ProviderApiClient.Model;
+using GitProviderApiClient.Api;
+using GitProviderApiClient.Client;
+using GitProviderApiClient.Model;
 
 namespace Example
 {
