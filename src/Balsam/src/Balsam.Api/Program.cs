@@ -18,7 +18,6 @@ builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddTransient<HubClient>();
 builder.Services.AddSingleton<HubRepositoryClient>();
 builder.Services.AddTransient<S3Client>();
-builder.Services.AddTransient<GitClient>();
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<GitProviderApiClient.Api.IRepositoryApi>(
     new GitProviderApiClient.Api.RepositoryApi(
