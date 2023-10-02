@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
-
-namespace Balsam.Api.Models
+﻿namespace Balsam.Api.Models
 {
     public class BalsamProject
     {
