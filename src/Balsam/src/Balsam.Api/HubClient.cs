@@ -77,7 +77,7 @@ namespace Balsam.Api
             return branches;
         }
 
-        private async Task<bool> ProjectExisits(string projectName)
+        private async Task<bool> ProjectExists(string projectName)
         {
             var projects = await GetProjects();
             if (projects.FirstOrDefault(p => p.Name == projectName) == null)
@@ -90,7 +90,7 @@ namespace Balsam.Api
         public async Task<BalsamProject> CreateProject(string preferredName, string description, string defaultBranchName)
         {
             //Check if there is a program with the same name.
-            if (await ProjectExisits(preferredName))
+            if (await ProjectExists(preferredName))
             {
                 return null;
             }
