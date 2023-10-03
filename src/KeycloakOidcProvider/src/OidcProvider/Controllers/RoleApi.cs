@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -57,6 +58,6 @@ namespace OidcProvider.Controllers
         [SwaggerOperation("CreateRole")]
         [SwaggerResponse(statusCode: 200, type: typeof(RoleCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult CreateRole([FromBody]CreateRoleRequest? createRoleRequest);
+        public abstract Task<IActionResult> CreateRole([FromBody] CreateRoleRequest? createRoleRequest);
     }
 }

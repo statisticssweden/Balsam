@@ -24,11 +24,14 @@ namespace Keycloak.OidcProvider.Controllers
             throw new NotImplementedException();
         }
 
-        public override IActionResult CreateRole([FromBody] CreateRoleRequest? createRoleRequest)
+        public override async Task<IActionResult> CreateRole([FromBody] CreateRoleRequest? createRoleRequest)
         {
-            //TODO: Secure Name
-            _keyCloakClient.CreateRole(createRoleRequest.Name);
-            return Accepted();
+            //_keyCloakClient.CreateRole(createRoleRequest.Name);
+            var group = await _keyCloakClient.CreateGroup(createRoleRequest.Name);
+            
+            return Accepted(group);
+
+            //TODO: Return correct object response
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Text;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using OidcProvider.Models;
 
 namespace Keycloak.OidcProvider.Client;
 
@@ -28,13 +29,57 @@ public class KeyCloakClient : IKeyCloakClient
         _clientSecret = options.Value.ClientSecret;
     }
 
+    public async Task<RoleCreatedResponse> CreateGroup(string projectName)
+    {
+        var group = new Group(projectName);
+        try
+        {
+            var accessToken = await GetAccessToken();
+            var id = await GetIdForClient(accessToken, _clientId);
+
+            var jsonBody = new { name = group.Name };
+
+            var request =
+                new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/admin/realms/{_realm}/groups")
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json"),
+                    Headers = { Authorization = new AuthenticationHeaderValue("Bearer", accessToken) }
+                };
+
+            try
+            {
+                using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+                var groupId = GetIdFromLocation( response.Headers.Location);
+
+                _logger.LogInformation("User Group created for project: {projectName}, with name {group}", projectName, group.Name);
+
+                return new RoleCreatedResponse {Id = groupId, Name = group.Name };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to POST group on Keycloak API");
+                throw;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to create user group for project [{projectName}] with name [{group}]", projectName, group.PreferredName);
+            throw;
+        }
+    }
+
+    private string GetIdFromLocation(Uri headersLocation)
+    {
+        var id = headersLocation.Segments.Last();
+        return id;
+    }
+
     public async Task<string> CreateRole(string program)
     {
-
         var role = new Role(program);
         try
         {
-
             var accessToken = await GetAccessToken();
             var id = await GetIdForClient(accessToken, _clientId);
             
