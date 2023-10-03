@@ -11,6 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,38 +27,38 @@ namespace OidcProvider.Controllers
     /// 
     /// </summary>
     [ApiController]
-    public abstract class RoleApiController : ControllerBase
+    public abstract class GroupApiController : ControllerBase
     { 
         /// <summary>
         /// 
         /// </summary>
-        /// <remarks>Adds a user to the role</remarks>
-        /// <param name="roleId">The id for the repository</param>
-        /// <param name="addUserToRoleRequest">Definition of the user to add to the role</param>
+        /// <remarks>Adds a user to the group</remarks>
+        /// <param name="groupId">The id for the group</param>
+        /// <param name="addUserToGroupRequest">Definition of the user to add to the group</param>
         /// <response code="200">Success</response>
         /// <response code="400">Error respsone for 400</response>
         [HttpPost]
-        [Route("/api/v1/roles/{roleId}/users")]
+        [Route("/api/v1/groups/{groupId}/users")]
         [Consumes("application/json")]
         [ValidateModelState]
-        [SwaggerOperation("AddUserToRole")]
+        [SwaggerOperation("AddUserToGroup")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult AddUserToRole([FromRoute (Name = "roleId")][Required]string roleId, [FromBody]AddUserToRoleRequest? addUserToRoleRequest);
+        public abstract Task<IActionResult> AddUserToGroup([FromRoute (Name = "groupId")][Required]string groupId, [FromBody]AddUserToGroupRequest? addUserToGroupRequest);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <remarks>Creates a new role</remarks>
-        /// <param name="createRoleRequest">Definition of a new role</param>
+        /// <remarks>Creates a new group</remarks>
+        /// <param name="createGroupRequest">Definition of a new group</param>
         /// <response code="200">Success</response>
         /// <response code="400">Error respsone for 400</response>
         [HttpPost]
-        [Route("/api/v1/roles")]
+        [Route("/api/v1/groups")]
         [Consumes("application/json")]
         [ValidateModelState]
-        [SwaggerOperation("CreateRole")]
-        [SwaggerResponse(statusCode: 200, type: typeof(RoleCreatedResponse), description: "Success")]
+        [SwaggerOperation("CreateGroup")]
+        [SwaggerResponse(statusCode: 200, type: typeof(GroupCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> CreateRole([FromBody] CreateRoleRequest? createRoleRequest);
+        public abstract Task<IActionResult> CreateGroup([FromBody]CreateGroupRequest? createGroupRequest);
     }
 }

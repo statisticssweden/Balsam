@@ -29,20 +29,19 @@ public class KeyCloakClient : IKeyCloakClient
         _clientSecret = options.Value.ClientSecret;
     }
 
-    public async Task<RoleCreatedResponse> CreateGroup(string projectName)
+    public async Task<GroupCreatedResponse> CreateGroup(string projectName)
     {
         var group = new Group(projectName);
         try
         {
             var accessToken = await GetAccessToken();
-            var id = await GetIdForClient(accessToken, _clientId);
 
-            var jsonBody = new { name = group.Name };
+            var requestBody = new { name = group.Name };
 
             var request =
                 new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/admin/realms/{_realm}/groups")
                 {
-                    Content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json"),
+                    Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json"),
                     Headers = { Authorization = new AuthenticationHeaderValue("Bearer", accessToken) }
                 };
 
@@ -50,11 +49,12 @@ public class KeyCloakClient : IKeyCloakClient
             {
                 using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                 response.EnsureSuccessStatusCode();
-                var groupId = GetIdFromLocation( response.Headers.Location);
+                
+                var groupId = response.Headers.Location?.Segments.Last();
 
                 _logger.LogInformation("User Group created for project: {projectName}, with name {group}", projectName, group.Name);
 
-                return new RoleCreatedResponse {Id = groupId, Name = group.Name };
+                return new GroupCreatedResponse {Id = groupId, Name = group.Name };
             }
             catch (Exception ex)
             {
@@ -68,53 +68,7 @@ public class KeyCloakClient : IKeyCloakClient
             throw;
         }
     }
-
-    private string GetIdFromLocation(Uri headersLocation)
-    {
-        var id = headersLocation.Segments.Last();
-        return id;
-    }
-
-    public async Task<string> CreateRole(string program)
-    {
-        var role = new Role(program);
-        try
-        {
-            var accessToken = await GetAccessToken();
-            var id = await GetIdForClient(accessToken, _clientId);
-            
-            var jsonBody = new {name = role.Name, description = "Balsam users for project " + role.PreferredName};
-
-            var request =
-                new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/admin/realms/{_realm}/clients/{id}/roles")
-                {
-                    Content = new StringContent(JsonConvert.SerializeObject(jsonBody), Encoding.UTF8, "application/json"),
-                    Headers = {Authorization = new AuthenticationHeaderValue("Bearer", accessToken)}
-                };
-
-            try
-            {
-                using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-                response.EnsureSuccessStatusCode();
-
-                var responseContentStream = response.Content.ReadAsStringAsync().Result;
-                _logger.LogInformation("User Role created for program: {program}", program);
-
-                return role.Name;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to POST role on Keycloak API");
-                throw;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to create role with name {role}", role.PreferredName);
-            throw;
-        }
-    }
-
+    
     private async Task<string> GetAccessToken()
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/realms/{_realm}/protocol/openid-connect/token")

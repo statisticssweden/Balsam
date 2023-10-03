@@ -4,6 +4,5 @@ namespace Keycloak.OidcProvider.Client;
 
 public interface IKeyCloakClient
 {
-    Task<string> CreateRole(string program);
-    Task<RoleCreatedResponse> CreateGroup(string name);
+    Task<GroupCreatedResponse> CreateGroup(string name);
 }

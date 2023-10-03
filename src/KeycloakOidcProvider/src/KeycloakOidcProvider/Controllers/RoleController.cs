@@ -8,30 +8,27 @@ namespace Keycloak.OidcProvider.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class RoleController : RoleApiController
+    public class GroupController : GroupApiController
     {
         private readonly ILogger _logger;
         private readonly IKeyCloakClient _keyCloakClient;
 
-        public RoleController(ILogger<RoleController> logger, IKeyCloakClient keyCloakClient)
+        public GroupController(ILogger<GroupController> logger, IKeyCloakClient keyCloakClient)
         {
             _logger = logger;
             _keyCloakClient = keyCloakClient;
         }
 
-        public override IActionResult AddUserToRole([FromRoute(Name = "roleId"), Required] string roleId, [FromBody] AddUserToRoleRequest? addUserToRoleRequest)
+        public override Task<IActionResult> AddUserToGroup(string groupId, AddUserToGroupRequest? addUserToGroupRequest)
         {
             throw new NotImplementedException();
         }
 
-        public override async Task<IActionResult> CreateRole([FromBody] CreateRoleRequest? createRoleRequest)
+        public override async Task<IActionResult> CreateGroup(CreateGroupRequest? createGroupRequest)
         {
-            //_keyCloakClient.CreateRole(createRoleRequest.Name);
-            var group = await _keyCloakClient.CreateGroup(createRoleRequest.Name);
-            
-            return Accepted(group);
+            var group = await _keyCloakClient.CreateGroup(createGroupRequest.Name);
 
-            //TODO: Return correct object response
+            return Accepted(group);
         }
     }
 }
