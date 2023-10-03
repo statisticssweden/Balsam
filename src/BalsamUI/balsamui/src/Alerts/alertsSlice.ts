@@ -7,9 +7,6 @@ export interface AlertItem {
   severity: 'success' | 'error' | 'info' | 'warning',
 }
 
-// export interface MessagesState {
-//   messages: Array<MessageItemState>   
-// }
 
 const initialState: Array<AlertItem> = [];
 
@@ -18,8 +15,20 @@ export const alertsSlice = createSlice({
   name: 'alerts',
   initialState: initialState,
   reducers: {
-    postAlert: (state, action) => {
+    postSuccess: (state, action) => {
       let newItem: AlertItem = { id: uuidv4(), severity: "success", text: action.payload};
+      state.push(newItem);
+    },
+    postError: (state, action) => {
+      let newItem: AlertItem = { id: uuidv4(), severity: "error", text: action.payload};
+      state.push(newItem);
+    },
+    postInfo: (state, action) => {
+      let newItem: AlertItem = { id: uuidv4(), severity: "info", text: action.payload};
+      state.push(newItem);
+    },
+    postWarning: (state, action) => {
+      let newItem: AlertItem = { id: uuidv4(), severity: "warning", text: action.payload};
       state.push(newItem);
     },
     removeAlert: (state, action) => {
@@ -30,7 +39,7 @@ export const alertsSlice = createSlice({
   },
 })
 
-export const { postAlert, removeAlert } = alertsSlice.actions
+export const { postSuccess, postError, postInfo, postWarning, removeAlert } = alertsSlice.actions
 
 export const selectAlerts = (state: any) => state.alerts;
 

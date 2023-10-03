@@ -2,9 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import MuiAlert, { AlertProps } from '@mui/material/Alert';
-import {selectAlerts, postAlert, AlertItem, removeAlert } from '../Alerts/alertsSlice';
-
-// import ReduxHelper from '../ReduxHelper/ReduxHelper';
+import {selectAlerts, AlertItem, removeAlert } from '../Alerts/alertsSlice';
 
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
         props,
@@ -16,13 +14,9 @@ export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert
 export default function Alerter() {
     const alerts = useSelector(selectAlerts);
     const [currentAlert, setCurrentAlert] = useState<AlertItem>();
-    //const [alertMessage, setAlertMessage] = useState("");
-    // const [alertSeverity, setAlertSeverity] = useState("");
-    // const [alertId, setAlertId] = useState("");
-    //const [snackbarOpen, setSnackbarOpen] = useState(false);
     const dispatch = useDispatch();
 
-    const handleSnackbarClose = (event, reason: SnackbarCloseReason) => {
+    const handleSnackbarClose = (event: any, reason: SnackbarCloseReason) => {
         
         if (reason !== "clickaway")
         {
@@ -45,28 +39,15 @@ export default function Alerter() {
         if(alerts.length > 0)
         {
             setCurrentAlert(alerts[0]);
-            // setSnackbarOpen(true);
+            
         }
         else
         {
             setCurrentAlert(undefined);
-            //alert("då");
-            // setSnackbarOpen(false);
         }
     }, [alerts])
 
     useEffect(() => {
-        // if(alerts.length > 0)
-        // {
-        //     setCurrentAlert(alerts[0]);
-        //     // setSnackbarOpen(true);
-        // }
-        // else
-        // {
-        //     setCurrentAlert(undefined);
-        //     //alert("då");
-        //     // setSnackbarOpen(false);
-        // }
     }, [currentAlert])
 
     const renderSnackbar = () =>
@@ -81,31 +62,9 @@ export default function Alerter() {
             </Snackbar>
 
         }
-        else
-        {
-            //setSnackbarOpen(false);
-        }
     }
 
     return renderSnackbar();
 }
-
-// export default function AppSnackBars(){
-//     // const [alertMessage, setAlertMessage]  = useState("");
-//     // const [snackbarOpen, setSnackbarOpen]  = useState(false);
-//     const [snackbars, setSnackbars] = useState([])
-
-//     const handleSnackbarClose = () => {
-//         setSnackbarOpen(false);
-//     }
-
-//     const renderAlerts
-
-//     return <Snackbar anchorOrigin={{vertical: "top", horizontal: "center"}} open={snackbarOpen} autoHideDuration={60000} onClose={handleSnackbarClose}>
-//         <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-//             {alertMessage}
-//         </Alert>
-//     </Snackbar>
-// }
 
 

@@ -10,7 +10,7 @@ import BalsamApi from '../services/BalsamAPIServices';
 import { CreateProjectRequest } from '../Model/ApiModels';
 import { Box, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { postAlert} from '../Alerts/alertsSlice';
+import { postSuccess, postError} from '../Alerts/alertsSlice';
 
 
 export interface NewProjectDialogProperties
@@ -44,7 +44,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     }
     const showAlert = (message: string) => 
     {
-        dispatch(postAlert(message));
+        dispatch(postSuccess(message));
     }
 
     const handleClickOpen = () => {
@@ -146,7 +146,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
             
         }), (reason) => {
                 
-            dispatch(postAlert("Det gick inte att skapa projektet"))
+            dispatch(postError("Det gick inte att skapa projektet"))
 
         });
     

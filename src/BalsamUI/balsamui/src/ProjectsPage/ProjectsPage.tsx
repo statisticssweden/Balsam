@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import NewProjectDialog from '../NewProjectDialog/NewProjectDialog';
 import './ProjectsPage.css';
 import { useDispatch } from 'react-redux';
-import {postAlert } from '../Alerts/alertsSlice';
+import { postError } from '../Alerts/alertsSlice';
 
 export default function ProjectsPage() {
     const [projects, setProjects] = useState<Array<any>>();
@@ -19,7 +19,7 @@ export default function ProjectsPage() {
             let promise = BalsamApi.getProjects();
             promise.catch((reason) => {
                 
-                dispatch(postAlert("Det gick inte att ladda projekt"))
+                dispatch(postError("Det gick inte att ladda projekt"))
             })
             let projects = await promise;
             setProjects(projects);
