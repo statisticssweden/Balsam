@@ -19,9 +19,10 @@ namespace Keycloak.OidcProvider.Controllers
             _keyCloakClient = keyCloakClient;
         }
 
-        public override Task<IActionResult> AddUserToGroup(string groupId, AddUserToGroupRequest? addUserToGroupRequest)
+        public override async Task<IActionResult> AddUserToGroup(string groupId, AddUserToGroupRequest? addUserToGroupRequest)
         {
-            throw new NotImplementedException();
+            await _keyCloakClient.AddUserToGroup(groupId, addUserToGroupRequest.UserName);
+            return  Accepted("user added");
         }
 
         public override async Task<IActionResult> CreateGroup(CreateGroupRequest? createGroupRequest)
