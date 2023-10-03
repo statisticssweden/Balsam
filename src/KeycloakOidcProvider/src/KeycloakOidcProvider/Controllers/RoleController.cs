@@ -28,7 +28,7 @@ namespace Keycloak.OidcProvider.Controllers
         {
             var group = await _keyCloakClient.CreateGroup(createGroupRequest.Name);
 
-            return Accepted(group);
+            return Ok(group);
         }
     }
 }
