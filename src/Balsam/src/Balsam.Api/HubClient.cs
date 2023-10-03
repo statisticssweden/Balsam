@@ -97,10 +97,9 @@ namespace Balsam.Api
                 return null;
             }
 
-            var project = new BalsamProject();
-            project.Id = Guid.NewGuid().ToString();
-            project.Name = preferredName;
+            var project = new BalsamProject(Guid.NewGuid().ToString(), preferredName,  description);
 
+            
             string programPath = Path.Combine(_hubRepositoryClient.Path, "hub", project.Id);
             DirectoryUtil.AssureDirectoryExists(programPath);
 

@@ -40,7 +40,7 @@ namespace Balsam.Api.Controllers
                 return BadRequest(new Problem() { Title = "Parameters missing", Status = 400, Type = "Missing parameters" });
             }
 
-            BalsamProject project = await _hubClient.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName);
+            BalsamProject? project = await _hubClient.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName);
 
             if (project == null)
             {
@@ -70,9 +70,8 @@ namespace Balsam.Api.Controllers
         {
             var projects = await _hubClient.GetProjects();
             var projectListResponse = new ProjectListResponse();
-            ///TODO Make sure that Description is set on CreateProject
+
             projectListResponse.Projects = MapProject(projects);
-            
             return Ok(projectListResponse);
         }
 
