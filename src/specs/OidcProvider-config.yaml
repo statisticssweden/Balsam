@@ -8,3 +8,5 @@ additionalProperties:
   packageDescription: OidcProvider class library
   licenseName: MIT
   packageAuthors: SCB
+  operationIsAsync: true
+  operationResultTask: true 
