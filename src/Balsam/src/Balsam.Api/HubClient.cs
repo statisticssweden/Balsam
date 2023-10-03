@@ -1,5 +1,7 @@
 ﻿using Balsam.Api.Models;
 using BalsamApi.Server.Models;
+using GitProviderApiClient.Api;
+using GitProviderApiClient.Model;
 using LibGit2Sharp;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -7,6 +9,9 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
+using S3ProviderApiClient.Api;
+using S3ProviderApiClient.Model;
+using System.Threading.Tasks;
 
 namespace Balsam.Api
 {
@@ -15,23 +20,24 @@ namespace Balsam.Api
         private readonly CapabilityOptions _git;
         private readonly CapabilityOptions _s3;
         private readonly CapabilityOptions _authentication;
-        private readonly S3Client _s3Client;
-        private readonly GitClient _gitClient;
+        private readonly BucketApi _s3Client;
         private readonly HubRepositoryClient _hubRepositoryClient;
         private readonly IMemoryCache _memoryCache;
+        private readonly IRepositoryApi _repositoryApi;
 
 
 
-        public HubClient(IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, S3Client s3Client, GitClient gitClient)
+        public HubClient(IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, BucketApi s3Client, IRepositoryApi reposiotryApi)
         {
             _memoryCache = memoryCach;
             _s3Client = s3Client;
-            _gitClient = gitClient;
+           
             _hubRepositoryClient = hubRepoClient;
 
             _git = capabilityOptions.Get(Capabilities.Git);
             _s3 = capabilityOptions.Get(Capabilities.S3);
             _authentication = capabilityOptions.Get(Capabilities.Authentication);
+            _repositoryApi = reposiotryApi;
         }
 
         private List<BalsamProject> GetProjects()
@@ -58,7 +64,7 @@ namespace Balsam.Api
             return true;
         }
 
-        public async Task<BalsamProject> CreateProject(string preferredName)
+        public async Task<BalsamProject> CreateProject(string preferredName, string description, string defaultBranchName)
         {
             //Check if there is a program with the same name.
             if (ProjectExisits(preferredName))
@@ -74,11 +80,11 @@ namespace Balsam.Api
             DirectoryUtil.AssureDirectoryExists(programPath);
 
             var tasks = new List<Task>();
-            Task<S3Data> s3Task = null;
-            Task<GitData> gitTask = null;
+            Task<BucketCreatedResponse> s3Task = null;
+        Task<RepositoryCreatedResponse> gitTask = null;
 
-            //TODO Implement
-            if (_authentication.Enabled)
+        //TODO Implement
+        if (_authentication.Enabled)
             {
                 //TODO call CreateRole in the OidcProvider
                 //TODO call AddUserToRolein the OidcProvider
@@ -86,28 +92,31 @@ namespace Balsam.Api
 
             if (_git.Enabled)
             {
-                gitTask = _gitClient.CreateRepository(preferredName);
+
+                gitTask = _repositoryApi.CreateRepositoryAsync(new CreateRepositoryRequest( preferredName,description, defaultBranchName));
                 tasks.Add(gitTask);
             }
 
             if (_s3.Enabled)
             {
-                s3Task = _s3Client.CreateBucket(preferredName);
+                s3Task = _s3Client.CreateBucketAsync(new S3ProviderApiClient.Model.CreateBucketRequest(preferredName));
                 tasks.Add(s3Task);
             }
 
             //wait for all task to finish
             await Task.WhenAll(tasks);
 
-            //fetch and sstore the results for each provider
+            //fetch and stores the results for each provider
             if (s3Task != null)
             {
-                project.S3 = s3Task.Result;
+                var s3Data = new S3Data() { BucketName = s3Task.Result.Name };
+                project.S3 = s3Data;
             }
 
             if (gitTask != null)
             {
-                project.Git = gitTask.Result;
+                var data = new GitData() { Name = gitTask.Result.Name, Path = gitTask.Result.Path };
+                project.Git = data;
             }
 
             string propPath = Path.Combine(programPath, "properties.json");

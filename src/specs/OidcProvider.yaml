@@ -8,29 +8,29 @@ servers:
   - url: http://oidc-provider.balsam-system.svc.cluster.local/api/v1
 
 tags:
-  - name: Role
-    description:  Roles methods
+  - name: Group
+    description:  Group methods
 
 paths:
-  /roles:
+  /groups:
     post:
       tags: 
-        - Role
-      operationId: CreateRole
-      description: Creates a new role
+        - Group
+      operationId: CreateGroup
+      description: Creates a new group
       requestBody:
-        description: Definition of a new role
+        description: Definition of a new group
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateRoleRequest'    
+              $ref: '#/components/schemas/CreateGroupRequest'    
       responses:
         '200':
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RoleCreatedResponse'
+                $ref: '#/components/schemas/GroupCreatedResponse'
               
               example: 
                   name: demo_users
@@ -39,22 +39,22 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
-  /roles/{roleId}/users:
+  /groups/{groupId}/users:
     post:
       tags: 
-        - Role
-      operationId: AddUserToRole
-      description: Adds a user to the role
+        - Group
+      operationId: AddUserToGroup
+      description: Adds a user to the group
       requestBody:
-        description: Definition of the user to add to the role
+        description: Definition of the user to add to the group
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddUserToRoleRequest'    
+              $ref: '#/components/schemas/AddUserToGroupRequest'    
       parameters:
-        - name: roleId
+        - name: groupId
           in: path
-          description: The id for the repository
+          description: The id for the group
           required: true
           schema:
             type: string
@@ -68,19 +68,19 @@ paths:
     
 components:
   schemas:
-    CreateRoleRequest:
+    CreateGroupRequest:
       type: object
-      description: Role name
+      description: Group name
       required:
         - "name"
       properties:
         name:
           type: string
-          description: The name of the role
+          description: The name of the group
 
-    AddUserToRoleRequest:
+    AddUserToGroupRequest:
       type: object
-      description: Role name
+      description: Group name
       required:
         - "userName"
       properties:
@@ -88,18 +88,18 @@ components:
           type: string
           description: The name of the user
 
-    RoleCreatedResponse:
+    GroupCreatedResponse:
       type: object
-      description: Repository description
+      description: Group created response
       required:
         - "name"
       properties:
         name:
           type: string
-          description: The name of the role
+          description: The name of the group
         id:
           type: string
-          description: The id to the role that can be used for accessing it.
+          description: The id to the group that can be used for accessing it.
 
     Problem:
       type: object

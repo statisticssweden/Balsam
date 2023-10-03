@@ -1,0 +1,9 @@
+additionalProperties:
+  apiName: S3ProviderApiClient
+  library: restsharp
+  netCoreProjectFile: true
+  nullableReferenceTypes: true
+  packageName: S3ProviderApiClient
+  packageTitle: S3ProviderApiClient
+  licenseId: MIT
+  targetFramework: net6.0

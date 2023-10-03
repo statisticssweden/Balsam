@@ -1,10 +1,9 @@
 additionalProperties:
-  aspnetCoreVersion: 6.0
+  apiName: GitProviderApiClient
+  library: restsharp
+  netCoreProjectFile: true
   nullableReferenceTypes: true
-  buildTarget: library
-  useSwashbuckle: true
-  packageName: GitProvider
-  packageTitle: GitProvider
-  packageDescription: GitProvider class library
-  licenseName: MIT
-  packageAuthors: SCB
+  packageName: GitProviderApiClient
+  packageTitle: GitProviderApiClient
+  licenseId: MIT
+  targetFramework: net6.0
