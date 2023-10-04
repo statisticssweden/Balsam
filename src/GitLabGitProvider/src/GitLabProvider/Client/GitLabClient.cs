@@ -36,16 +36,17 @@ namespace GitLabProvider.Client
 
         private static readonly HttpClient HttpClient = new HttpClient();
 
-        public async Task<RepositoryInfo?> CreateProjectRepo(string repoName)
+        public async Task<RepositoryInfo?> CreateProjectRepo(string repoName, string description, string defaultBranchName)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/api/v4/projects")
             {
                 Content = new FormUrlEncodedContent(new KeyValuePair<string?, string?>[]
                 {
                     new("name", repoName),
-                    new("description", "project created from Balsam.UI"),
+                    new("description", description),
                     new("namespace_id", _namespaceId),
-                    new("initialize_with_readme", "true")
+                    new("initialize_with_readme", "true"),
+                    new("default_branch", defaultBranchName)
                 })
             };
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);

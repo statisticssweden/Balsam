@@ -21,23 +21,23 @@ using OidcProvider.Converters;
 namespace OidcProvider.Models
 { 
     /// <summary>
-    /// Repository description
+    /// Group created response
     /// </summary>
     [DataContract]
-    public class RoleCreatedResponse : IEquatable<RoleCreatedResponse>
+    public class GroupCreatedResponse : IEquatable<GroupCreatedResponse>
     {
         /// <summary>
-        /// The name of the role
+        /// The name of the group
         /// </summary>
-        /// <value>The name of the role</value>
+        /// <value>The name of the group</value>
         [Required]
         [DataMember(Name="name", EmitDefaultValue=false)]
         public string Name { get; set; }
 
         /// <summary>
-        /// The id to the role that can be used for accessing it.
+        /// The id to the group that can be used for accessing it.
         /// </summary>
-        /// <value>The id to the role that can be used for accessing it.</value>
+        /// <value>The id to the group that can be used for accessing it.</value>
         [DataMember(Name="id", EmitDefaultValue=false)]
         public string Id { get; set; }
 
@@ -48,7 +48,7 @@ namespace OidcProvider.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class RoleCreatedResponse {\n");
+            sb.Append("class GroupCreatedResponse {\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("}\n");
@@ -73,15 +73,15 @@ namespace OidcProvider.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((RoleCreatedResponse)obj);
+            return obj.GetType() == GetType() && Equals((GroupCreatedResponse)obj);
         }
 
         /// <summary>
-        /// Returns true if RoleCreatedResponse instances are equal
+        /// Returns true if GroupCreatedResponse instances are equal
         /// </summary>
-        /// <param name="other">Instance of RoleCreatedResponse to be compared</param>
+        /// <param name="other">Instance of GroupCreatedResponse to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(RoleCreatedResponse other)
+        public bool Equals(GroupCreatedResponse other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -120,12 +120,12 @@ namespace OidcProvider.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(RoleCreatedResponse left, RoleCreatedResponse right)
+        public static bool operator ==(GroupCreatedResponse left, GroupCreatedResponse right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(RoleCreatedResponse left, RoleCreatedResponse right)
+        public static bool operator !=(GroupCreatedResponse left, GroupCreatedResponse right)
         {
             return !Equals(left, right);
         }
