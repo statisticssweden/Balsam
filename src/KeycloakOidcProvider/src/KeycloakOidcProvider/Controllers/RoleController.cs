@@ -22,14 +22,14 @@ namespace Keycloak.OidcProvider.Controllers
         public override async Task<IActionResult> AddUserToGroup(string groupId, AddUserToGroupRequest? addUserToGroupRequest)
         {
             await _keyCloakClient.AddUserToGroup(groupId, addUserToGroupRequest.UserName);
-            return  Accepted("user added");
+            return  Ok("user added");
         }
 
         public override async Task<IActionResult> CreateGroup(CreateGroupRequest? createGroupRequest)
         {
             var group = await _keyCloakClient.CreateGroup(createGroupRequest.Name);
 
-            return Accepted(group);
+            return Ok(group);
         }
     }
 }
