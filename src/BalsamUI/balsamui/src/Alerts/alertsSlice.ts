@@ -26,7 +26,6 @@ export const alertsSlice = createSlice({
   reducers: {
     postSuccess: { 
       reducer: (state, action: PayloadAction<AlertItem>) => {
-        //let newItem: AlertItem = { id: uuiv4(), severity: "success", text: action.payload.text, link: action.payload.link};
         state.push(action.payload);
       },
       prepare: (text: string, link?: AlertLink) => {
