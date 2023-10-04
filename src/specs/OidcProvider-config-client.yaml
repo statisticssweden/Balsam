@@ -1,0 +1,9 @@
+additionalProperties:
+  apiName: OidcProviderApiClient
+  library: restsharp
+  netCoreProjectFile: true
+  nullableReferenceTypes: true
+  packageName: OidcProviderApiClient
+  packageTitle: OidcProviderApiClient
+  licenseId: MIT
+  targetFramework: net6.0

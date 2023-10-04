@@ -1,4 +1,4 @@
-# GitProviderApiClient.Model.Problem
+# OidcProviderApiClient.Model.Problem
 
 ## Properties
 
