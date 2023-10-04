@@ -11,7 +11,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>OidcProvider</AssemblyName>
     <PackageId>OidcProvider</PackageId>
-    <UserSecretsId>902f94bc-cb5b-4939-893d-810bcb257e55</UserSecretsId>
+    <UserSecretsId>625686de-676a-469c-8c2a-ca709a758e2a</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>

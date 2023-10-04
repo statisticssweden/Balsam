@@ -1,6 +1,8 @@
-﻿namespace Keycloak.OidcProvider.Client;
+﻿using OidcProvider.Models;
+
+namespace Keycloak.OidcProvider.Client;
 
 public interface IKeyCloakClient
 {
-    Task<string> CreateRole(string program);
+    Task<GroupCreatedResponse> CreateGroup(string name);
 }

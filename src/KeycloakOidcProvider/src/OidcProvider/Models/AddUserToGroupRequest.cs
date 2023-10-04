@@ -21,18 +21,18 @@ using OidcProvider.Converters;
 namespace OidcProvider.Models
 { 
     /// <summary>
-    /// Role name
+    /// Group name
     /// </summary>
     [DataContract]
-    public class CreateRoleRequest : IEquatable<CreateRoleRequest>
+    public class AddUserToGroupRequest : IEquatable<AddUserToGroupRequest>
     {
         /// <summary>
-        /// The name of the role
+        /// The name of the user
         /// </summary>
-        /// <value>The name of the role</value>
+        /// <value>The name of the user</value>
         [Required]
-        [DataMember(Name="name", EmitDefaultValue=false)]
-        public string Name { get; set; }
+        [DataMember(Name="userName", EmitDefaultValue=false)]
+        public string UserName { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -41,8 +41,8 @@ namespace OidcProvider.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class CreateRoleRequest {\n");
-            sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("class AddUserToGroupRequest {\n");
+            sb.Append("  UserName: ").Append(UserName).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -65,24 +65,24 @@ namespace OidcProvider.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((CreateRoleRequest)obj);
+            return obj.GetType() == GetType() && Equals((AddUserToGroupRequest)obj);
         }
 
         /// <summary>
-        /// Returns true if CreateRoleRequest instances are equal
+        /// Returns true if AddUserToGroupRequest instances are equal
         /// </summary>
-        /// <param name="other">Instance of CreateRoleRequest to be compared</param>
+        /// <param name="other">Instance of AddUserToGroupRequest to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(CreateRoleRequest other)
+        public bool Equals(AddUserToGroupRequest other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
                 (
-                    Name == other.Name ||
-                    Name != null &&
-                    Name.Equals(other.Name)
+                    UserName == other.UserName ||
+                    UserName != null &&
+                    UserName.Equals(other.UserName)
                 );
         }
 
@@ -96,8 +96,8 @@ namespace OidcProvider.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (Name != null)
-                    hashCode = hashCode * 59 + Name.GetHashCode();
+                    if (UserName != null)
+                    hashCode = hashCode * 59 + UserName.GetHashCode();
                 return hashCode;
             }
         }
@@ -105,12 +105,12 @@ namespace OidcProvider.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(CreateRoleRequest left, CreateRoleRequest right)
+        public static bool operator ==(AddUserToGroupRequest left, AddUserToGroupRequest right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(CreateRoleRequest left, CreateRoleRequest right)
+        public static bool operator !=(AddUserToGroupRequest left, AddUserToGroupRequest right)
         {
             return !Equals(left, right);
         }
