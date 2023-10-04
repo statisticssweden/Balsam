@@ -1,0 +1,28 @@
+.alert-link-button
+{
+    color: white;
+    margin-left: 40px;
+    text-transform: uppercase;
+    
+    text-decoration: none;
+}
+
+
+div > .alert-link-button
+{
+    border-radius: 5px;
+    background-color: #00000022;
+    padding: 4px 10px;
+
+}
+
+.alert-link-button:hover
+{
+    text-decoration: underline;
+}
+
+.alert-content
+{
+    display: flex;
+    justify-content: space-between;
+}

@@ -42,9 +42,10 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         setOkEnabled(projectNameValid && branchNameValid)
 
     }
-    const showAlert = (message: string) => 
+
+    const showNewItemCreatedAlert = (message: string, id: string) => 
     {
-        dispatch(postSuccess(message));
+        dispatch(postSuccess(message, {caption: "Öppna", href: `/projects/${id}`} ));
     }
 
     const handleClickOpen = () => {
@@ -142,7 +143,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
             
             setOpen(false);
             props.onClosing();
-            showAlert(`Projekt "${response.name}" är skapat`);
+            showNewItemCreatedAlert(`Projekt "${response.name}" är skapat`, response.id);
             
         }), (reason) => {
                 

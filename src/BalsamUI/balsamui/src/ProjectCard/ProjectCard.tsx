@@ -33,13 +33,13 @@ export default function ProjectCard(properties : ProjectCardProperties) {
             </CardActionArea>
             <CardActions>
 
-                    <Button component={Link as any} 
+                <Button component={Link as any} 
                     target="_blank" 
                     underline="hover" 
                     to={'project/' + properties.project.id}
-                    >
-                        Öppna<OpenInNew fontSize="inherit" />
-                    </Button>
+                >
+                    Öppna<OpenInNew fontSize="inherit" />
+                </Button>
             </CardActions>
         </Card>
     );
