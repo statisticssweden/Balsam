@@ -62,42 +62,12 @@ export default function Alerter() {
             const link = currentAlert.link ? (<a className='alert-link-button' href={currentAlert.link.href}>
                                     {currentAlert.link.caption}
                                     </a>) : ("");
-            // const link = currentAlert.link ? (<Button className='alert-link-button' component={Link as any} underline="hover" to={currentAlert.link.href} color='info' size="small" onClick={handleAlertClose}>
-            //                         {currentAlert.link.caption}
-            //                         </Button>) : ("");
-            // // const link = currentAlert.link ? (<Button color="secondary" size="small" onClick={handleAlertClose}>
-            // //                         {currentAlert.link}
-            // //                         </Button>) : ("");
-
-            // if (currentAlert.link !== undefined)
-            // {
-            //     const action = (
-            //         <React.Fragment>
-            //           <Button color="secondary" size="small" onClick={handleAlertClose}>
-            //             UNDO
-            //           </Button>
-            //           <IconButton
-            //             size="small"
-            //             aria-label="close"
-            //             color="inherit"
-            //             onClick={handleAlertClose}
-            //           >
-            //             <CloseIcon fontSize="small" />
-            //           </IconButton>
-            //         </React.Fragment>
-            //       );   
-            //       return <Snackbar anchorOrigin={{vertical: "top", horizontal: "center"}} open={true} autoHideDuration={6000} onClose={handleSnackbarClose} action={action}/>
-
-            // }
-            // else
-            // {
-                return <Snackbar anchorOrigin={{vertical: "top", horizontal: "center"}} open={true} autoHideDuration={600000} onClose={handleSnackbarClose}>
-                    <Alert onClose={handleAlertClose} severity={currentAlert.severity as AlertColor} sx={{ width: '100%' }}>
-                    <div className='alert-content' ><div>{currentAlert.text}</div><div> {link}</div></div>
-                    </Alert>
-                </Snackbar>
-            // }
-
+            
+            return <Snackbar anchorOrigin={{vertical: "top", horizontal: "center"}} open={true} autoHideDuration={600000} onClose={handleSnackbarClose}>
+                <Alert onClose={handleAlertClose} severity={currentAlert.severity as AlertColor} sx={{ width: '100%' }}>
+                <div className='alert-content' ><div>{currentAlert.text}</div><div> {link}</div></div>
+                </Alert>
+            </Snackbar>
         }
     }
 
