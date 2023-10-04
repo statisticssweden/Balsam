@@ -2,11 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import {selectAlerts, AlertItem, removeAlert } from '../Alerts/alertsSlice';
-import { Link } from 'react-router-dom';
 import "./Alerter.css"
 
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
