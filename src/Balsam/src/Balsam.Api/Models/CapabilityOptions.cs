@@ -5,8 +5,8 @@ namespace Balsam.Api.Models
     public class CapabilityOptions
     {
         public bool Enabled { get; set; }
-        public string ServiceLocation { get; set; }
-        public string[] Actions { get; set; }
+        public string? ServiceLocation { get; set; }
+        public string[]? Actions { get; set; }
     }
 
     public class Capabilities
