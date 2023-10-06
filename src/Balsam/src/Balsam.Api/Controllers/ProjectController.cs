@@ -34,6 +34,7 @@ namespace Balsam.Api.Controllers
         }
 
 
+        [Authorize]
         public async override Task<IActionResult> CreateProject([FromBody] CreateProjectRequest? createProjectRequest)
         {
             if (createProjectRequest is null)
