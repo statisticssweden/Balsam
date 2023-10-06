@@ -23,9 +23,13 @@ builder.Services.AddSingleton<GitProviderApiClient.Api.IRepositoryApi>(
     new GitProviderApiClient.Api.RepositoryApi(
         builder.Configuration.GetSection($"Capabilities:{Capabilities.Git}:ServiceLocation").Value??"git-provider.balsam-system.svc.cluster.local"));
 
-builder.Services.AddSingleton<S3ProviderApiClient.Api.BucketApi>(
+builder.Services.AddSingleton<S3ProviderApiClient.Api.IBucketApi>(
     new S3ProviderApiClient.Api.BucketApi(
         builder.Configuration.GetSection($"Capabilities:{Capabilities.S3}:ServiceLocation").Value ?? "s3-provider.balsam-system.svc.cluster.local"));
+
+builder.Services.AddSingleton<OidcProviderApiClient.Api.IGroupApi>(
+    new OidcProviderApiClient.Api.GroupApi(
+        builder.Configuration.GetSection($"Capabilities:{Capabilities.Authentication}:ServiceLocation").Value ?? "oidc-provider.balsam-system.svc.cluster.local"));
 
 builder.Services.Configure<CapabilityOptions>(Capabilities.Git, builder.Configuration.GetSection($"Capabilities:{Capabilities.Git}"));
 builder.Services.Configure<CapabilityOptions>(Capabilities.S3, builder.Configuration.GetSection($"Capabilities:{Capabilities.S3}"));
