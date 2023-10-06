@@ -43,3 +43,10 @@ Use the following command to generate the souces from the spec.
 docker run --rm -v ${PWD}:/localin -v ${PWD}\..\MinIOS3Provider:/localout openapitools/openapi-generator-cli generate -i /localin/S3Provider.yaml -g aspnetcore -o /localout/ -c /localin/S3Provider-config.yaml
 ```
 
+## ChatProvider
+Provides Balsam hubs with chat capability 
+
+Use the following command to generate the souces from the spec.
+```
+docker run --rm -v ${PWD}:/localin -v ${PWD}\..\RocketChatChatProvider:/localout openapitools/openapi-generator-cli generate -i /localin/ChatProvider.yaml -g aspnetcore -o /localout/ -c /localin/ChatProvider-config.yaml
+```
