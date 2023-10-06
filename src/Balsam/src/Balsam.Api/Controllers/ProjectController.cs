@@ -73,9 +73,24 @@ namespace Balsam.Api.Controllers
         }
 
         [Authorize]
-        public override Task<IActionResult> GetProject([FromRoute(Name = "projectId"), Required] string projectId)
+        public async override Task<IActionResult> GetProject([FromRoute(Name = "projectId"), Required] string projectId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var balsamProject = _hubClient.GetProject(projectId);
+
+                if (balsamProject == null) {
+                    return BadRequest(new Problem() { Title = "Project with given id can not be found", Status = 400, Type = "Can not find project" });
+                }
+
+                var evt = new ProjectCreatedResponse();
+                return Ok(evt);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("", ex);
+                return BadRequest(new Problem() { Title = "Project can not be loaded", Status = 400, Type = "Can not load project" });
+            }
         }
 
         [Authorize]
