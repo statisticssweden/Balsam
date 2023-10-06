@@ -40,7 +40,7 @@ namespace Balsam.Api
             _repositoryApi = reposiotryApi;
         }
 
-        public async Task<List<BalsamProject>> GetProjects()
+        public async Task<List<BalsamProject>> GetProjects(bool includeBranches = true)
         {
             var projects = new List<BalsamProject>();
             var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
@@ -51,7 +51,10 @@ namespace Balsam.Api
                 var project = JsonConvert.DeserializeObject<BalsamProject>(await System.IO.File.ReadAllTextAsync(propsFile));
                 if (project != null)
                 {
-                    project.Branches = await ReadBranches(projectPath);
+                    if (includeBranches) 
+                    { 
+                        project.Branches = await ReadBranches(projectPath);
+                    }
                     projects.Add(project);
                 }
                 else
@@ -88,7 +91,7 @@ namespace Balsam.Api
 
         private async Task<bool> ProjectExists(string projectName)
         {
-            var projects = await GetProjects();
+            var projects = await GetProjects(false);
             if (projects.FirstOrDefault(p => p.Name == projectName) == null)
             {
                 return false;
