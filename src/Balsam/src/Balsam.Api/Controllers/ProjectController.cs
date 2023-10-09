@@ -85,7 +85,7 @@ namespace Balsam.Api.Controllers
 
                 var evt = new ProjectResponse();
                 evt.Id = balsamProject.Id;
-                evt.Name= balsamProject.Name;
+                evt.Name = balsamProject.Name;
                 evt.Description = balsamProject.Description;
                 evt.GitUrl = balsamProject.Git is null?"": balsamProject.Git.Path;
                 evt.Branches = balsamProject.Branches.Select(b => new Branch() { Id = b.Id, Description = b.Description, Name = b.Name, IsDefault = b.IsDefault }).ToList();
