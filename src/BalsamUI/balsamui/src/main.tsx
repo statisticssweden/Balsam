@@ -5,6 +5,20 @@ import './index.css'
 import KeyCloakService from './security/KeyCloakService.ts';
 import HttpService from './services/HttpServices.ts';
 
+import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom'
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { svSE, enUS } from '@mui/material/locale';
+import store from './App/store.ts';
+
+const theme = createTheme(
+  {
+    palette: {
+      primary: { main: '#1976d2' },
+    },
+  },
+  svSE,
+);
 
 const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
@@ -12,9 +26,15 @@ const root = ReactDOM.createRoot(
 
 const renderApp = () =>
     root.render(
+      <Provider store={store}>
         <React.StrictMode>
-            <App />
+            <ThemeProvider theme={theme}>
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
+            </ThemeProvider>
         </React.StrictMode>
+      </Provider>
     );
 
 KeyCloakService.CallLogin(renderApp);

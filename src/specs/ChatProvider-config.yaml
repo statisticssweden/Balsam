@@ -1,0 +1,12 @@
+additionalProperties:
+  aspnetCoreVersion: 6.0
+  nullableReferenceTypes: true
+  operationIsAsync: true
+  operationResultTask: true
+  buildTarget: library
+  useSwashbuckle: true
+  packageName: ChatProvider
+  packageTitle: ChatProvider
+  packageDescription: ChatProvider generated code
+  licenseName: MIT
+  packageAuthors: SCB

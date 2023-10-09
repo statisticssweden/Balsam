@@ -2,7 +2,7 @@
 {
     public interface IGitLabClient
     {
-        Task<RepositoryInfo?> CreateProjectRepo(string repoName);
+        Task<RepositoryInfo?> CreateProjectRepo(string repoName, string description, string defaultBranchName);
 
         Task<bool> CreateBranch(string branchname, string repositoryId);
 
