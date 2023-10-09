@@ -17,4 +17,8 @@
     <ProjectReference Include="..\OidcProvider\OidcProvider.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="certs\" />
+  </ItemGroup>
+
 </Project>
