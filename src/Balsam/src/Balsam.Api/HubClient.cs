@@ -65,6 +65,25 @@ namespace Balsam.Api
             return projects;
         }
 
+        public async Task<BalsamProject?> GetProject(string projectId)
+        {
+            var projectPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId);
+
+            if (!System.IO.Directory.Exists(projectPath))
+            {
+                return null;
+            }
+
+            var propsFile = Path.Combine(projectPath, "properties.json");
+            var project = JsonConvert.DeserializeObject<BalsamProject>(await System.IO.File.ReadAllTextAsync(propsFile));
+            if (project != null)
+            {
+                project.Branches = await ReadBranches(projectPath);
+            }
+
+            return project;
+        }
+
         private async Task<List<BalsamBranch>> ReadBranches(string projectPath)
         {
             var branches = new List<BalsamBranch>();
