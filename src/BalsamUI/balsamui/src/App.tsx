@@ -10,9 +10,6 @@ import ProjectsPage from './ProjectsPage/ProjectsPage';
 import './App.css'
 import Alerter  from './Alerter/Alerter';
 
-
-
-
 function App() {
     //const [count, setCount] = useState(0)
 

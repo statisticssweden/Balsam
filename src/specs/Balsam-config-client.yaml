@@ -1,0 +1,7 @@
+additionalProperties:
+  supportsES6: true
+  apiPackage: "BalsamAPI.API"
+  modelPackage: "BalsamAPI.Model"
+  withSeparateModelsAndApi: true
+  #npmName: "BalsamAPIClient"
+

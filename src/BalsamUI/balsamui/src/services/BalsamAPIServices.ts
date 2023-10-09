@@ -1,32 +1,20 @@
 import HttpService from './HttpServices';
-import { ProjectCreatedResponse, CreateProjectRequest } from '../Model/ApiModels';
-
+import { Configuration } from '../../BalsamAPI/configuration';
+import { ProjectApi } from '../../BalsamAPI/api'
 
 const apiMockUrl = "http://balsam-api-mock.tanzu.scb.intra/api/v1";
 
+const configuration = new Configuration({
+    basePath: apiMockUrl, 
+  });
 
+const projectApi = new ProjectApi(configuration, apiMockUrl, HttpService.getAxiosClient() );
 
-const getProjects = async () : Promise<any[]> => {
-    let promise = HttpService.getAxiosClient()
-            .get(apiMockUrl + "/projects");
-
-    let response = await promise;
-
-    return response.data.projects;
-};
-
-const postProject = async (project: CreateProjectRequest) : Promise<ProjectCreatedResponse> => {
-    let promise = HttpService.getAxiosClient()
-    .post(apiMockUrl + "/projects", project);
-
-    let response = await promise;
-
-    return response.data as ProjectCreatedResponse;
+const BalsamAPI = {
+    projectApi
 }
 
-const BalsamApi = {
-    getProjects,
-    postProject
-}
+export default BalsamAPI
 
-export default BalsamApi
+//Export the model for ease of use
+export * from "../../BalsamAPI/BalsamAPI/Model";
