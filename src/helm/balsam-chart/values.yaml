@@ -9,7 +9,7 @@ balsamApi:
     repository: # The repository for balsamApi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: # The tag for balsamApi
+    tag: 0.0.10 # The tag for balsamApi
   service:
     type: ClusterIP
     port: 80
@@ -29,7 +29,7 @@ balsamApi:
     annotations: {
       kubernetes.io/ingress.class: "contour",
       cert-manager.io/cluster-issuer: ca-issuer,
-      kubernetes.io/ingress.allow-http: "false"
+      kubernetes.io/ingress.allow-http: "true"
     } 
     hosts:
       host: # Add the ingress for balsamApi
@@ -40,7 +40,7 @@ s3Provider:
     repository: # The repository for the s3Provider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: # The tag for the s3Provider API
+    tag: 0.0.2 # The tag for the s3Provider API
   service:
     type: ClusterIP
     port: 80
@@ -58,9 +58,9 @@ s3Provider:
 
 oidcProvider:
   image:
-    repository: harbor-dev.scb.intra/balsam/keycloak-oidc-provider
+    repository: # The repository for the oidcProvider API
     pullPolicy: Always
-    tag: 0.1
+    tag: 0.0.2
   service:
     type: ClusterIP
     port: 80
@@ -83,7 +83,7 @@ gitProvider:
     repository: # The repository for the gitProvider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: # The tag for the gitProvider API
+    tag: 0.0.2 # The tag for the gitProvider API
   service:
     type: ClusterIP
     port: 80
@@ -119,9 +119,9 @@ securityContext: {
     runAsGroup: 3000
 }
 
-service:
-  type: ClusterIP
-  port: 80
+# service:
+#   type: ClusterIP
+#   port: 80
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

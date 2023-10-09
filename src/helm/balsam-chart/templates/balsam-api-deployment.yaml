@@ -32,6 +32,8 @@ spec:
           value: "http://git-provider.balsam-system.svc.cluster.local/api/v1"
         - name: Capabilities__S3__ServiceLocation
           value: "http://s3-provider.balsam-system.svc.cluster.local/api/v1"
+        - name: Capabilities__AUTHENTICATION__ServiceLocation
+          value: "http://oidc-provider.balsam-system.svc.cluster.local/api/v1"
         resources:
           requests:
             memory: "200Mi"
