@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak-oidc-provider
+  labels:
+    app: keycloak-oidc-provider
+  namespace: balsam-system
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: keycloak-oidc-provider
+  template:
+    metadata:
+      labels:
+        app: keycloak-oidc-provider
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+      containers:
+      - name: keycloak-oidc-provider
+        image: "{{ .Values.oidcProvider.image.repository }}:{{ .Values.oidcProvider.image.tag }}"
+        imagePullPolicy: {{ .Values.oidcProvider.image.pullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.oidcProvider.secret.name }}
+        - configMapRef:
+            name: {{ .Values.oidcProvider.configMap.name }}
+        resources:
+          requests:
+            memory: "250Mi"
+            cpu: "500m"
+          limits:
+            memory: "250Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: {{ .Values.oidcProvider.containerPort }}

@@ -22,6 +22,16 @@ spec:
       - name: balsam-api
         image: "{{ .Values.balsamApi.image.repository }}:{{ .Values.balsamApi.image.tag }}"
         imagePullPolicy: {{ .Values.balsamApi.image.pullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.balsamApi.secret.name }}
+        - configMapRef:
+            name: {{ .Values.balsamApi.configMap.name }}
+        env:
+        - name: Capabilities__GIT__ServiceLocation
+          value: "http://git-provider.balsam-system.svc.cluster.local/api/v1"
+        - name: Capabilities__S3__ServiceLocation
+          value: "http://s3-provider.balsam-system.svc.cluster.local/api/v1"
         resources:
           requests:
             memory: "200Mi"
