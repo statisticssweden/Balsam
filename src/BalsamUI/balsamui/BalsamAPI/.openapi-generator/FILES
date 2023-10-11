@@ -1,6 +1,5 @@
 .gitignore
 .npmignore
-.openapi-generator-ignore
 BalsamAPI/API/knowledge-library-api.ts
 BalsamAPI/API/project-api.ts
 BalsamAPI/API/workspace-api.ts
@@ -26,5 +25,3 @@ api.ts
 base.ts
 common.ts
 configuration.ts
-git_push.sh
-index.ts

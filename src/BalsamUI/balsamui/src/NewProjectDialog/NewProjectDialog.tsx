@@ -46,7 +46,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
 
     const showNewItemCreatedAlert = (message: string, id: string) => 
     {
-        dispatch(postSuccess(message, {caption: "Öppna", href: `/projects/${id}`} ));
+        dispatch(postSuccess(message, {caption: "Öppna", href: `/project/${id}`} ));
     }
 
     const handleClickOpen = () => {

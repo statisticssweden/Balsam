@@ -43,6 +43,6 @@ export interface Branch {
      * @type {boolean}
      * @memberof Branch
      */
-    'IsDefault'?: boolean;
+    'isDefault'?: boolean;
 }
 
