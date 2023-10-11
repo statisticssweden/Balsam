@@ -41,7 +41,9 @@ namespace Balsam.Api
                 CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = _userId, Password = _password }
             };
 
+            _logger.LogInformation("Begin clone Hub repo");
             _repositoryPath = Repository.Clone(options.Value.RemoteUrl, basePath, cloneOptions);
+            _logger.LogInformation("End clone Hub repo");
             _repository = new Repository(_repositoryPath);
             _repositoryPath = basePath;
         }

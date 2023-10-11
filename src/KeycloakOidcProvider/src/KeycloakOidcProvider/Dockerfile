@@ -33,4 +33,4 @@ RUN dotnet publish "Keycloak.OidcProvider.csproj" -c Release -o /app/publish /p:
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "KeycloakOidcProvider.dll"]
+ENTRYPOINT ["dotnet", "Keycloak.OidcProvider.dll"]

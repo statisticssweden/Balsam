@@ -1,6 +1,7 @@
 using Balsam.Api;
 using Balsam.Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -90,6 +91,8 @@ builder.Services.AddAuthentication(options =>
     cfg.Authority = builder.Configuration.GetSection($"Authentication:Authority").Value;
 });
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -98,6 +101,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseHttpLogging();
 
 app.UseCors();
 

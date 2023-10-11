@@ -31,6 +31,7 @@ namespace Balsam.Api
             _logger = logger;
             _memoryCache = memoryCach;
             _s3Client = s3Client;
+            _oidcClient = oidcClient;
            
             _hubRepositoryClient = hubRepoClient;
 
@@ -121,19 +122,26 @@ namespace Balsam.Api
         public async Task<BalsamProject?> CreateProject(string preferredName, string description, string defaultBranchName, string username)
         {
             //Check if there is a program with the same name.
+            _logger.LogDebug("Chack for duplicate names");
             if (await ProjectExists(preferredName))
             {
                 _logger.LogInformation($"Could not create project {preferredName}, due to name dublication");
                 return null;
             }
 
+            _logger.LogDebug($"create project information");
             var project = new BalsamProject(SanitizeName(preferredName), preferredName,  description);
             string programPath = Path.Combine(_hubRepositoryClient.Path, "hub", project.Id);
+
+            _logger.LogDebug($"Assure path exists {programPath}");
+
             DirectoryUtil.AssureDirectoryExists(programPath);
 
+            _logger.LogDebug($"Begin call service providers");
 
             if (_authentication.Enabled)
             {
+                _logger.LogDebug($"Begin call OpenIdConnect");
                 var oidcData = await _oidcClient.CreateGroupAsync(new CreateGroupRequest(project.Id));
                 await _oidcClient.AddUserToGroupAsync(oidcData.Id, new AddUserToGroupRequest(username));
                 project.Oidc = new OidcData(oidcData.Id, oidcData.Name);
@@ -142,6 +150,7 @@ namespace Balsam.Api
 
             if (_git.Enabled)
             {
+                _logger.LogDebug($"Begin call Git");
                 var gitData = await _repositoryApi.CreateRepositoryAsync(new CreateRepositoryRequest( preferredName,description, defaultBranchName));
                 project.Git = new GitData() { Name = gitData.Name, Path = gitData.Path };
                 _logger.LogInformation($"Git repository {project.Git.Name} created");
@@ -149,6 +158,7 @@ namespace Balsam.Api
 
             if (_s3.Enabled)
             {
+                _logger.LogDebug($"Begin call S3");
                 var s3Data = await _s3Client.CreateBucketAsync(new S3ProviderApiClient.Model.CreateBucketRequest(preferredName));
                 project.S3 = new S3Data() { BucketName = s3Data.Name };
                 _logger.LogInformation($"Bucket {project.S3.BucketName} created");
@@ -203,8 +213,10 @@ namespace Balsam.Api
             return true;
         }
 
-        private static string SanitizeName(string name)
+        private  string SanitizeName(string name)
         {
+
+            _logger.LogDebug($"Begin sanitize {name}");
             var crc32 = new Crc32();
 
             crc32.Append(System.Text.Encoding.ASCII.GetBytes(name));
@@ -214,7 +226,9 @@ namespace Balsam.Api
             name = name.ToLower(); //Only lower charachters allowed
             name = name.Replace(" ", "-"); //replaces spaches with hypen
             name = Regex.Replace(name, @"[^a-z0-9\-]", ""); // make sure that only a-z or digit or hypen removes all other characters
-            name = name.Substring(0, 50 - crcHash.Length) + crcHash; //Assures max size of 50 characters
+            name = name.Substring(0,Math.Min(50 - crcHash.Length, name.Length)) + "-" + crcHash; //Assures max size of 50 characters
+
+            _logger.LogDebug($"End sanitize {name}");
 
             return name;
 
