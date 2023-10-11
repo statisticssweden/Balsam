@@ -5,4 +5,4 @@ metadata:
   namespace: balsam-system
 data: 
   HubRepo__RemoteUrl: "{{ .Values.balsamApi.configMap.data.repoUrl }}"
-  Authentication__Authority: "{{ .Values.balsamApi.configMap.data.authority}}"
+  Authentication__Authority: "{{ .Values.balsamApi.configMap.data.authority }}"

@@ -6,4 +6,4 @@ metadata:
 data: 
   KEYCLOAK__BaseUrl: "{{ .Values.oidcProvider.configMap.data.KEYCLOAK__BaseUrl }}"
   KEYCLOAK__Realm: "{{ .Values.oidcProvider.configMap.data.KEYCLOAK__Realm }}"
-  KEYCLOAK__ClientId: "{{ .Values.gitProvider.configMap.data.KEYCLOAK__ClientId }}"
+  KEYCLOAK__ClientId: "{{ .Values.oidcProvider.configMap.data.KEYCLOAK__ClientId }}"

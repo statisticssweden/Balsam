@@ -9,7 +9,7 @@ balsamApi:
     repository: # The repository for balsamApi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.10 # The tag for balsamApi
+    tag: 0.0.20 # The tag for balsamApi
   service:
     type: ClusterIP
     port: 80
@@ -30,7 +30,7 @@ balsamApi:
       kubernetes.io/ingress.class: "contour",
       cert-manager.io/cluster-issuer: ca-issuer,
       kubernetes.io/ingress.allow-http: "true"
-    } 
+    }
     hosts:
       host: # Add the ingress for balsamApi
 
@@ -60,7 +60,7 @@ oidcProvider:
   image:
     repository: # The repository for the oidcProvider API
     pullPolicy: Always
-    tag: 0.0.2
+    tag: 0.0.5
   service:
     type: ClusterIP
     port: 80
@@ -83,7 +83,7 @@ gitProvider:
     repository: # The repository for the gitProvider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.2 # The tag for the gitProvider API
+    tag: 0.0.5 # The tag for the gitProvider API
   service:
     type: ClusterIP
     port: 80
