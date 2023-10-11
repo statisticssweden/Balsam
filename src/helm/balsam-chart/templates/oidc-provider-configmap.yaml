@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.oidcProvider.configMap.name }}
+  namespace: balsam-system
+data: 
+  KEYCLOAK__BaseUrl: "{{ .Values.oidcProvider.configMap.data.KEYCLOAK__BaseUrl }}"
+  KEYCLOAK__Realm: "{{ .Values.oidcProvider.configMap.data.KEYCLOAK__Realm }}"
+  KEYCLOAK__ClientId: "{{ .Values.oidcProvider.configMap.data.KEYCLOAK__ClientId }}"
