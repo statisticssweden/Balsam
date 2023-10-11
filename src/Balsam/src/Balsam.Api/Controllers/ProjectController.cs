@@ -11,6 +11,7 @@ namespace Balsam.Api.Controllers
     
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProjectController : BalsamApi.Server.Controllers.ProjectApiController
     {
 
@@ -20,7 +21,7 @@ namespace Balsam.Api.Controllers
         private readonly ILogger<ProjectController> _logger;
 
 
-        public ProjectController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, Logger<ProjectController> logger,HubClient hubClient)
+        public ProjectController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, ILogger<ProjectController> logger,HubClient hubClient)
         {
             _hubClient = hubClient;
             _logger = logger;
@@ -34,15 +35,15 @@ namespace Balsam.Api.Controllers
         }
 
 
-        [Authorize]
         public async override Task<IActionResult> CreateProject([FromBody] CreateProjectRequest? createProjectRequest)
         {
             if (createProjectRequest is null)
             {
                 return BadRequest(new Problem() { Title = "Parameters missing", Status = 400, Type = "Missing parameters" });
             }
+            _logger.LogInformation("Reading user information");
             var username = this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
-
+            _logger.LogInformation($"The user is {username}");
             try
             {
 
@@ -72,7 +73,7 @@ namespace Balsam.Api.Controllers
             throw new NotImplementedException();
         }
 
-        [Authorize]
+
         public async override Task<IActionResult> GetProject([FromRoute(Name = "projectId"), Required] string projectId)
         {
             try
@@ -99,9 +100,10 @@ namespace Balsam.Api.Controllers
             }
         }
 
-        [Authorize]
+
         public override async Task<IActionResult> ListProjects([FromQuery(Name = "all")] bool? all)
         {
+            _logger.LogError($"Hit ListProject");
             var projects = await _hubClient.GetProjects();
             var projectListResponse = new ProjectListResponse();
 

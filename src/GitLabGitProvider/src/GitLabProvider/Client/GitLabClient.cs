@@ -72,7 +72,7 @@ namespace GitLabProvider.Client
                         repoInfo.Url = createResponse.http_url_to_repo;
                         repoInfo.Name = createResponse.name;
 
-                        GitFilesToRepo(repoInfo.Id).Wait();
+                        GitFilesToRepo(repoInfo.Id, defaultBranchName).Wait();
                     }
                 }
                 else
@@ -172,7 +172,7 @@ namespace GitLabProvider.Client
             return null;
         }
 
-        public async Task GitFilesToRepo(string repositoryId)
+        public async Task GitFilesToRepo(string repositoryId, string branch)
         {
             try
             {
@@ -197,7 +197,7 @@ namespace GitLabProvider.Client
 
                 var gitContent = new GitContent
                 {
-                    branch = "main",
+                    branch = branch,
                     commit_message = "commit",
                     actions = actions
                 };
@@ -218,7 +218,7 @@ namespace GitLabProvider.Client
 
             }
             catch (Exception ex) {
-                _logger.LogError("Could not initiate repo with files, due to error", ex);
+                _logger.LogError("Could not initiate repo with files, due to error" + ex.ToString(), ex);
             }
         }
     }
