@@ -5,7 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import resourceImage from '../assets/resource.jpg'
+import resourceImage from '../assets/text.jpg'
 import markdownImage from '../assets/text.jpg'
 import pdfImage from '../assets/PDF_icon.svg'
 import { Link } from 'react-router-dom';
@@ -49,7 +49,7 @@ export default function ResourceCard({ projectid, branch, resource } : ResourceC
                 <CardMedia
                     sx={{ height: 140 }}
                     image={image}
-                    title="green iguana"
+                    title={resource.name}
                 />
                 <CardContent className="cardContent">
                     <Typography gutterBottom variant="h6" component="div">
