@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: balsam-ui
+  labels:
+    app: balsam-ui
+  namespace: balsam-system
+spec:
+  replicas: {{ .Values.replicaCount }} #En gemensam replicaCount för att styra alla api:er, kan ändras
+  selector:
+    matchLabels:
+      app: balsam-ui
+  template:
+    metadata:
+      labels:
+        app: balsam-ui
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+      containers:
+      - name: balsam-ui
+        image: "{{ .Values.balsamUi.image.repository }}:{{ .Values.balsamUi.image.tag }}"
+        imagePullPolicy: {{ .Values.balsamUi.image.pullPolicy }}
+        volumeMounts:
+          - name: {{ .Values.balsamApi.configMap.name }}
+            mountPath: "/app/config.json"
+            readOnly: true
+            subPath: config.json
+          - name: {{ .Values.balsamApi.configMap.name }}
+            mountPath: "/app/keycloak.json"
+            readOnly: true
+            subPath: keycloak.json
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.balsamApi.configMap.name }}
+        resources:
+          requests:
+            memory: "200Mi"
+            cpu: "500m"
+          limits:
+            memory: "200Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: {{ .Values.balsamUi.containerPort }}
+      volumes:
+        - name: {{ .Values.balsamApi.configMap.name }}
+          configMap:
+            name: {{ .Values.balsamApi.configMap.name }}

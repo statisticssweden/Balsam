@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.balsamApi.configMap.name }}
+  namespace: balsam-system
+data:
+  config.json: |-
+    {
+        "apiurl": "http://{{ .Values.balsamApi.ingress.hosts.host }}/api/v1"
+    }
+  keycloak.json: |-
+    {
+      "realm": "{{ .Values.oidcProvider.configMap.data.KEYCLOAK__Realm }}",
+      "auth-server-url": "{{ .Values.oidcProvider.configMap.data.KEYCLOAK__BaseUrl }}/",
+      "ssl-required": "external",
+      "resource": "balsam-ui",
+      "public-client": true,
+      "verify-token-audience": true,
+      "use-resource-role-mappings": true,
+      "confidential-port": 0
+    }
