@@ -9,7 +9,7 @@ balsamApi:
     repository: # The repository for balsamApi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.21 # The tag for balsamApi
+    tag: 0.0.20 # The tag for balsamApi
   service:
     type: ClusterIP
     port: 80
@@ -23,7 +23,7 @@ balsamApi:
     name: balsam-api-config
     data:
       repoUrl: ##The URL for the hubrepo with protocol e.g. http/https
-      authority: 
+      authority: ##
   ingress:
     enabled: true
     annotations: {
@@ -39,11 +39,11 @@ balsamUi:
     repository: # The repository for balsamApi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.1 # The tag for balsamApi
+    tag: 0.0.2 # The tag for balsamApi
   service:
     type: ClusterIP
     port: 80
-  containerPort: 80 #8080?
+  containerPort: 8080 #8080?
   configMap:
     name: ##the name of the configmap balsam-api-config 
   ingress:
@@ -61,7 +61,7 @@ s3Provider:
     repository: # The repository for the s3Provider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.3 # The tag for the s3Provider API
+    tag: 0.0.2 # The tag for the s3Provider API
   service:
     type: ClusterIP
     port: 80

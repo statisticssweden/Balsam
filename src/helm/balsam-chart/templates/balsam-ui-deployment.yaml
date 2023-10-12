@@ -23,17 +23,18 @@ spec:
         image: "{{ .Values.balsamUi.image.repository }}:{{ .Values.balsamUi.image.tag }}"
         imagePullPolicy: {{ .Values.balsamUi.image.pullPolicy }}
         volumeMounts:
-          - name: {{ .Values.balsamApi.configMap.name }}
-            mountPath: "/app/config.json"
+          - name: {{ .Values.balsamUi.configMap.name }}
+            mountPath: "/usr/share/nginx/html/config.json"
             readOnly: true
             subPath: config.json
-          - name: {{ .Values.balsamApi.configMap.name }}
-            mountPath: "/app/keycloak.json"
+          - name: {{ .Values.balsamUi.configMap.name }}
+            mountPath: "/usr/share/nginx/html/keycloak.json"
             readOnly: true
             subPath: keycloak.json
-        envFrom:
-        - configMapRef:
-            name: {{ .Values.balsamApi.configMap.name }}
+          - name: {{.Values.balsamUi.configMap.name }}
+            mountPath: "/etc/nginx/conf.d/default.conf"
+            readOnly: true
+            subPath: default.conf
         resources:
           requests:
             memory: "200Mi"
@@ -44,6 +45,6 @@ spec:
         ports:
         - containerPort: {{ .Values.balsamUi.containerPort }}
       volumes:
-        - name: {{ .Values.balsamApi.configMap.name }}
+        - name: {{ .Values.balsamUi.configMap.name }}
           configMap:
-            name: {{ .Values.balsamApi.configMap.name }}
+            name: {{ .Values.balsamUi.configMap.name }}
