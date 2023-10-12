@@ -6,11 +6,12 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
-import BalsamApi from '../services/BalsamAPIServices';
-import { CreateProjectRequest } from '../Model/ApiModels';
+import BalsamApiOld from '../services/BalsamAPIServices';
+//import { CreateProjectRequest } from '../Model/ApiModels';
 import { Box, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { postSuccess, postError} from '../Alerts/alertsSlice';
+import BalsamAPI, {CreateProjectRequest} from '../services/BalsamAPIServices'
 
 
 export interface NewProjectDialogProperties
@@ -45,7 +46,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
 
     const showNewItemCreatedAlert = (message: string, id: string) => 
     {
-        dispatch(postSuccess(message, {caption: "Öppna", href: `/projects/${id}`} ));
+        dispatch(postSuccess(message, {caption: "Öppna", href: `/project/${id}`} ));
     }
 
     const handleClickOpen = () => {
@@ -139,13 +140,13 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
             branchName: branchName
         }
 
-        BalsamApi.postProject(project).then((response => {
+        BalsamAPI.projectApi.createProject(project).then((response => {
             
             setOpen(false);
             props.onClosing();
-            showNewItemCreatedAlert(`Projekt "${response.name}" är skapat`, response.id);
+            showNewItemCreatedAlert(`Projekt "${response.data.name}" är skapat`, response.data.id);
             
-        }), (reason) => {
+        }), () => {
                 
             dispatch(postError("Det gick inte att skapa projektet"))
 

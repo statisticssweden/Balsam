@@ -59,7 +59,7 @@ export default function Alerter() {
                                     {currentAlert.link.caption}
                                     </a>) : ("");
             
-            return <Snackbar anchorOrigin={{vertical: "top", horizontal: "center"}} open={true} autoHideDuration={600000} onClose={handleSnackbarClose}>
+            return <Snackbar anchorOrigin={{vertical: "top", horizontal: "center"}} open={true} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <Alert onClose={handleAlertClose} severity={currentAlert.severity as AlertColor} sx={{ width: '100%' }}>
                 <div className='alert-content' ><div>{currentAlert.text}</div><div> {link}</div></div>
                 </Alert>

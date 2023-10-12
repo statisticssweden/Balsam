@@ -553,7 +553,7 @@ components:
         description:
           type: string
           description: Description of the branch
-        IsDefault:
+        isDefault:
           type: boolean
           description: If the branch is the default branch of the project
 

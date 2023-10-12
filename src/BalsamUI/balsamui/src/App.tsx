@@ -5,17 +5,13 @@ import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import ProjectsPage from './ProjectsPage/ProjectsPage';
+import ProjectPage from './ProjectPage/ProjectPage';
 
-//import { useState } from 'react'
 import './App.css'
 import Alerter  from './Alerter/Alerter';
-
-
-
+import ResoruceMarkdownPage from './ResourceMarkdownPage/ResoruceMarkdownPage';
 
 function App() {
-    //const [count, setCount] = useState(0)
-
     return (
         
         <React.Fragment>
@@ -31,6 +27,8 @@ function App() {
                 
                  <Routes>
                     <Route path="/" element={<ProjectsPage />} />
+                    <Route path="project/:id" element={<ProjectPage />} />
+                    <Route path="resorucemarkdown" element={<ResoruceMarkdownPage />} />
                  </Routes>
              </div>
              <Alerter />
