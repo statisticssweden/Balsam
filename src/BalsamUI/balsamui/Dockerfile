@@ -1,7 +1,10 @@
 FROM node:18-alpine as build
 WORKDIR /app
 COPY . ./
+ENV NODE_ENV=development
 RUN npm install
+
+# ENTRYPOINT ["tail", "-f", "/dev/null"]
 RUN npm run build
 
 # production environment
