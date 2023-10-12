@@ -447,8 +447,10 @@ components:
       type: object
       description: File information
       required:
-        - "id"
+        - "path"
         - "name"
+        - "type"
+        - "contentUrl"
       properties:
         path:
           type: string

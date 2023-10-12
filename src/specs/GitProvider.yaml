@@ -76,6 +76,41 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400NoRepo'    
 
+  /repos/{repositoryId}/branches/{branchId}/files:
+    get:
+      tags: 
+        - Repository
+      operationId: GetFilesInBranch
+      description: Gets file descriptions of all files in a git branch for specified repository
+   
+      parameters:
+        - name: repositoryId
+          in: path
+          description: The id of the repository.
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: path
+          description: The id of the branch.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileListResponse'
+
+                example: |
+                  repository: demo-repot
+                  preferedName: Demo repot
+                  name: demo-repot
+        '400':
+          $ref: '#/components/responses/ErrorResponse400NoRepo'  
+
   /users/{id}/PAT:
     post:
       tags: 
@@ -106,6 +141,35 @@ paths:
     
 components:
   schemas:
+    FileListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/File' 
+
+    File:
+      type: object
+      description: File information
+      required:
+        - "path"
+        - "name"
+        - "type"
+        - "contentUrl"
+      properties:
+        path:
+          type: string
+          description: The full relative path 
+        name:
+          type: string
+          description: The name
+        type:
+          type: string
+          description: Description of the template
+          enum:
+            - File
+            - Folder
+        contentUrl:
+          type: string
+          description: Url to the raw content of the file
     CreateRepositoryRequest:
       type: object
       description: Payload for creating new repository
