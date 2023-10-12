@@ -1,14 +1,13 @@
 import HttpService from './HttpServices';
 import { Configuration } from '../../BalsamAPI/configuration';
 import { ProjectApi } from '../../BalsamAPI/api'
-
-const apiMockUrl = "http://balsam-api-mock.tanzu.scb.intra/api/v1";
+import config from '../configuration/configuration';
 
 const configuration = new Configuration({
-    basePath: apiMockUrl, 
+    basePath: config.apiurl, 
   });
 
-const projectApi = new ProjectApi(configuration, apiMockUrl, HttpService.getAxiosClient() );
+const projectApi = new ProjectApi(configuration, config.apiurl, HttpService.getAxiosClient() );
 
 const BalsamAPI = {
     projectApi
