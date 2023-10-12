@@ -11,7 +11,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>S3Provider</AssemblyName>
     <PackageId>S3Provider</PackageId>
-    <UserSecretsId>faa701e1-08e7-4421-bdd5-a76a31a20cd0</UserSecretsId>
+    <UserSecretsId>eff04413-a94f-4783-a7af-4ea869ae57fc</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
