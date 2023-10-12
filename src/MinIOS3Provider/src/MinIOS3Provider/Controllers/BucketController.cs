@@ -36,7 +36,7 @@ namespace MinIOS3Provider.Controllers
             var name = NameUtil.SanitizeBucketName(createBucketRequest.Name);
 
             _client.CreateBucket(name);
-            _client.CreatePolicy(name);
+            _client.CreatePolicy(createBucketRequest.PolicyName);
             _client.CreateUser(name);
 
             return Ok(new BucketCreatedResponse() { Name = name, RequestedName = createBucketRequest.Name });

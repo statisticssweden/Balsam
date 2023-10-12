@@ -1,33 +1,30 @@
 openapi: 3.0.2
 info:
-  description: This a service contract for the OidcProvider in Balsam.
-  title: OidcProvider
+  description: This a service contract for the OicdProvider in Balsam.
+  title: S3Provider
   version: "2.0"
 servers:
-- url: http://oidc-provider.balsam-system.svc.cluster.local/api/v1
+- url: http://s3-provider.balsam-system.svc.cluster.local/api/v1
 tags:
-- description: Group methods
-  name: Group
+- description: Buckets methods
+  name: Bucket
 paths:
-  /groups:
+  /buckets:
     post:
-      description: Creates a new group
-      operationId: CreateGroup
+      description: Creates a new Bucket
+      operationId: CreateBucket
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateGroupRequest'
-        description: Definition of a new group
+              $ref: '#/components/schemas/CreateBucketRequest'
+        description: Definition of a new role
       responses:
         "200":
           content:
             application/json:
-              example:
-                name: demo_users
-                id: 12
               schema:
-                $ref: '#/components/schemas/GroupCreatedResponse'
+                $ref: '#/components/schemas/BucketCreatedResponse'
           description: Success
         "400":
           content:
@@ -40,16 +37,16 @@ paths:
                 $ref: '#/components/schemas/Problem'
           description: Error respsone for 400
       tags:
-      - Group
-  /groups/{groupId}/users:
+      - Bucket
+  /buckets/{bucketId}/folder:
     post:
-      description: Adds a user to the group
-      operationId: AddUserToGroup
+      description: Creates a new virtual folder in the bucket.
+      operationId: CreateFolder
       parameters:
-      - description: The id for the group
+      - description: the name of the bucket
         explode: false
         in: path
-        name: groupId
+        name: bucketId
         required: true
         schema:
           type: string
@@ -58,10 +55,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddUserToGroupRequest'
-        description: Definition of the user to add to the group
+              $ref: '#/components/schemas/CreateFolderRequest'
+        description: Definition of a new role
       responses:
         "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FolderCreatedResponse'
           description: Success
         "400":
           content:
@@ -74,7 +75,39 @@ paths:
                 $ref: '#/components/schemas/Problem'
           description: Error respsone for 400
       tags:
-      - Group
+      - Bucket
+  /buckets/{bucketId}/acceskey:
+    post:
+      description: Creates a new acces key for the bucket.
+      operationId: CreateAccessKey
+      parameters:
+      - description: the name of the bucket
+        explode: false
+        in: path
+        name: bucketId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessKeyCreatedResponse'
+          description: Success
+        "400":
+          content:
+            application/problem+json:
+              example:
+                title: Bad Request
+                status: 400
+                detail: Generic error
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: Error respsone for 400
+      tags:
+      - Bucket
 components:
   responses:
     ErrorResponse400:
@@ -88,42 +121,81 @@ components:
             $ref: '#/components/schemas/Problem'
       description: Error respsone for 400
   schemas:
-    CreateGroupRequest:
-      description: Group name
+    CreateBucketRequest:
+      description: Bucket name
+      example:
+        policyName: policyName
+        name: name
+      properties:
+        name:
+          description: The name of the bucket
+          type: string
+        policyName:
+          description: name of the s3 policy name should match the group name in Oidc
+            provider
+          type: string
+      required:
+      - name
+      - policyName
+      type: object
+    CreateFolderRequest:
+      description: Folder name
       example:
         name: name
       properties:
         name:
-          description: The name of the group
+          description: The name of the folder
           type: string
       required:
       - name
       type: object
-    AddUserToGroupRequest:
-      description: Group name
+    BucketCreatedResponse:
+      description: Bucket description
       example:
-        userName: userName
-      properties:
-        userName:
-          description: The name of the user
-          type: string
-      required:
-      - userName
-      type: object
-    GroupCreatedResponse:
-      description: Group created response
-      example:
+        requestedName: requestedName
         name: name
-        id: id
       properties:
-        name:
-          description: The name of the group
+        requestedName:
+          description: The requested name of the bucket
           type: string
-        id:
-          description: The id to the group that can be used for accessing it.
+        name:
+          description: The name of the bucket
           type: string
       required:
       - name
+      - requestedName
+      type: object
+    FolderCreatedResponse:
+      description: Folder created description
+      example:
+        requestedName: requestedName
+        name: name
+      properties:
+        requestedName:
+          description: The requested name of the virtual folder
+          type: string
+        name:
+          description: The name of the virtual folder
+          type: string
+      required:
+      - name
+      - requestedName
+      type: object
+    AccessKeyCreatedResponse:
+      description: Access key created description
+      example:
+        secretKey: secretKey
+        accessKey: accessKey
+      properties:
+        accessKey:
+          description: The access key
+          type: string
+        secretKey:
+          description: The secret key
+          type: string
+      required:
+      - accessKey
+      - secretKey
       type: object
     Problem:
       properties:

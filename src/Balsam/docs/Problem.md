@@ -1,4 +1,4 @@
-# OidcProviderApiClient.Model.Problem
+# S3ProviderApiClient.Model.Problem
 
 ## Properties
 
