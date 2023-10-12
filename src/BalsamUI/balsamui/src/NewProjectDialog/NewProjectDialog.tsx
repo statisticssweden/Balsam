@@ -6,8 +6,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
-import BalsamApiOld from '../services/BalsamAPIServices';
-//import { CreateProjectRequest } from '../Model/ApiModels';
 import { Box, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { postSuccess, postError} from '../Alerts/alertsSlice';
@@ -19,11 +17,13 @@ export interface NewProjectDialogProperties
     onClosing: () => void
 }
 
+const defaultBranchName = "main";
+
 export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const [open, setOpen] = useState(false);
     const [projectName, setProjectName] = useState("");
     const [projectDescription, setProjectDescription] = useState("");
-    const [branchName, setBranchName] = useState("main");
+    const [branchName, setBranchName] = useState(defaultBranchName);
     const [projectNameError, setProjectNameError] = useState(false);
     const [projectNameHelperText, setProjectNameHelperText] = useState("")
     const [branchNameError, setBranchNameError] = useState(false);
@@ -46,17 +46,33 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
 
     const showNewItemCreatedAlert = (message: string, id: string) => 
     {
-        dispatch(postSuccess(message, {caption: "Öppna", href: `/project/${id}`} ));
+        dispatch(postSuccess(message, {caption: "Öppna", href: `/project/${id}`} )); //TODO: Language
     }
 
     const handleClickOpen = () => {
         setOpen(true);
-        
+    };
+
+    const resetDialog = () => {
+        setProjectName("");
+        setProjectNameError(false);
+        setProjectNameHelperText("");
+        setProjectDescription("");
+        setBranchName(defaultBranchName);
+        setBranchNameError(false);
+        setBranchNameHelperText("");
     };
 
     const handleCancel = () => {
         setOpen(false);
         props.onClosing();
+        resetDialog();
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+        props.onClosing();
+        resetDialog();
     };
 
     const projectNameChanged = (name: string) => {
@@ -114,7 +130,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
 
         if(name === "")
         {
-            errors.push("Projektet måste ha ett namn");
+            errors.push("Projektet måste ha ett namn"); //TODO: Language
         }
 
         return errors;
@@ -125,7 +141,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
 
         if(name === "")
         {
-            errors.push("Defaultbranchen måste ha ett namn");
+            errors.push("Defaultbranchen måste ha ett namn"); //TODO: Language
         }
 
         return errors;
@@ -144,14 +160,15 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
             
             setOpen(false);
             props.onClosing();
-            showNewItemCreatedAlert(`Projekt "${response.data.name}" är skapat`, response.data.id);
-            
+            resetDialog();
+            showNewItemCreatedAlert(`Projekt "${response.data.name}" är skapat`, response.data.id); //TODO: Language
         }), () => {
                 
-            dispatch(postError("Det gick inte att skapa projektet"))
+            dispatch(postError("Det gick inte att skapa projektet")); //TODO: Language
 
         });
-    
+
+        
     };
 
     return (
@@ -163,7 +180,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
             
             <Dialog
                 open={open}
-                onClose={handleCancel}
+                onClose={handleClose}
                 fullWidth={true}
             >
                 <DialogTitle>Skapa projekt</DialogTitle>
@@ -179,7 +196,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                             m:'auto'
                         }}
                         component='form'>
-                            
+                        {/* TODO: Language */}
                         <FormControl sx={{ mt: 4}}>
                             <TextField id="name-input" error={projectNameError} helperText={projectNameHelperText} label="Namn" variant='standard' required value={projectName} onChange={e => projectNameChanged(e.target.value)} aria-describedby="Projektets namn" />
                         </FormControl>
