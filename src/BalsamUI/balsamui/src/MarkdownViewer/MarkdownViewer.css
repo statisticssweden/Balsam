@@ -1,0 +1,24 @@
+.markdown-view  {
+    /*background-color: lightgrey;*/    
+}
+
+    .markdown-view h1 {
+        font-size: x-large;
+        margin-bottom: 10px;
+        font-weight: 400;
+    }
+
+    .markdown-view h2 {
+        font-size: large;
+        font-weight: 300;
+        margin-bottom: 10px;
+    }
+
+    .markdown-view h3 {
+        font-size: medium;
+        margin-bottom: 10px;
+    }
+
+    .markdown-view p {
+        margin: 10px 0 10px 0;
+    }

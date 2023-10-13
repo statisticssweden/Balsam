@@ -1,13 +1,15 @@
-import BalsamApi from '../services/BalsamAPIServices';
 import ProjectCard from '../ProjectCard/ProjectCard';
 import { useState, useEffect } from 'react';
 import NewProjectDialog from '../NewProjectDialog/NewProjectDialog';
 import './ProjectsPage.css';
 import { useDispatch } from 'react-redux';
 import { postError } from '../Alerts/alertsSlice';
+import BalsamAPI, {Project} from '../services/BalsamAPIServices'
+
 
 export default function ProjectsPage() {
-    const [projects, setProjects] = useState<Array<any>>();
+
+    const [projects, setProjects] = useState<Array<Project>>();
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
 
@@ -16,14 +18,18 @@ export default function ProjectsPage() {
         setLoading(true);
 
         const fetchData = async () => {
-            let promise = BalsamApi.getProjects();
-            promise.catch((reason) => {
+            // let promise = BalsamApiOld.getProjects();
+            let promise = BalsamAPI.projectApi.listProjects(true);
+            promise.catch(() => {
                 
                 dispatch(postError("Det gick inte att ladda projekt"))
             })
-            let projects = await promise;
-            setProjects(projects);
+
+            let listProjectsResponse = await promise;
+            
+            setProjects(listProjectsResponse.data.projects);
             setLoading(false);
+
         }
 
         fetchData()
@@ -40,7 +46,7 @@ export default function ProjectsPage() {
 
     };
 
-    function renderProjectsTable(projs: Array<any>) {
+    function renderProjectsTable(projs: Array<Project>) {
         return (
 
             <div className='cards' aria-labelledby="tabelLabel">
@@ -58,7 +64,7 @@ export default function ProjectsPage() {
 
     let contents = loading
         ? <p><em>Laddar...</em></p>
-        : renderProjectsTable(projects as Array<any>);
+        : renderProjectsTable(projects as Array<Project>);
 
     return (
         <div>

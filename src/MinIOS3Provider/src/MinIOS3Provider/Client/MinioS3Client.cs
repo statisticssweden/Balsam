@@ -12,7 +12,6 @@ namespace MinIOS3Provider.Client
         private readonly string _apiUrl;
         private readonly string _accessKey;
         private readonly string _secretKey;
-        private readonly string _directoryStructure;
 
         public MinioS3Client(IOptions<ApiOptions> options, ILogger<MinioS3Client> logger)
         {
@@ -178,14 +177,14 @@ namespace MinIOS3Provider.Client
         /// <summary>
         /// Creates a policy for full access to a bucket.
         /// </summary>
-        /// <param name="bucketName">name of the bucket</param>
-        public void CreatePolicy(string bucketName)
+        /// <param name="policyName">name of the bucket</param>
+        public void CreatePolicy(string policyName)
         {
-            var jsonPolicy = GetJsonPolicy(bucketName);
+            var jsonPolicy = GetJsonPolicy(policyName);
             var policyPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             File.WriteAllText(policyPath, jsonPolicy);
 
-            var cmd = $"admin policy add balsam {bucketName}-users {policyPath}";
+            var cmd = $"admin policy add balsam {policyName} {policyPath}";
             var i = MC(cmd).Result;
 
             if (i != 0)
@@ -199,23 +198,23 @@ namespace MinIOS3Provider.Client
         /// Note that a bucket policy with the name bucketname-users must exisit
         /// </summary>
         /// <param name="bucketName"></param>
-        public void CreateUser(string bucketName)
+        public void CreateUser(string bucketName, string policyName)
         {
             var secret = TokenGenerate();
             var userName = $"svc-{bucketName}";
             var cmd = $"admin user add balsam {userName} {secret}";
             var i = MC(cmd).Result;
 
-            AddPolicyUser(bucketName, userName);
+            AddPolicyToUser(policyName, userName);
         }
 
         /// <summary>
         /// Adds a user to a existing policy by the naming rule of the policy as <bucketName>-user
         /// </summary>
-        /// <param name="bucketName">Name of the bucket</param>
-        private void AddPolicyUser(string bucketName, string userName)
+        /// <param name="policyName">Name of the bucket</param>
+        private void AddPolicyToUser(string policyName, string userName)
         {
-            var cmd = $"admin policy set balsam {bucketName}-users user={userName}";
+            var cmd = $"admin policy set balsam {policyName} user={userName}";
             var i = MC(cmd).Result;
         }
 

@@ -33,17 +33,25 @@ namespace MinIOS3Provider.Controllers
 
            public override IActionResult CreateBucket([FromBody] CreateBucketRequest? createBucketRequest)
         {
+            if (createBucketRequest is null)
+            {
+                return BadRequest(new Problem() { Status = 400, Type = "Parameter error", Title = "Missing request data" });
+            }
             var name = NameUtil.SanitizeBucketName(createBucketRequest.Name);
 
             _client.CreateBucket(name);
-            _client.CreatePolicy(name);
-            _client.CreateUser(name);
+            _client.CreatePolicy(createBucketRequest.PolicyName);
+            _client.CreateUser(name, createBucketRequest.PolicyName);
 
             return Ok(new BucketCreatedResponse() { Name = name, RequestedName = createBucketRequest.Name });
         }
 
         public override IActionResult CreateFolder([FromRoute(Name = "bucketId"), Required] string bucketId, [FromBody] CreateFolderRequest? createFolderRequest)
         {
+            if (createFolderRequest is null)
+            {
+                return BadRequest(new Problem() { Status = 400, Type = "Parameter error", Title = "Missing request data" });
+            }
 
             if (!NameUtil.CheckObjectName(createFolderRequest.Name))
             {

@@ -10,6 +10,8 @@ using OidcProviderApiClient.Api;
 using OidcProviderApiClient.Model;
 using System.Text.RegularExpressions;
 using System.IO.Hashing;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+using RestSharp;
 
 namespace Balsam.Api
 {
@@ -148,6 +150,11 @@ namespace Balsam.Api
                 _logger.LogInformation($"Group {project.Oidc.GroupName}({project.Oidc.GroupId}) created");
             }
 
+            if (project.Oidc == null)
+            {
+                throw new Exception("Could not parse oidc data");
+            }
+
             if (_git.Enabled)
             {
                 _logger.LogDebug($"Begin call Git");
@@ -159,7 +166,7 @@ namespace Balsam.Api
             if (_s3.Enabled)
             {
                 _logger.LogDebug($"Begin call S3");
-                var s3Data = await _s3Client.CreateBucketAsync(new S3ProviderApiClient.Model.CreateBucketRequest(preferredName));
+                var s3Data = await _s3Client.CreateBucketAsync(new S3ProviderApiClient.Model.CreateBucketRequest(preferredName, project.Oidc.GroupName));
                 project.S3 = new S3Data() { BucketName = s3Data.Name };
                 _logger.LogInformation($"Bucket {project.S3.BucketName} created");
             }

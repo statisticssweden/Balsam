@@ -1,0 +1,13 @@
+.secondaryText {
+    word-wrap:break-word;
+}
+.cardContent {
+    height: 112px;
+}
+
+.cardmediaicon
+{
+    font-size: 140px;
+    margin:auto;
+    width: fit-content;
+}
