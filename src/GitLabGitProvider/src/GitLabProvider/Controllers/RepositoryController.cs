@@ -31,11 +31,9 @@ namespace GitLabProvider.Controllers
 
         public override IActionResult CreateRepository([FromBody] CreateRepositoryRequest? createRepositoryRequest)
         {
-            //TODO default branch name 
             var repoInfo = _gitLabClient.CreateProjectRepo(createRepositoryRequest.Name, createRepositoryRequest.Description, createRepositoryRequest.DefaultBranchName).Result;
             if (repoInfo != null)
             {
-                //TODO fix response
                 return Ok(new RepositoryCreatedResponse() { Name = repoInfo.Name, PreferredName = createRepositoryRequest.Name, Path = repoInfo.Url, Id = repoInfo.Id });
             }
             return BadRequest(new Problem() { Type = "404", Title = "Could not create repository" });
