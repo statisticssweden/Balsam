@@ -177,14 +177,14 @@ namespace MinIOS3Provider.Client
         /// <summary>
         /// Creates a policy for full access to a bucket.
         /// </summary>
-        /// <param name="policytName">name of the bucket</param>
-        public void CreatePolicy(string policytName)
+        /// <param name="policyName">name of the bucket</param>
+        public void CreatePolicy(string policyName)
         {
-            var jsonPolicy = GetJsonPolicy(policytName);
+            var jsonPolicy = GetJsonPolicy(policyName);
             var policyPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             File.WriteAllText(policyPath, jsonPolicy);
 
-            var cmd = $"admin policy add balsam {policytName} {policyPath}";
+            var cmd = $"admin policy add balsam {policyName} {policyPath}";
             var i = MC(cmd).Result;
 
             if (i != 0)
