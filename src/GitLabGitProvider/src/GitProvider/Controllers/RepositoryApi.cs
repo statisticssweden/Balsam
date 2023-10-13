@@ -59,5 +59,21 @@ namespace GitProvider.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(RepositoryCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
         public abstract IActionResult CreateRepository([FromBody]CreateRepositoryRequest? createRepositoryRequest);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Gets file descriptions of all files in a git branch for specified repository</remarks>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The id of the branch.</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpGet]
+        [Route("/api/v1/repos/{repositoryId}/branches/{branchId}/files")]
+        [ValidateModelState]
+        [SwaggerOperation("GetFilesInBranch")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<File>), description: "Success")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract IActionResult GetFilesInBranch([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromRoute (Name = "branchId")][Required]string branchId);
     }
 }
