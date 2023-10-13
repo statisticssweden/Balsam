@@ -36,7 +36,7 @@ namespace GitLabProvider.Controllers
             if (repoInfo != null)
             {
                 //TODO fix response
-                return Ok(new RepositoryCreatedResponse() { /*Name = repoInfo.Name, PreferredName = preferredName, Path = repoInfo.Url, Id = repoInfo.Id */});
+                return Ok(new RepositoryCreatedResponse() { Name = repoInfo.Name, PreferredName = createRepositoryRequest.Name, Path = repoInfo.Url, Id = repoInfo.Id });
             }
             return BadRequest(new Problem() { Type = "404", Title = "Could not create repository" });
         }
