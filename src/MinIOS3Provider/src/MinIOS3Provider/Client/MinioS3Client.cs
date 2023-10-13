@@ -178,7 +178,7 @@ namespace MinIOS3Provider.Client
         /// Creates a policy for full access to a bucket.
         /// </summary>
         /// <param name="policyName">name of the bucket</param>
-        public void CreatePolicy(string policyName)
+        public void CreatePolicy(string policyName, string bucketName)
         {
             var jsonPolicy = GetJsonPolicy(policyName);
             var policyPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -242,7 +242,7 @@ namespace MinIOS3Provider.Client
             return new KeyPair(secretKey, accessKey);
         }
 
-        private static string GetJsonPolicy(string programName)
+        private static string GetJsonPolicy(string bucketName)
         {
             var jsonPolicy = @$"{{
                     ""Version"": ""2012-10-17"",
@@ -253,7 +253,7 @@ namespace MinIOS3Provider.Client
                                 ""s3:ListBucket""
                             ],
                             ""Resource"": [
-                                ""arn:aws:s3:::{programName}""
+                                ""arn:aws:s3:::{bucketName}""
                             ]
                         }},
                         {{
@@ -262,7 +262,7 @@ namespace MinIOS3Provider.Client
                                 ""s3:*""
                             ],
                             ""Resource"": [
-                                ""arn:aws:s3:::{programName}/*""
+                                ""arn:aws:s3:::{bucketName}/*""
                             ]
                         }}
                     ]
