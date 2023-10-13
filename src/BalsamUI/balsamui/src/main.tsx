@@ -8,7 +8,7 @@ import HttpService from './services/HttpServices.ts';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { svSE, enUS } from '@mui/material/locale';
+import { svSE } from '@mui/material/locale';
 import store from './App/store.ts';
 
 const theme = createTheme(
@@ -27,6 +27,7 @@ const root = ReactDOM.createRoot(
 const renderApp = () =>
     root.render(
       <Provider store={store}>
+        
         <React.StrictMode>
             <ThemeProvider theme={theme}>
                 <BrowserRouter>
@@ -34,6 +35,7 @@ const renderApp = () =>
                 </BrowserRouter>
             </ThemeProvider>
         </React.StrictMode>
+        
       </Provider>
     );
 

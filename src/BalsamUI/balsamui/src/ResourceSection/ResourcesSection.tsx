@@ -15,7 +15,7 @@ export default function ResourcesSection(props: ResourceSectionProperties) {
             
             <div className='cards' aria-labelledby="tabelLabel">
                 {resources.map((resource: Resource) =>
-                    <ResourceCard projectid={props.projectid} branch={props.branch} resource={resource} key={resource.filePath} />
+                    <ResourceCard resource={resource} key={resource.filePath} />
                 )}
             </div>
         );

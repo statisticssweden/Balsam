@@ -1,4 +1,4 @@
-import {useState, Fragment, useEffect} from 'react';
+import {useState, Fragment, useEffect, useContext} from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -9,7 +9,8 @@ import FormControl from '@mui/material/FormControl';
 import { Box, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { postSuccess, postError} from '../Alerts/alertsSlice';
-import BalsamAPI, {CreateProjectRequest} from '../services/BalsamAPIServices'
+import { CreateProjectRequest } from '../services/BalsamAPIServices'
+import AppContext, { AppContextState } from '../configuration/AppContext';
 
 
 export interface NewProjectDialogProperties
@@ -30,6 +31,8 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const [branchNameHelperText, setBranchNameHelperText] = useState("")
     const [okEnabled, setOkEnabled] = useState(false);
     const dispatch = useDispatch();
+
+    const appContext = useContext(AppContext) as AppContextState;
 
     useEffect(() => {
         updateOkEnabled(projectName, branchName);
@@ -156,7 +159,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
             branchName: branchName
         }
 
-        BalsamAPI.projectApi.createProject(project).then((response => {
+        appContext.balsamApi.projectApi.createProject(project).then((response => {
             
             setOpen(false);
             props.onClosing();
