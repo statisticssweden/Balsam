@@ -11,6 +11,8 @@ import AppContext, { AppContextState } from '../configuration/AppContext';
 export default function ProjectsPage() {
 
     const [projects, setProjects] = useState<Array<Project>>();
+
+    const [projects, setProjects] = useState<Array<Project>>();
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const appContext = useContext(AppContext) as AppContextState;
@@ -29,7 +31,12 @@ export default function ProjectsPage() {
             let listProjectsResponse = await promise;
             
             setProjects(listProjectsResponse.data.projects);
+
+            let listProjectsResponse = await promise;
+            
+            setProjects(listProjectsResponse.data.projects);
             setLoading(false);
+
 
         }
 
@@ -48,6 +55,7 @@ export default function ProjectsPage() {
     };
 
     function renderProjectsTable(projs: Array<Project>) {
+    function renderProjectsTable(projs: Array<Project>) {
         return (
 
             <div className='cards' aria-labelledby="tabelLabel">
@@ -65,6 +73,7 @@ export default function ProjectsPage() {
 
     let contents = loading
         ? <p><em>Laddar...</em></p>
+        : renderProjectsTable(projects as Array<Project>);
         : renderProjectsTable(projects as Array<Project>);
 
     return (

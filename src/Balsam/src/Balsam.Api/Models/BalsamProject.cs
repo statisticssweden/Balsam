@@ -7,6 +7,8 @@
         public string Description { get; set; }
         public S3Data? S3 { get; set; }
         public GitData? Git { get; set; }
+        public OidcData? Oidc { get; set; }
+
         public List<BalsamBranch> Branches { get; set; }
 
         public BalsamProject(string id, string name, string description)

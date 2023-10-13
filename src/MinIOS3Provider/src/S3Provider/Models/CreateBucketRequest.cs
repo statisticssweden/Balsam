@@ -35,6 +35,14 @@ namespace S3Provider.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// name of the s3 policy name should match the group name in Oidc provider
+        /// </summary>
+        /// <value>name of the s3 policy name should match the group name in Oidc provider</value>
+        [Required]
+        [DataMember(Name="policyName", EmitDefaultValue=false)]
+        public string PolicyName { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -43,6 +51,7 @@ namespace S3Provider.Models
             var sb = new StringBuilder();
             sb.Append("class CreateBucketRequest {\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  PolicyName: ").Append(PolicyName).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -83,6 +92,11 @@ namespace S3Provider.Models
                     Name == other.Name ||
                     Name != null &&
                     Name.Equals(other.Name)
+                ) && 
+                (
+                    PolicyName == other.PolicyName ||
+                    PolicyName != null &&
+                    PolicyName.Equals(other.PolicyName)
                 );
         }
 
@@ -98,6 +112,8 @@ namespace S3Provider.Models
                 // Suitable nullity checks etc, of course :)
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
+                    if (PolicyName != null)
+                    hashCode = hashCode * 59 + PolicyName.GetHashCode();
                 return hashCode;
             }
         }

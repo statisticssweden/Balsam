@@ -8,10 +8,10 @@ metadata:
   annotations:
 {{ toYaml .Values.balsamApi.ingress.annotations | indent 4 }}
 spec:  
-  tls:
-  - hosts:
-      - {{ .Values.balsamApi.ingress.hosts.host }}
-    secretName: balsam-api-certificate
+  # tls:
+  # - hosts:
+  #     - {{ .Values.balsamApi.ingress.hosts.host }}
+  #   secretName: balsam-api-certificate
   rules:
   - host: {{ .Values.balsamApi.ingress.hosts.host }}
     http:

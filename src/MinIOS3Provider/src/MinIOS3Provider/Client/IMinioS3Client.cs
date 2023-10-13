@@ -4,7 +4,7 @@
     {
         Task CreateBucket(string bucketName);
         void CreatePolicy(string programName);
-        void CreateUser(string programName);
+        void CreateUser(string programName, string policyName);
         Task CreateDirectory(string bucket, string directory);
         KeyPair CreateAccessKey(string programName);
     }

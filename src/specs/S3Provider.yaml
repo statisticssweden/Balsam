@@ -95,10 +95,14 @@ components:
       description: Bucket name
       required:
         - "name"
+        - "policyName"
       properties:
         name:
           type: string
           description: The name of the bucket
+        policyName:
+          type: string
+          description: name of the s3 policy name should match the group name in Oidc provider
 
     CreateFolderRequest:
       type: object

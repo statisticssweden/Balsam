@@ -22,6 +22,11 @@ spec:
       - name: minio-s3-provider
         image: "{{ .Values.s3Provider.image.repository }}:{{ .Values.s3Provider.image.tag }}"
         imagePullPolicy: {{ .Values.s3Provider.image.pullPolicy }}
+        volumeMounts:
+          - name: s3-templates
+            mountPath: "/app/readme.txt"
+            readOnly: true
+            subPath: readme.txt
         envFrom:
         - secretRef:
             name: {{ .Values.s3Provider.secret.name }}
@@ -36,3 +41,7 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: {{ .Values.s3Provider.containerPort }}
+      volumes:
+        - name: s3-templates
+          configMap:
+            name: s3-templates

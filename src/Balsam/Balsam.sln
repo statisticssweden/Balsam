@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitProviderApiClient", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GitProviderApiClient.Test", "src\GitProviderApiClient.Test\GitProviderApiClient.Test.csproj", "{3E040A54-0F81-436A-B1F9-6570F27B46F8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcProviderApiClient", "src\OidcProviderApiClient\OidcProviderApiClient.csproj", "{DAB11BBB-A485-4E63-AC01-FBB279ED19BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcProviderApiClient.Test", "src\OidcProviderApiClient.Test\OidcProviderApiClient.Test.csproj", "{75CBE72A-B84E-4E05-BB65-2E6C964FBBE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{3E040A54-0F81-436A-B1F9-6570F27B46F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E040A54-0F81-436A-B1F9-6570F27B46F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E040A54-0F81-436A-B1F9-6570F27B46F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAB11BBB-A485-4E63-AC01-FBB279ED19BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAB11BBB-A485-4E63-AC01-FBB279ED19BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAB11BBB-A485-4E63-AC01-FBB279ED19BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAB11BBB-A485-4E63-AC01-FBB279ED19BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75CBE72A-B84E-4E05-BB65-2E6C964FBBE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75CBE72A-B84E-4E05-BB65-2E6C964FBBE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75CBE72A-B84E-4E05-BB65-2E6C964FBBE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75CBE72A-B84E-4E05-BB65-2E6C964FBBE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

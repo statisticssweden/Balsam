@@ -14,6 +14,7 @@ builder.Services.AddSingleton(typeof(HttpClient));
 builder.Services.AddSingleton<IKeyCloakClient, KeyCloakClient>();
 
 var app = builder.Build();
+app.UseHttpLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -21,8 +22,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

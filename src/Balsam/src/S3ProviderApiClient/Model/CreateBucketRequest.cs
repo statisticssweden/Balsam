@@ -40,7 +40,8 @@ namespace S3ProviderApiClient.Model
         /// Initializes a new instance of the <see cref="CreateBucketRequest" /> class.
         /// </summary>
         /// <param name="name">The name of the bucket (required).</param>
-        public CreateBucketRequest(string name = default(string))
+        /// <param name="policyName">name of the s3 policy name should match the group name in Oidc provider (required).</param>
+        public CreateBucketRequest(string name = default(string), string policyName = default(string))
         {
             // to ensure "name" is required (not null)
             if (name == null)
@@ -48,6 +49,12 @@ namespace S3ProviderApiClient.Model
                 throw new ArgumentNullException("name is a required property for CreateBucketRequest and cannot be null");
             }
             this.Name = name;
+            // to ensure "policyName" is required (not null)
+            if (policyName == null)
+            {
+                throw new ArgumentNullException("policyName is a required property for CreateBucketRequest and cannot be null");
+            }
+            this.PolicyName = policyName;
         }
 
         /// <summary>
@@ -58,6 +65,13 @@ namespace S3ProviderApiClient.Model
         public string Name { get; set; }
 
         /// <summary>
+        /// name of the s3 policy name should match the group name in Oidc provider
+        /// </summary>
+        /// <value>name of the s3 policy name should match the group name in Oidc provider</value>
+        [DataMember(Name = "policyName", IsRequired = true, EmitDefaultValue = true)]
+        public string PolicyName { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -66,6 +80,7 @@ namespace S3ProviderApiClient.Model
             StringBuilder sb = new StringBuilder();
             sb.Append("class CreateBucketRequest {\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  PolicyName: ").Append(PolicyName).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -105,6 +120,11 @@ namespace S3ProviderApiClient.Model
                     this.Name == input.Name ||
                     (this.Name != null &&
                     this.Name.Equals(input.Name))
+                ) && 
+                (
+                    this.PolicyName == input.PolicyName ||
+                    (this.PolicyName != null &&
+                    this.PolicyName.Equals(input.PolicyName))
                 );
         }
 
@@ -120,6 +140,10 @@ namespace S3ProviderApiClient.Model
                 if (this.Name != null)
                 {
                     hashCode = (hashCode * 59) + this.Name.GetHashCode();
+                }
+                if (this.PolicyName != null)
+                {
+                    hashCode = (hashCode * 59) + this.PolicyName.GetHashCode();
                 }
                 return hashCode;
             }
