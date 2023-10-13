@@ -9,7 +9,7 @@ balsamApi:
     repository: # The repository for balsamApi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.20 # The tag for balsamApi
+    tag: 0.0.21 # The tag for balsamApi
   service:
     type: ClusterIP
     port: 80
@@ -61,7 +61,7 @@ s3Provider:
     repository: # The repository for the s3Provider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.2 # The tag for the s3Provider API
+    tag: 0.0.4 # The tag for the s3Provider API
   service:
     type: ClusterIP
     port: 80
@@ -104,7 +104,7 @@ gitProvider:
     repository: # The repository for the gitProvider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.5 # The tag for the gitProvider API
+    tag: 0.0.6 # The tag for the gitProvider API
   service:
     type: ClusterIP
     port: 80
