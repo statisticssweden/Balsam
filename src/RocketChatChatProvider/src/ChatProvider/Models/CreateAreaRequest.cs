@@ -19,12 +19,20 @@ using Newtonsoft.Json;
 using ChatProvider.Converters;
 
 namespace ChatProvider.Models
-{ 
+{
+    public interface ICreateAreaRequest
+    {
+    }
+
+    public interface ICreateAreaRequest2
+    {
+    }
+
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public class CreateAreaRequest : IEquatable<CreateAreaRequest>
+    public class CreateAreaRequest : IEquatable<CreateAreaRequest>, ICreateAreaRequest, ICreateAreaRequest2
     {
         /// <summary>
         /// The name of the area
