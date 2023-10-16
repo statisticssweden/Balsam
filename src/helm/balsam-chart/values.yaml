@@ -61,7 +61,7 @@ s3Provider:
     repository: # The repository for the s3Provider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.4 # The tag for the s3Provider API
+    tag: 0.0.7 # The tag for the s3Provider API
   service:
     type: ClusterIP
     port: 80
