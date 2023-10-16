@@ -180,7 +180,7 @@ namespace MinIOS3Provider.Client
         /// <param name="policyName">name of the bucket</param>
         public void CreatePolicy(string policyName, string bucketName)
         {
-            var jsonPolicy = GetJsonPolicy(policyName);
+            var jsonPolicy = GetJsonPolicy(bucketName);
             var policyPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             File.WriteAllText(policyPath, jsonPolicy);
 
