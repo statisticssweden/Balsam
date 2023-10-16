@@ -5,7 +5,7 @@ export interface AppConfiguration
     apiurl: string
 }
 
-const getConfig = async ():Promise<AppConfiguration> => 
+export const getConfig = async ():Promise<AppConfiguration> => 
 {
     let config = await fetch(configFile)
         .then(async (result) => {
@@ -14,16 +14,16 @@ const getConfig = async ():Promise<AppConfiguration> =>
                 return json;
             })
             .catch(()=> {
-                alert("Det gick inte att läsa in konfigurationsfil."); //TODO: Language 
+                throw("Det gick inte att läsa in konfigurationsfil."); //TODO: Language 
             })
         }
         ).catch(() => {
-            alert("Det gick inte att hämta konfigurationsfil."); //TODO: Language
+            throw("Det gick inte att hämta konfigurationsfil."); //TODO: Language
         });
 
     return config as AppConfiguration;
 }
 
-const config = await getConfig();
+// const config = await getConfig();
 
-export default config;
+// export default config;

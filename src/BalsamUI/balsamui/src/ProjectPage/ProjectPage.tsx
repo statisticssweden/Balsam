@@ -1,4 +1,4 @@
-import BalsamApi, {Project, Branch} from '../services/BalsamAPIServices';
+import {Project, Branch} from '../services/BalsamAPIServices';
 // import Button from '@mui/material/Button';
 // import { Link } from 'react-router-dom';
 // import { Description, OpenInNew } from '@mui/icons-material';
@@ -7,13 +7,14 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import MarkdownViewer from '../MarkdownViewer/MarkdownViewer';
 import { useDispatch } from 'react-redux';
-import { useState, useEffect } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useState, useEffect, useContext } from 'react';
+import { useParams } from 'react-router-dom'
 import { postError } from '../Alerts/alertsSlice';
 import './ProjectPage.css'
 import HttpService from '../services/HttpServices';
 import { Resource, ResourceType, getResourceType } from '../Model/Model';
 import ResourcesSection from '../ResourceSection/ResourcesSection';
+import AppContext, { AppContextState } from '../configuration/AppContext';
 
 
 export default function ProjectPage() {
@@ -21,12 +22,13 @@ export default function ProjectPage() {
     const [loading, setLoading] = useState(true);
     const { id } = useParams<string>();
     const [branches, setBranches] = useState<Array<Branch>>();
-    const [defaultBranch, setDefaultBranch] = useState(null);
     const [selectedBranch, setSelectedBranch] = useState<string>();
     const [readmeMarkdown, setReadmeMarkdown] = useState<string>();
     const [resources, setResources] = useState<Array<Resource>>();
 
-    const { branch } = useSearchParams();
+    const appContext = useContext(AppContext) as AppContextState;
+    
+    // const { branch } = useSearchParams();
 
     const dispatch = useDispatch();
 
@@ -36,7 +38,7 @@ export default function ProjectPage() {
             return;
         }
 
-        let promise = BalsamApi.projectApi.getFiles(projectId, branch);
+        let promise = appContext.balsamApi.projectApi.getFiles(projectId, branch);
         let response = await promise;
         let files = response.data;
 
@@ -96,13 +98,11 @@ export default function ProjectPage() {
 
     };
 
-
-
     useEffect(() => {
 
         setLoading(true);
         const fetchData = async () => {
-            let promise = BalsamApi.projectApi.getProject(id as string);
+            let promise = appContext.balsamApi.projectApi.getProject(id as string);
 
             promise.catch(() => {
                 

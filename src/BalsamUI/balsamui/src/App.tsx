@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Routes, Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -6,35 +6,73 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import ProjectsPage from './ProjectsPage/ProjectsPage';
 import ProjectPage from './ProjectPage/ProjectPage';
-
+import { useDispatch } from 'react-redux';
 import './App.css'
 import Alerter  from './Alerter/Alerter';
 import ResoruceMarkdownPage from './ResourceMarkdownPage/ResoruceMarkdownPage';
+import AppContext, { AppContextState } from './configuration/AppContext';
+import { getConfig } from './configuration/configuration';
+import { getBalsamAPI } from './services/BalsamAPIServices';
+import { postError } from './Alerts/alertsSlice';
+
 
 function App() {
-    return (
-        
-        <React.Fragment>
-             <CssBaseline />
+    const [appContextState, setAppContextState] = useState<AppContextState>();
+    const [loading, setLoading] = useState(true);
+    
+    const dispatch = useDispatch();
 
-             <AppBar position="static">
-                 <Toolbar>
-                     <Button component={Link} color="inherit" to="/">Projekt</Button>
-                     <Button component={Link} color="inherit" to="/library">Kunskapsbibliotek</Button>
-                 </Toolbar>
-             </AppBar>
-             <div className="app">
-                
-                 <Routes>
-                    <Route path="/" element={<ProjectsPage />} />
-                    <Route path="project/:id" element={<ProjectPage />} />
-                    <Route path="resorucemarkdown" element={<ResoruceMarkdownPage />} />
-                 </Routes>
-             </div>
-             <Alerter />
-        </React.Fragment>
-        
-    )
+    useEffect(() => {
+        setLoading(true);
+
+        getConfig().then((config) => {
+                let state: AppContextState = {
+                    config: config,
+                    balsamApi: getBalsamAPI(config.apiurl),
+                };
+                setAppContextState(state)
+                setLoading(false);
+            })
+            .catch(() => {
+                dispatch(postError("Det gick inte att ladda konfigurationsfil")); //TODO: Language
+            })
+
+        }, []);
+
+    const renderApp =  () =>
+    {
+        return (
+            <React.Fragment>
+                <AppContext.Provider value={appContextState} >
+                <AppBar position="static">
+                    <Toolbar>
+                        <Button component={Link} color="inherit" to="/">Projekt</Button>
+                        <Button component={Link} color="inherit" to="/library">Kunskapsbibliotek</Button>
+                    </Toolbar>
+                </AppBar>
+                <div className="app">
+                    <Routes>
+                        <Route path="/" element={<ProjectsPage />} />
+                        <Route path="project/:id" element={<ProjectPage />} />
+                        <Route path="resorucemarkdown" element={<ResoruceMarkdownPage />} />
+                    </Routes>
+                </div>
+                </AppContext.Provider>
+            </React.Fragment>
+        )
+    }
+
+    let contents = loading
+        ? <p><em>Laddar...</em></p>
+        :  renderApp();
+
+    return ( <React.Fragment>
+        <CssBaseline />
+
+        { contents }
+        <Alerter />
+    </React.Fragment> )
+
 }
 
 export default App

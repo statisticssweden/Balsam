@@ -7,19 +7,17 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import resourceImage from '../assets/text.jpg'
 import markdownImage from '../assets/text.jpg'
-import pdfImage from '../assets/PDF_icon.svg'
+// import pdfImage from '../assets/PDF_icon.svg'
 import { Link } from 'react-router-dom';
 import { OpenInNew } from '@mui/icons-material';
 import './ResourceCard.css';
 import { Resource, ResourceType } from '../Model/Model';
 
 export interface ResourceCardProperties {
-    projectid: string,
-    branch: string,
     resource: Resource
 }
 
-export default function ResourceCard({ projectid, branch, resource } : ResourceCardProperties) {
+export default function ResourceCard({ resource } : ResourceCardProperties) {
 
     let secondaryText = resource.description;
     let cardActionAreaTo = "";

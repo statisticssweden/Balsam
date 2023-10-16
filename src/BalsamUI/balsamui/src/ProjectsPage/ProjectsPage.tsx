@@ -1,10 +1,11 @@
 import ProjectCard from '../ProjectCard/ProjectCard';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import NewProjectDialog from '../NewProjectDialog/NewProjectDialog';
 import './ProjectsPage.css';
 import { useDispatch } from 'react-redux';
 import { postError } from '../Alerts/alertsSlice';
-import BalsamAPI, {Project} from '../services/BalsamAPIServices'
+import { Project} from '../services/BalsamAPIServices'
+import AppContext, { AppContextState } from '../configuration/AppContext';
 
 
 export default function ProjectsPage() {
@@ -12,14 +13,14 @@ export default function ProjectsPage() {
     const [projects, setProjects] = useState<Array<Project>>();
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
+    const appContext = useContext(AppContext) as AppContextState;
 
     const loadData = () =>
     {
         setLoading(true);
 
         const fetchData = async () => {
-            // let promise = BalsamApiOld.getProjects();
-            let promise = BalsamAPI.projectApi.listProjects(true);
+            let promise = appContext.balsamApi.projectApi.listProjects(true);
             promise.catch(() => {
                 
                 dispatch(postError("Det gick inte att ladda projekt"))
@@ -29,6 +30,7 @@ export default function ProjectsPage() {
             
             setProjects(listProjectsResponse.data.projects);
             setLoading(false);
+
 
         }
 

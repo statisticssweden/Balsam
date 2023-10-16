@@ -17,7 +17,7 @@ export default function Alerter() {
     const [currentAlert, setCurrentAlert] = useState<AlertItem>();
     const dispatch = useDispatch();
 
-    const handleSnackbarClose = (event: any, reason: SnackbarCloseReason) => {
+    const handleSnackbarClose = (_event: any, reason: SnackbarCloseReason) => {
         
         if (reason !== "clickaway")
         {
