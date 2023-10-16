@@ -23,12 +23,33 @@ balsamApi:
     name: balsam-api-config
     data:
       repoUrl: ##The URL for the hubrepo with protocol e.g. http/https
-      authority: 
+      authority: ##
   ingress:
     enabled: true
     annotations: {
       kubernetes.io/ingress.class: "contour",
       cert-manager.io/cluster-issuer: ca-issuer,
+      kubernetes.io/ingress.allow-http: "true"
+    }
+    hosts:
+      host: # Add the ingress for balsamApi
+
+balsamUi:
+  image:
+    repository: # The repository for balsamApi
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.2 # The tag for balsamApi
+  service:
+    type: ClusterIP
+    port: 80
+  containerPort: 8080 #8080?
+  configMap:
+    name: ##the name of the configmap balsam-api-config 
+  ingress:
+    enabled: true
+    annotations: {
+      kubernetes.io/ingress.class: "contour",
       kubernetes.io/ingress.allow-http: "true"
     }
     hosts:
@@ -40,7 +61,7 @@ s3Provider:
     repository: # The repository for the s3Provider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.3 # The tag for the s3Provider API
+    tag: 0.0.7 # The tag for the s3Provider API
   service:
     type: ClusterIP
     port: 80
@@ -83,7 +104,7 @@ gitProvider:
     repository: # The repository for the gitProvider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.5 # The tag for the gitProvider API
+    tag: 0.0.6 # The tag for the gitProvider API
   service:
     type: ClusterIP
     port: 80
