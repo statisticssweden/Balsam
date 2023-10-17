@@ -25,13 +25,13 @@ export interface Branch {
      * @type {string}
      * @memberof Branch
      */
-    'id'?: string;
+    'id': string;
     /**
      * The name
      * @type {string}
      * @memberof Branch
      */
-    'name'?: string;
+    'name': string;
     /**
      * Description of the branch
      * @type {string}
@@ -43,6 +43,6 @@ export interface Branch {
      * @type {boolean}
      * @memberof Branch
      */
-    'isDefault'?: boolean;
+    'isDefault': boolean;
 }
 

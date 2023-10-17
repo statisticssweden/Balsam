@@ -112,7 +112,7 @@ export default function ProjectPage() {
             let response = await promise;
             setProject(response.data);
             setBranches(response.data.branches);
-            setSelectedBranch(response.data.branches?.find((b) => b.isDefault)?.id); 
+            setSelectedBranch(response.data.branches.find((b) => b.isDefault)?.id); 
             setLoading(false);
 
 
@@ -159,7 +159,7 @@ export default function ProjectPage() {
                         onChange={selectedBranchChanged}
                     >
                         {branches.map(branch => (
-                            <MenuItem key={branch.name} value={branch.id}>{branch.name}</MenuItem>
+                            <MenuItem key={branch.id} value={branch.id}>{branch.name}</MenuItem>
                         ))}
 
                     </Select>
@@ -189,7 +189,7 @@ export default function ProjectPage() {
                 </div>
                 {readmeElement}
                 <h3>Resurser</h3>
-                <ResourcesSection projectid={project.id!} branch={selectedBranch!} resources={resources} />
+                <ResourcesSection projectid={project.id} branch={selectedBranch!} resources={resources} />
                 <h3>Bearbetningsmiljöer</h3>
                 {/* <WorkAreasSection projectid={project.id} /> */}
             </div>

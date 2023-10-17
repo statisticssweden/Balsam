@@ -28,13 +28,13 @@ export interface Project {
      * @type {string}
      * @memberof Project
      */
-    'id'?: string;
+    'id': string;
     /**
      * The name
      * @type {string}
      * @memberof Project
      */
-    'name'?: string;
+    'name': string;
     /**
      * Description of the project
      * @type {string}
@@ -42,10 +42,16 @@ export interface Project {
      */
     'description'?: string;
     /**
+     * Url to the repository
+     * @type {string}
+     * @memberof Project
+     */
+    'gitUrl'?: string;
+    /**
      * 
      * @type {Array<Branch>}
      * @memberof Project
      */
-    'branches'?: Array<Branch>;
+    'branches': Array<Branch>;
 }
 
