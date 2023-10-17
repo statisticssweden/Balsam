@@ -20,7 +20,7 @@ USER appuser
 FROM mcr.microsoft.com/dotnet/sdk:6.0.400-1-alpine3.16-amd64 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore "MinIOS3Provider/RocketChatChatProvider.csproj"
+RUN dotnet restore "RocketChatChatProvider/RocketChatChatProvider.csproj"
 
 WORKDIR "/src/RocketChatChatProvider"
 RUN dotnet build "RocketChatChatProvider.csproj" -c Release -o /app/build

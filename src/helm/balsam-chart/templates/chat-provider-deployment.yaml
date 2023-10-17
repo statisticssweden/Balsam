@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rocketchat-provider
+  labels:
+    app: rocketchat-provider
+  namespace: balsam-system
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: rocketchat-provider
+  template:
+    metadata:
+      labels:
+        app: rocketchat-provider
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      securityContext:
+{{ toYaml .Values.securityContext | indent 8 }}
+      containers:
+      - name: rocketchat-provider
+        image: "{{ .Values.chatProvider.image.repository }}:{{ .Values.chatProvider.image.tag }}"
+        imagePullPolicy: {{ .Values.chatProvider.image.pullPolicy }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.chatProvider.secret.name }}
+        - configMapRef:
+            name: {{ .Values.chatProvider.configMap.name }}
+        resources:
+          requests:
+            memory: "250Mi"
+            cpu: "500m"
+          limits:
+            memory: "250Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: {{ .Values.chatProvider.containerPort }}
