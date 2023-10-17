@@ -1,0 +1,9 @@
+additionalProperties:
+  apiName: RocketChatChatProviderApiClient
+  library: restsharp
+  netCoreProjectFile: true
+  nullableReferenceTypes: true
+  packageName: RocketChatChatProviderApiClient
+  packageTitle: RocketChatChatProviderApiClient
+  licenseId: MIT
+  targetFramework: net6.0

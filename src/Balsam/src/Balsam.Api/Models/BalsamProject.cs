@@ -8,6 +8,7 @@
         public S3Data? S3 { get; set; }
         public GitData? Git { get; set; }
         public OidcData? Oidc { get; set; }
+        public ChatData? Chat { get; set; }
 
         public List<BalsamBranch> Branches { get; set; }
 
