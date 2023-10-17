@@ -113,7 +113,7 @@ namespace ChatProvider.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(CreateAreaRequest left, CreateAreaRequest right)
+        public static bool operator ==(CreateAreaRequest? left, CreateAreaRequest? right)
         {
             return Equals(left, right);
         }

@@ -7,21 +7,25 @@ namespace RocketChatChatProvider.Controllers
     public class AreaController : ChatProvider.Controllers.AreaApiController
     {
         private readonly ILogger<AreaController> _logger;
-        private IRocketChatClient _rocketChatClient;
+        private IRocketChatClient _client;
 
-        public AreaController(ILogger<AreaController> logger, IRocketChatClient rocketChatClient)
+        public AreaController(ILogger<AreaController> logger, IRocketChatClient client)
         {
             _logger = logger;
-            _rocketChatClient = rocketChatClient;
+            _client = client;
         }
 
         public override async Task<IActionResult> CreateArea([FromBody] CreateAreaRequest? createAreaRequest)
         {
-            _rocketChatClient.CreateArea(createAreaRequest);
+            if (createAreaRequest == null || string.IsNullOrEmpty(createAreaRequest.Name))
+            {
+                return BadRequest(createAreaRequest);
+            }
 
-            //TODO: return channel Id, this can be used from workspace to create messages to a channel with id
+            var name = NameUtil.SanitizeName(createAreaRequest.Name);
+            var area = await _client.CreateArea(name);
 
-            return Ok();
+            return Ok(area);
         }
     }
 }

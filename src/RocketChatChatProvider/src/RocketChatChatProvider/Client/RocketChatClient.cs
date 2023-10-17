@@ -1,6 +1,5 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json.Serialization;
 using ChatProvider.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -11,7 +10,7 @@ namespace RocketChatChatProvider.Client;
 
 public interface IRocketChatClient
 {
-    Task CreateArea(CreateAreaRequest createAreaRequest);
+    Task<AreaCreatedResponse?> CreateArea(string channelName);
 }
 
 public class RocketChatClient : IRocketChatClient
@@ -32,66 +31,52 @@ public class RocketChatClient : IRocketChatClient
         };
     }
 
-    public async Task CreateArea(CreateAreaRequest createAreaRequest)
+    public async Task<AreaCreatedResponse?> CreateArea(string channelName)
     {
-        _logger.LogDebug("Starting creating channel {channel}", createAreaRequest.Name);
-        
-        var requestUri = $"{_api.Endpoint}api/v1/channels.create";
+        _logger.LogDebug("Starting creating channel {channel}", channelName);
 
-        var channel = new RocketChatChannel(createAreaRequest.Name, "first", false, true);
-        var jsonBody = JsonConvert.SerializeObject(channel, _camelCase);
+        var requestUri = $"{_api.BaseUrl}api/v1/channels.create";
+
+        var channel = new RocketChatChannel(channelName, "", false, true);
 
         var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
         {
             Content = new StringContent(JsonConvert.SerializeObject(channel, _camelCase), Encoding.UTF8, "application/json")
         };
-        
+
         _httpClient.DefaultRequestHeaders.Add("X-Auth-Token", _api.Token);
         _httpClient.DefaultRequestHeaders.Add("X-User-Id", _api.UserId);
 
         try
         {
-            var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseContentRead);
-            if (response.IsSuccessStatusCode)
-            {
-                return ;
-            }
-            else
-            {
-                
-                _logger.LogError("An error occurred when creating channel {channel}", createAreaRequest.Name);
+            var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
 
+            if (response.Content is not { Headers.ContentType.MediaType: "application/json" }) return null;
+
+            var content = await response.Content.ReadAsStringAsync();
+            if (content == null)
+            {
+                _logger.LogError("Could not interpret response from Rocket.Chat-api");
+                return null;
             }
+            dynamic createdResponse = JsonConvert.DeserializeObject(content);
+            if (createdResponse == null) return null;
+
+            var chatResponse = new AreaCreatedResponse
+            {
+                Id = createdResponse.channel._id,
+                Name = createdResponse.channel.name
+            };
+
+            _logger.LogInformation("Channel created: {channel}", chatResponse.Name);
+            return chatResponse;
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "An error occurred when creating channel {channel}", createAreaRequest.Name);
-            throw;
+            _logger.LogError(e, "An error occurred when creating channel {channel}", channelName);
+            return null;
         }
-        
-        _logger.LogDebug("created channel {channel}", channel.Name);
-    }
-}
 
-public class RocketChatChannel
-{
-    [JsonPropertyName("name")]
-    public string Name { get; }
-    
-    [JsonPropertyName("excludeSelf")]
-    public bool ExcludeSelf { get; }
-
-    [JsonPropertyName("readOnly")]
-    public bool ReadOnly { get; }
-
-    [JsonPropertyName("members")]
-    public IEnumerable<string> Members { get; set; }
-
-    public RocketChatChannel(string name, string firstMember, bool? isReadOnly, bool excludeSelf)
-    {
-        Name = name;
-        ExcludeSelf = excludeSelf;
-        Members = new List<string>() {firstMember};
-        ReadOnly = isReadOnly ?? false;
     }
 }
