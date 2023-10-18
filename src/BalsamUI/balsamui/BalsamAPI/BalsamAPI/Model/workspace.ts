@@ -25,30 +25,30 @@ export interface Workspace {
      * @type {string}
      * @memberof Workspace
      */
-    'id'?: string;
+    'id': string;
     /**
      * The name
      * @type {string}
      * @memberof Workspace
      */
-    'name'?: string;
+    'name': string;
     /**
      * The id of the template that the workspace is based on.
      * @type {string}
      * @memberof Workspace
      */
-    'templateId'?: string;
+    'templateId': string;
     /**
      * The id of the project
      * @type {string}
      * @memberof Workspace
      */
-    'projectId'?: string;
+    'projectId': string;
     /**
      * The id of the branch
      * @type {string}
      * @memberof Workspace
      */
-    'branchId'?: string;
+    'branchId': string;
 }
 
