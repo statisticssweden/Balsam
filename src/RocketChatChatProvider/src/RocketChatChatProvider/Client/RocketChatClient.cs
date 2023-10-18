@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Text;
+﻿using System.Text;
 using ChatProvider.Models;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -17,15 +16,15 @@ public class RocketChatClient : IRocketChatClient
 {
     private readonly ILogger<RocketChatClient> _logger;
     private readonly ApiOptions _api;
-    private HttpClient _httpClient;
-    private JsonSerializerSettings _camelCase;
+    private readonly HttpClient _httpClient;
+    private readonly JsonSerializerSettings _camelCase;
 
     public RocketChatClient(IOptions<ApiOptions> options, ILogger<RocketChatClient> logger, HttpClient httpClient)
     {
         _api = options.Value;
         _logger = logger;
         _httpClient = httpClient;
-        _camelCase = new JsonSerializerSettings()
+        _camelCase = new JsonSerializerSettings
         {
             ContractResolver = new CamelCasePropertyNamesContractResolver()
         };
@@ -52,17 +51,12 @@ public class RocketChatClient : IRocketChatClient
             var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
             response.EnsureSuccessStatusCode();
 
-            if (response.Content is not { Headers.ContentType.MediaType: "application/json" }) return null;
+            if (response.Content is not {Headers.ContentType.MediaType: "application/json"}) return null;
 
             var content = await response.Content.ReadAsStringAsync();
-            if (content == null)
-            {
-                _logger.LogError("Could not interpret response from Rocket.Chat-api");
-                return null;
-            }
-            dynamic createdResponse = JsonConvert.DeserializeObject(content);
-            if (createdResponse == null) return null;
 
+            dynamic createdResponse = JsonConvert.DeserializeObject(content) ?? throw new DeserializeException();
+            
             var chatResponse = new AreaCreatedResponse
             {
                 Id = createdResponse.channel._id,
@@ -72,11 +66,19 @@ public class RocketChatClient : IRocketChatClient
             _logger.LogInformation("Channel created: {channel}", chatResponse.Name);
             return chatResponse;
         }
+        catch (DeserializeException e)
+        {
+            _logger.LogError(e,"Could not interpret the response object from Rocket.Chat-api.");
+            return null;
+        }
         catch (Exception e)
         {
             _logger.LogError(e, "An error occurred when creating channel {channel}", channelName);
             return null;
         }
-
     }
+}
+
+public class DeserializeException : Exception
+{
 }
