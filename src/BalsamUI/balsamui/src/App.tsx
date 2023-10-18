@@ -14,6 +14,7 @@ import AppContext, { AppContextState } from './configuration/AppContext';
 import { getConfig } from './configuration/configuration';
 import { getBalsamAPI } from './services/BalsamAPIServices';
 import { postError } from './Alerts/alertsSlice';
+import MyPage from './MyPage/MyPage';
 
 
 function App() {
@@ -46,13 +47,15 @@ function App() {
                 <AppContext.Provider value={appContextState} >
                 <AppBar position="static">
                     <Toolbar>
-                        <Button component={Link} color="inherit" to="/">Projekt</Button>
+                        <Button component={Link} color="inherit" to="/">Min sida</Button>
+                        <Button component={Link} color="inherit" to="/projects">Projekt</Button>
                         <Button component={Link} color="inherit" to="/library">Kunskapsbibliotek</Button>
                     </Toolbar>
                 </AppBar>
                 <div className="app">
                     <Routes>
-                        <Route path="/" element={<ProjectsPage />} />
+                        <Route path="/" element={<MyPage />} />
+                        <Route path="projects/" element={<ProjectsPage />} />
                         <Route path="project/:id" element={<ProjectPage />} />
                         <Route path="resorucemarkdown" element={<ResoruceMarkdownPage />} />
                     </Routes>
