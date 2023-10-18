@@ -359,10 +359,8 @@ components:
     ProjectResponse:
       type: object
       description: Project created response
-      required:
-        - "id"
-        - "name"
-        - "gitUrl"
+      # Additional properties not working with openapi cli for typescript-axios
+      # gitUrl moved to Project
       allOf:
         - $ref: '#/components/schemas/Project'
       properties:
@@ -526,6 +524,10 @@ components:
     
     Project:
       type: object
+      required: 
+        - "id"
+        - "name"
+        - "branches"
       properties:
         id:
           type: string
@@ -536,6 +538,9 @@ components:
         description:
           type: string
           description: Description of the project
+        gitUrl:
+          type: string
+          description: Url to the repository
         branches:         
           type: array
           items: 
@@ -543,6 +548,10 @@ components:
 
     Branch:
       type: object
+      required: 
+        - "id"
+        - "name"
+        - "isDefault"
       properties:
         id:
           type: string
@@ -553,13 +562,19 @@ components:
         description:
           type: string
           description: Description of the branch
-        IsDefault:
+        isDefault:
           type: boolean
           description: If the branch is the default branch of the project
 
 
     Workspace:
       type: object
+      required:
+        - "id"
+        - "name"
+        - "templateId"
+        - "projectId"
+        - "branchId"
       properties:
         id:
           type: string

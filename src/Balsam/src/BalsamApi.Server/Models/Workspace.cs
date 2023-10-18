@@ -30,6 +30,7 @@ namespace BalsamApi.Server.Models
         /// The identifier
         /// </summary>
         /// <value>The identifier</value>
+        [Required]
         [DataMember(Name="id", EmitDefaultValue=false)]
         public string Id { get; set; }
 
@@ -37,6 +38,7 @@ namespace BalsamApi.Server.Models
         /// The name
         /// </summary>
         /// <value>The name</value>
+        [Required]
         [DataMember(Name="name", EmitDefaultValue=false)]
         public string Name { get; set; }
 
@@ -44,6 +46,7 @@ namespace BalsamApi.Server.Models
         /// The id of the template that the workspace is based on.
         /// </summary>
         /// <value>The id of the template that the workspace is based on.</value>
+        [Required]
         [DataMember(Name="templateId", EmitDefaultValue=false)]
         public string TemplateId { get; set; }
 
@@ -51,6 +54,7 @@ namespace BalsamApi.Server.Models
         /// The id of the project
         /// </summary>
         /// <value>The id of the project</value>
+        [Required]
         [DataMember(Name="projectId", EmitDefaultValue=false)]
         public string ProjectId { get; set; }
 
@@ -58,6 +62,7 @@ namespace BalsamApi.Server.Models
         /// The id of the branch
         /// </summary>
         /// <value>The id of the branch</value>
+        [Required]
         [DataMember(Name="branchId", EmitDefaultValue=false)]
         public string BranchId { get; set; }
 

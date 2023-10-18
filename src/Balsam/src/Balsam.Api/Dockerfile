@@ -6,19 +6,20 @@ WORKDIR /app
 RUN apk add --no-cache icu-libs
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-COPY certs/SCB_ROOT_CA6.crt /usr/local/share/ca-certificates/SCB_ROOT_CA6.crt
-COPY certs/SCB_SUB_CA6.crt /usr/local/share/ca-certificates/SCB_SUB_CA6.crt
+COPY ../certs/SCB_ROOT_CA6.crt /usr/local/share/ca-certificates/SCB_ROOT_CA6.crt
+COPY ../certs/SCB_SUB_CA6.crt /usr/local/share/ca-certificates/SCB_SUB_CA6.crt
 
 RUN cat /usr/local/share/ca-certificates/SCB_ROOT_CA6.crt >> /etc/ssl/certs/ca-certificates.crt && apk --no-cache add curl
 RUN cat /usr/local/share/ca-certificates/SCB_SUB_CA6.crt >> /etc/ssl/certs/ca-certificates.crt && apk --no-cache add curl
 
-#EXPOSE 80
+#Lokal
+EXPOSE 80
 
-EXPOSE 8080
-ENV ASPNETCORE_URLS=http://*:8080
+#EXPOSE 8080
+#ENV ASPNETCORE_URLS=http://*:8080
 
-RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser /app
-USER appuser
+#RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser /app
+#USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0.400-1-alpine3.16-amd64 AS build
 WORKDIR /src
