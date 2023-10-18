@@ -24,8 +24,9 @@ namespace Balsam.Api.Controllers
 
             projects.Projects = new List<Project>();
 
-            var project = new Project() { Id = "001", Name = "Projekt 1", Description = "Lore Ipsum", Branches = new List<Branch>() };
+            var project = new Project() { Id = "001", Name = "Projekt 1", Description = "Lore Ipsum", Branches = new List<Branch>(), GitUrl= "https://balsam-gitlab-pilot.tanzu.scb.intra/resources/kopia-av-undersokningsmall_08e94f8d-fed0-444e-a6d0-b945c189a612.git" };
             project.Branches.Add(new Branch() { Id = "main", Name = "main", Description = "Lore Ipsum", IsDefault = true });
+            project.Branches.Add(new Branch() { Id = "feature", Name = "feature", Description = "New feature branch", IsDefault = false });
             projects.Projects.Add(project);
         }
 
@@ -81,7 +82,38 @@ namespace Balsam.Api.Controllers
                 Type = BalsamApi.Server.Models.File.TypeEnum.FileEnum,
                 Name = "README.md",
                 Path = "/README.md",
-                ContentUrl = "https://raw.githubusercontent.com/statisticssweden/Balsam/main/README.md"
+                ContentUrl = "https://balsam-gitlab-pilot.tanzu.scb.intra/resources/kopia-av-undersokningsmall_08e94f8d-fed0-444e-a6d0-b945c189a612/-/raw/378ad7447653d9f13118c21b9ce1fadc0c24b1c6/README.md"
+            });
+
+
+            files.Add(new BalsamApi.Server.Models.File()
+            {
+                Type = BalsamApi.Server.Models.File.TypeEnum.FileEnum,
+                Name = "sps.url",
+                Path = "/scb.se.url",
+                ContentUrl = "https://balsam-gitlab-pilot.tanzu.scb.intra/resources/kopia-av-undersokningsmall_08e94f8d-fed0-444e-a6d0-b945c189a612/-/raw/378ad7447653d9f13118c21b9ce1fadc0c24b1c6/Resources/Statistikproduktionsst%C3%B6d.url"
+            });
+
+            files.Add(new BalsamApi.Server.Models.File()
+            {
+                Type = BalsamApi.Server.Models.File.TypeEnum.FolderEnum,
+                Name = "Resources",
+                Path = "/Resouces",
+                ContentUrl = ""
+            });
+            files.Add(new BalsamApi.Server.Models.File()
+            {
+                Type = BalsamApi.Server.Models.File.TypeEnum.FolderEnum,
+                Name = "Kodning",
+                Path = "/Resouces/Kodning",
+                ContentUrl = ""
+            });
+            files.Add(new BalsamApi.Server.Models.File()
+            {
+                Type = BalsamApi.Server.Models.File.TypeEnum.FileEnum,
+                Name = "README.md",
+                Path = "/Resouces/Kodning/README.md",
+                ContentUrl = "https://balsam-gitlab-pilot.tanzu.scb.intra/resources/kopia-av-undersokningsmall_08e94f8d-fed0-444e-a6d0-b945c189a612/-/raw/378ad7447653d9f13118c21b9ce1fadc0c24b1c6/README.md"
             });
 
             return Task.FromResult<IActionResult>(Ok(files.ToArray()));
