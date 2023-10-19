@@ -36,16 +36,16 @@ balsamApi:
 
 balsamUi:
   image:
-    repository: # The repository for balsamApi
+    repository: # The repository for balsamUi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.2 # The tag for balsamApi
+    tag: 0.0.2 # The tag for balsamUi
   service:
     type: ClusterIP
     port: 80
   containerPort: 8080 #8080?
   configMap:
-    name: ##the name of the configmap balsam-api-config 
+    name: ##the name of the configmap balsam-ui-config 
   ingress:
     enabled: true
     annotations: {
@@ -53,7 +53,7 @@ balsamUi:
       kubernetes.io/ingress.allow-http: "true"
     }
     hosts:
-      host: # Add the ingress for balsamApi
+      host: # Add the ingress for balsamUi
 
 
 s3Provider:
@@ -119,6 +119,27 @@ gitProvider:
       API__GroupID: # The GroupID (GitLab)
       API__BaseUrl: # The baseURL for the GitLab instance
       API__TemplatePath: /app/templates
+
+chatProvider:
+  image:
+    repository: # The repository for the chatProvider API
+    pullPolicy: Always
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.0.1 # The tag for the chatProvider API
+  service:
+    type: ClusterIP
+    port: 80
+  containerPort: 8080
+  secret:
+    name: rocketchat-provider-secret
+    data:
+      ROCKETCHAT__PAT: # The PAT used by the chatprovider API
+  configMap:
+    name: rocketchat-provider-config
+    data:
+      API__BaseUrl: ###
+      API__Token: ###
+      API__UserId: ###
 
 serviceAccount:
   # Specifies whether a service account should be created
