@@ -125,7 +125,7 @@ chatProvider:
     repository: # The repository for the chatProvider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: # The tag for the chatProvider API
+    tag: 0.0.1 # The tag for the chatProvider API
   service:
     type: ClusterIP
     port: 80
