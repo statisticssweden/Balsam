@@ -20,19 +20,11 @@ using ChatProvider.Converters;
 
 namespace ChatProvider.Models
 {
-    public interface ICreateAreaRequest
-    {
-    }
-
-    public interface ICreateAreaRequest2
-    {
-    }
-
     /// <summary>
     /// 
     /// </summary>
     [DataContract]
-    public class CreateAreaRequest : IEquatable<CreateAreaRequest>, ICreateAreaRequest, ICreateAreaRequest2
+    public class CreateAreaRequest : IEquatable<CreateAreaRequest>
     {
         /// <summary>
         /// The name of the area
@@ -113,7 +105,7 @@ namespace ChatProvider.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(CreateAreaRequest? left, CreateAreaRequest? right)
+        public static bool operator ==(CreateAreaRequest left, CreateAreaRequest right)
         {
             return Equals(left, right);
         }
