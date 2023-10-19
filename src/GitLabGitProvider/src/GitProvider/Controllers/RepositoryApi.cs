@@ -11,6 +11,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +44,7 @@ namespace GitProvider.Controllers
         [SwaggerOperation("CreateBranch")]
         [SwaggerResponse(statusCode: 200, type: typeof(BranchCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult CreateBranch([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromBody]CreateBranchRequest? createBranchRequest);
+        public abstract Task<IActionResult> CreateBranch([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromBody]CreateBranchRequest? createBranchRequest);
 
         /// <summary>
         /// 
@@ -58,7 +60,7 @@ namespace GitProvider.Controllers
         [SwaggerOperation("CreateRepository")]
         [SwaggerResponse(statusCode: 200, type: typeof(RepositoryCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult CreateRepository([FromBody]CreateRepositoryRequest? createRepositoryRequest);
+        public abstract Task<IActionResult> CreateRepository([FromBody]CreateRepositoryRequest? createRepositoryRequest);
 
         /// <summary>
         /// 
@@ -74,6 +76,6 @@ namespace GitProvider.Controllers
         [SwaggerOperation("GetFilesInBranch")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<File>), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult GetFilesInBranch([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromRoute (Name = "branchId")][Required]string branchId);
+        public abstract Task<IActionResult> GetFilesInBranch([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromRoute (Name = "branchId")][Required]string branchId);
     }
 }
