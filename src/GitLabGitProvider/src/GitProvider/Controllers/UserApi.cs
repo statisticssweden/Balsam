@@ -11,6 +11,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +42,6 @@ namespace GitProvider.Controllers
         [SwaggerOperation("CreatePAT")]
         [SwaggerResponse(statusCode: 200, type: typeof(UserPATCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract IActionResult CreatePAT([FromRoute (Name = "id")][Required]string id);
+        public abstract Task<IActionResult> CreatePAT([FromRoute (Name = "id")][Required]string id);
     }
 }

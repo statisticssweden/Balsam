@@ -17,9 +17,9 @@ namespace GitLabProvider.Controllers
         {
             _gitLabClient = gitLabClient;
         }
-        public override IActionResult CreatePAT([FromRoute(Name = "id"), Required] string id)
+        public async override Task<IActionResult> CreatePAT([FromRoute(Name = "id"), Required] string id)
         {
-            var token = _gitLabClient.CreatePAT(id).Result;
+            var token = await _gitLabClient.CreatePAT(id);
             if (token != null)
             {
                 return Ok(new UserPATCreatedResponse() { Name = "token", Token = token });

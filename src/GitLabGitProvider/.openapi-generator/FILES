@@ -16,6 +16,7 @@ src/GitProvider/GitProvider.nuspec
 src/GitProvider/Models/BranchCreatedResponse.cs
 src/GitProvider/Models/CreateBranchRequest.cs
 src/GitProvider/Models/CreateRepositoryRequest.cs
+src/GitProvider/Models/File.cs
 src/GitProvider/Models/Problem.cs
 src/GitProvider/Models/RepositoryCreatedResponse.cs
 src/GitProvider/Models/UserPATCreatedResponse.cs
