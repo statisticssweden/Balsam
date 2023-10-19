@@ -19,7 +19,7 @@ using Newtonsoft.Json;
 using ChatProvider.Converters;
 
 namespace ChatProvider.Models
-{ 
+{
     /// <summary>
     /// 
     /// </summary>
