@@ -7,7 +7,7 @@ namespace RocketChatChatProvider.Controllers
     public class AreaController : ChatProvider.Controllers.AreaApiController
     {
         private readonly ILogger<AreaController> _logger;
-        private IRocketChatClient _client;
+        private readonly IRocketChatClient _client;
 
         public AreaController(ILogger<AreaController> logger, IRocketChatClient client)
         {
@@ -19,13 +19,25 @@ namespace RocketChatChatProvider.Controllers
         {
             if (createAreaRequest == null || string.IsNullOrEmpty(createAreaRequest.Name))
             {
-                return BadRequest(createAreaRequest);
+                return BadRequest(new Problem {Type = "404", Title = "Request must have a value"});
             }
 
             var name = NameUtil.SanitizeName(createAreaRequest.Name);
-            var area = await _client.CreateArea(name);
+            try
+            {
+                var area = await _client.CreateArea(name);
+                if (area != null)
+                {
+                    return Ok(area);
+                }
 
-            return Ok(area);
+                return BadRequest(new Problem {Type = "404", Title = "Could not create channel"});
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred when creating area {area}", createAreaRequest.Name);
+                return BadRequest(new Problem {Type = "404", Title = "Could not create channel"});
+            }
         }
     }
 }
