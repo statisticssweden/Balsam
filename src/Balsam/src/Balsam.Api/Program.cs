@@ -32,9 +32,14 @@ builder.Services.AddSingleton<OidcProviderApiClient.Api.IGroupApi>(
     new OidcProviderApiClient.Api.GroupApi(
         builder.Configuration.GetSection($"Capabilities:{Capabilities.Authentication}:ServiceLocation").Value ?? "oidc-provider.balsam-system.svc.cluster.local"));
 
+builder.Services.AddSingleton<RocketChatChatProviderApiClient.Api.IAreaApi>(
+    new RocketChatChatProviderApiClient.Api.AreaApi(
+        builder.Configuration.GetSection($"Capabilities:{Capabilities.Chat}:ServiceLocation").Value ?? "chat-provider.balsam-system.svc.cluster.local"));
+
 builder.Services.Configure<CapabilityOptions>(Capabilities.Git, builder.Configuration.GetSection($"Capabilities:{Capabilities.Git}"));
 builder.Services.Configure<CapabilityOptions>(Capabilities.S3, builder.Configuration.GetSection($"Capabilities:{Capabilities.S3}"));
 builder.Services.Configure<CapabilityOptions>(Capabilities.Authentication, builder.Configuration.GetSection($"Capabilities:{Capabilities.Authentication}"));
+builder.Services.Configure<CapabilityOptions>(Capabilities.Chat, builder.Configuration.GetSection($"Capabilities:{Capabilities.Chat}"));
 
 builder.Services.AddCors(options =>
 {
