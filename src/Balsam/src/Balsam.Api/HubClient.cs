@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.TagHelpers;
 using RestSharp;
 using RocketChatChatProviderApiClient.Api;
 using System.Xml.Linq;
+using HandlebarsDotNet;
 
 namespace Balsam.Api
 {
@@ -48,6 +49,22 @@ namespace Balsam.Api
             _chat = capabilityOptions.Get(Capabilities.Chat);
             _repositoryApi = reposiotryApi;
 
+        }
+
+        static HubClient()
+        {
+            Handlebars.RegisterHelper("curlies", (writer, context, parameters) =>
+            {
+                if (parameters.Length == 1 && parameters.At<bool>(0) == true)
+                {
+                    writer.Write("{{");
+                }
+                else
+                {
+                    writer.Write("}}");
+                }
+
+            });
         }
 
         public async Task<List<BalsamProject>> GetProjects(bool includeBranches = true)
@@ -140,11 +157,11 @@ namespace Balsam.Api
 
             _logger.LogDebug($"create project information");
             var project = new BalsamProject(SanitizeName(preferredName), preferredName,  description);
-            string programPath = Path.Combine(_hubRepositoryClient.Path, "hub", project.Id);
+            string projectPath = Path.Combine(_hubRepositoryClient.Path, "hub", project.Id);
 
-            _logger.LogDebug($"Assure path exists {programPath}");
+            _logger.LogDebug($"Assure path exists {projectPath}");
 
-            DirectoryUtil.AssureDirectoryExists(programPath);
+            DirectoryUtil.AssureDirectoryExists(projectPath);
 
             _logger.LogDebug($"Begin call service providers");
 
@@ -187,7 +204,7 @@ namespace Balsam.Api
             }
 
                 
-            string propPath = Path.Combine(programPath, "properties.json");
+            string propPath = Path.Combine(projectPath, "properties.json");
 
             if (await CreateBranch(project, defaultBranchName, description, true))
             {
@@ -197,9 +214,37 @@ namespace Balsam.Api
             _hubRepositoryClient.PullChanges();
             // serialize JSON to a string and then write string to a file
             await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(project));
+
+            CreateProjectManifests(project, projectPath);
             _hubRepositoryClient.PersistChanges($"New program with id {project.Id}");
             _logger.LogInformation($"Project {project.Name}({project.Id}) created");
             return project;
+        }
+
+        private void CreateProjectManifests(BalsamProject project, string projectPath)
+        {
+            var context = new ProjectContext() { Project = project };
+
+            CreateManifests(context, projectPath, "projects");
+        }
+
+        private void CreateManifests(BalsamContext context, string destinationPath, string templateName)
+        {
+            var templatePath = System.IO.Path.Combine(_hubRepositoryClient.Path, "templates", templateName);
+
+            foreach (var file in System.IO.Directory.GetFiles(templatePath, "*.yaml"))
+            {
+                var source = System.IO.File.ReadAllText(file);
+
+                var template = Handlebars.Compile(source);
+
+                var result = template(context);
+
+                var destinationFilePath = System.IO.Path.Combine(destinationPath, System.IO.Path.GetFileName(file));
+
+                System.IO.File.WriteAllText(destinationFilePath, result);
+            }
+
         }
 
         private async Task<bool> CreateBranch(BalsamProject project, string branchName, string description, bool isDefault = false)
