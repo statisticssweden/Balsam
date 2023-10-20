@@ -103,7 +103,7 @@ namespace Balsam.Api.Controllers
 
         public override async Task<IActionResult> ListProjects([FromQuery(Name = "all")] bool? all)
         {
-            _logger.LogError($"Hit ListProject");
+            _logger.LogDebug($"Hit ListProject");
             var projects = await _hubClient.GetProjects();
             var projectListResponse = new ProjectListResponse();
 
