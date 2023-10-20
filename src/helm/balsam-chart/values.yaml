@@ -9,7 +9,7 @@ balsamApi:
     repository: # The repository for balsamApi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.21 # The tag for balsamApi
+    tag: 0.0.22 # The tag for balsamApi
   service:
     type: ClusterIP
     port: 80
