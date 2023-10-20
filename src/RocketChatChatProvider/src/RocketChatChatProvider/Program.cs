@@ -12,7 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<ApiOptions>(builder.Configuration.GetSection("Api"));
-builder.Services.AddSingleton(typeof(HttpClient));
+builder.Services.AddScoped(typeof(HttpClient));
 builder.Services.AddScoped<IRocketChatClient, RocketChatClient>();
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
