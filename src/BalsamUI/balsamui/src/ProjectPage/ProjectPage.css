@@ -4,3 +4,7 @@ div.scroll {
     overflow-x: hidden;
     overflow-y: auto;
 }
+
+.buttonrow{
+    padding-bottom: 20px;    
+}

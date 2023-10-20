@@ -22,11 +22,7 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../../base';
 // @ts-ignore
-import { CreateKnowledgeLibraryRequest } from '../../BalsamAPI/Model';
-// @ts-ignore
 import { CreateWorkspaceRequest } from '../../BalsamAPI/Model';
-// @ts-ignore
-import { KnowledgeLibraryCreatedResponse } from '../../BalsamAPI/Model';
 // @ts-ignore
 import { Problem } from '../../BalsamAPI/Model';
 // @ts-ignore
@@ -41,39 +37,6 @@ import { WorkspaceCreatedResponse } from '../../BalsamAPI/Model';
  */
 export const WorkspaceApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
-        /**
-         * Create a new connection to a knowledge library
-         * @param {CreateKnowledgeLibraryRequest} [createKnowledgeLibraryRequest] Definition of a new Knowledge library connection
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        createKnowledgeLibrary: async (createKnowledgeLibraryRequest?: CreateKnowledgeLibraryRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/knowledge-libraries`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(createKnowledgeLibraryRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
         /**
          * Create a new workspace
          * @param {CreateWorkspaceRequest} [createWorkspaceRequest] Definition of a new workspace
@@ -224,16 +187,6 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = WorkspaceApiAxiosParamCreator(configuration)
     return {
         /**
-         * Create a new connection to a knowledge library
-         * @param {CreateKnowledgeLibraryRequest} [createKnowledgeLibraryRequest] Definition of a new Knowledge library connection
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async createKnowledgeLibrary(createKnowledgeLibraryRequest?: CreateKnowledgeLibraryRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<KnowledgeLibraryCreatedResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.createKnowledgeLibrary(createKnowledgeLibraryRequest, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
-        },
-        /**
          * Create a new workspace
          * @param {CreateWorkspaceRequest} [createWorkspaceRequest] Definition of a new workspace
          * @param {*} [options] Override http request option.
@@ -285,15 +238,6 @@ export const WorkspaceApiFactory = function (configuration?: Configuration, base
     const localVarFp = WorkspaceApiFp(configuration)
     return {
         /**
-         * Create a new connection to a knowledge library
-         * @param {CreateKnowledgeLibraryRequest} [createKnowledgeLibraryRequest] Definition of a new Knowledge library connection
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        createKnowledgeLibrary(createKnowledgeLibraryRequest?: CreateKnowledgeLibraryRequest, options?: any): AxiosPromise<KnowledgeLibraryCreatedResponse> {
-            return localVarFp.createKnowledgeLibrary(createKnowledgeLibraryRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
          * Create a new workspace
          * @param {CreateWorkspaceRequest} [createWorkspaceRequest] Definition of a new workspace
          * @param {*} [options] Override http request option.
@@ -340,17 +284,6 @@ export const WorkspaceApiFactory = function (configuration?: Configuration, base
  * @extends {BaseAPI}
  */
 export class WorkspaceApi extends BaseAPI {
-    /**
-     * Create a new connection to a knowledge library
-     * @param {CreateKnowledgeLibraryRequest} [createKnowledgeLibraryRequest] Definition of a new Knowledge library connection
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof WorkspaceApi
-     */
-    public createKnowledgeLibrary(createKnowledgeLibraryRequest?: CreateKnowledgeLibraryRequest, options?: AxiosRequestConfig) {
-        return WorkspaceApiFp(this.configuration).createKnowledgeLibrary(createKnowledgeLibraryRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
     /**
      * Create a new workspace
      * @param {CreateWorkspaceRequest} [createWorkspaceRequest] Definition of a new workspace

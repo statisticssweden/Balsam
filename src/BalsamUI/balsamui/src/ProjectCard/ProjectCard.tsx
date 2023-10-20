@@ -16,7 +16,7 @@ type ProjectCardProperties = {
 export default function ProjectCard(properties : ProjectCardProperties) {
     return (
         <Card sx={{ maxWidth: 300, minWidth: 300 }}>
-            <CardActionArea component={Link} to={'project/' + properties.project.id}>
+            <CardActionArea component={Link} to={'/project/' + properties.project.id}>
                 <CardMedia
                     sx={{ height: 140 }}
                     image={projectimage}
@@ -36,7 +36,7 @@ export default function ProjectCard(properties : ProjectCardProperties) {
                 <Button component={Link as any} 
                     target="_blank" 
                     underline="hover" 
-                    to={'project/' + properties.project.id}
+                    to={'/project/' + properties.project.id}
                 >
                     Öppna<OpenInNew fontSize="inherit" />
                 </Button>
