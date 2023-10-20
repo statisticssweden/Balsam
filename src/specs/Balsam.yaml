@@ -244,7 +244,7 @@ paths:
                 $ref: '#/components/schemas/KnowledgeLibraryListResponse'
     post:
       tags: 
-        - Workspace
+        - KnowledgeLibrary
       operationId: CreateKnowledgeLibrary
       description: Create a new connection to a knowledge library
       requestBody:

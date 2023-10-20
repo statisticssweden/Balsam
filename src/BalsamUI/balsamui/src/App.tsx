@@ -55,8 +55,8 @@ function App() {
                 <div className="app">
                     <Routes>
                         <Route path="/" element={<MyPage />} />
-                        <Route path="projects/" element={<ProjectsPage />} />
-                        <Route path="project/:id" element={<ProjectPage />} />
+                        <Route path="/projects/" element={<ProjectsPage />} />
+                        <Route path="/project/:id" element={<ProjectPage />} />
                         <Route path="resorucemarkdown" element={<ResoruceMarkdownPage />} />
                     </Routes>
                 </div>
