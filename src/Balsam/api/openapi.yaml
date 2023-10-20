@@ -1,33 +1,36 @@
 openapi: 3.0.2
 info:
-  description: This a service contract for the ChatProvider in Balsam.
-  title: ChatProvider
+  description: This a service contract for the GitProvider in Balsam.
+  title: GitProvider
   version: "2.0"
 servers:
-- url: http://chat-provider.balsam-system.svc.cluster.local/api/v1
+- url: http://git-provider.balsam-system.svc.cluster.local/api/v1
 tags:
-- description: Topic methods
-  name: Area
+- description: Repository methods
+  name: Repository
+- description: User methods
+  name: User
 paths:
-  /areas:
+  /repos:
     post:
-      description: Creates a new Area
-      operationId: CreateArea
+      description: Creates a new repository
+      operationId: CreateRepository
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateAreaRequest'
-        description: Definition of a new area
+              $ref: '#/components/schemas/CreateRepositoryRequest'
+        description: Definition of a new repository
       responses:
         "200":
           content:
             application/json:
               example:
-                name: demo_users
-                id: 12
+                preferedName: Demo repot
+                name: demo-repot
+                path: https://mygit.local/demo-repot.git
               schema:
-                $ref: '#/components/schemas/AreaCreatedResponse'
+                $ref: '#/components/schemas/RepositoryCreatedResponse'
           description: Success
         "400":
           content:
@@ -40,9 +43,130 @@ paths:
                 $ref: '#/components/schemas/Problem'
           description: Error respsone for 400
       tags:
-      - Area
+      - Repository
+  /repos/{repositoryId}/branches:
+    post:
+      description: Create a branch from main branch in a existing repository
+      operationId: CreateBranch
+      parameters:
+      - description: The name of the repository where the branch should be created.
+        explode: false
+        in: path
+        name: repositoryId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBranchRequest'
+        description: Definition of a new repository
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BranchCreatedResponse'
+          description: Success
+        "400":
+          content:
+            application/problem+json:
+              example:
+                title: Bad Request
+                status: 400
+                detail: No such repository
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: Error respsone for 400
+      tags:
+      - Repository
+  /repos/{repositoryId}/branches/{branchId}/files:
+    get:
+      description: Gets file descriptions of all files in a git branch for specified
+        repository
+      operationId: GetFilesInBranch
+      parameters:
+      - description: The id of the repository.
+        explode: false
+        in: path
+        name: repositoryId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The id of the branch.
+        explode: false
+        in: path
+        name: branchId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileListResponse'
+          description: Success
+        "400":
+          content:
+            application/problem+json:
+              example:
+                title: Bad Request
+                status: 400
+                detail: No such repository
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: Error respsone for 400
+      tags:
+      - Repository
+  /users/{id}/PAT:
+    post:
+      description: Creates a personal access token for the user.
+      operationId: CreatePAT
+      parameters:
+      - description: The user identifier.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPATCreatedResponse'
+          description: Success
+        "400":
+          content:
+            application/problem+json:
+              example:
+                title: Bad Request
+                status: 400
+                detail: Generic error
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: Error respsone for 400
+      tags:
+      - User
 components:
   responses:
+    ErrorResponse400NoRepo:
+      content:
+        application/problem+json:
+          example:
+            title: Bad Request
+            status: 400
+            detail: No such repository
+          schema:
+            $ref: '#/components/schemas/Problem'
+      description: Error respsone for 400
     ErrorResponse400:
       content:
         application/problem+json:
@@ -54,31 +178,139 @@ components:
             $ref: '#/components/schemas/Problem'
       description: Error respsone for 400
   schemas:
-    CreateAreaRequest:
+    FileListResponse:
+      items:
+        $ref: '#/components/schemas/File'
+      type: array
+    File:
+      description: File information
       example:
+        path: path
+        contentUrl: contentUrl
         name: name
+        type: File
       properties:
+        path:
+          description: The full relative path
+          type: string
         name:
-          description: The name of the area
+          description: The name
+          type: string
+        type:
+          description: Description of the template
+          enum:
+          - File
+          - Folder
+          type: string
+        contentUrl:
+          description: Url to the raw content of the file
           type: string
       required:
+      - contentUrl
       - name
+      - path
+      - type
       type: object
-    AreaCreatedResponse:
-      description: Group created response
+    CreateRepositoryRequest:
+      description: Payload for creating new repository
       example:
+        defaultBranchName: defaultBranchName
         name: name
-        id: id
+        description: description
       properties:
         name:
-          description: The name of the area
+          description: The name of the branch
           type: string
+        description:
+          description: The description of the branch
+          type: string
+        defaultBranchName:
+          description: The branch from which this branch will be created. The default
+            branch for the project will be used if not specified.
+          type: string
+      required:
+      - defaultBranchName
+      - name
+      type: object
+    CreateBranchRequest:
+      description: Payload for creating new branch
+      example:
+        fromBranch: fromBranch
+        name: name
+      properties:
+        name:
+          description: The name of the branch
+          type: string
+        fromBranch:
+          description: The branch from which this branch will be created. The default
+            branch for the project will be used if not specified.
+          type: string
+      required:
+      - fromBranch
+      - name
+      type: object
+    RepositoryCreatedResponse:
+      description: Repository description
+      example:
+        path: path
+        name: name
+        id: id
+        preferredName: preferredName
+      properties:
         id:
-          description: The id to the area that can be used for accessing it.
+          description: The identity of the repository
+          type: string
+        preferredName:
+          description: The preferred name for the repository
+          type: string
+        name:
+          description: The name of the repository
+          type: string
+        path:
+          description: The path to the repository that can be used for clone it.
           type: string
       required:
       - id
       - name
+      - path
+      - preferredName
+      type: object
+    BranchCreatedResponse:
+      description: Branch created description
+      example:
+        repositoryId: repositoryId
+        name: name
+        id: id
+      properties:
+        repositoryId:
+          description: The name of the repository.
+          type: string
+        id:
+          description: The id for the branch
+          type: string
+        name:
+          description: The name of the branch
+          type: string
+      required:
+      - id
+      - name
+      - repositoryId
+      type: object
+    UserPATCreatedResponse:
+      description: A PAT description
+      example:
+        name: name
+        token: token
+      properties:
+        name:
+          description: The name of the token.
+          nullable: true
+          type: string
+        token:
+          description: The token that was created.
+          type: string
+      required:
+      - token
       type: object
     Problem:
       properties:

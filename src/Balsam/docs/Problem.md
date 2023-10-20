@@ -1,4 +1,4 @@
-# RocketChatChatProviderApiClient.Model.Problem
+# GitProviderApiClient.Model.Problem
 
 ## Properties
 

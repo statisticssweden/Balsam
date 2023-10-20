@@ -1,3 +1,4 @@
+# GitProviderApiClient.Model.UserPATCreatedResponse
 A PAT description
 
 ## Properties
