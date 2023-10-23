@@ -1,4 +1,4 @@
-# S3ProviderApiClient.Model.Problem
+# RocketChatChatProviderApiClient.Model.Problem
 
 ## Properties
 

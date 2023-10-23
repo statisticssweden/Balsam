@@ -172,6 +172,42 @@ namespace GitLabProvider.Client
             return null;
         }
 
+        public async Task<List<GitLabTreeFile>> GetFiles(string repositoryId, string branchName)
+        {
+            var projectId = repositoryId;
+            var pageNumber = "1";
+            var allFiles = new List<GitLabTreeFile>();
+            try
+            {
+                
+                while (!string.IsNullOrWhiteSpace(pageNumber))
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/api/v4/projects/{projectId}/repository/tree?recursive=true&ref={branchName}&per_page=10&page={pageNumber}");
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);
+
+                    var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+
+                    if (response.IsSuccessStatusCode) {
+
+                        string content = await response.Content.ReadAsStringAsync();
+                        if (content != null)
+                        {
+                            var fileItems = JsonConvert.DeserializeObject<List<GitLabTreeFile>>(content);
+                            allFiles.AddRange(fileItems);
+
+                        }
+                        pageNumber = response.Headers.GetValues("x-next-page").FirstOrDefault();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not read files from repository");
+            }
+
+            return allFiles;
+        }
+
         public async Task GitFilesToRepo(string repositoryId, string branch)
         {
             try

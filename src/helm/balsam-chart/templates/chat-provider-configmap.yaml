@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.chatProvider.configMap.name }}
+  namespace: balsam-system
+data: 
+  API__BaseUrl: "{{ .Values.chatProvider.configMap.data.API__BaseUrl }}"
+  API__Token: {{ .Values.chatProvider.configMap.data.API__Token }}
+  API__UserId: {{ .Values.chatProvider.configMap.data.API__UserId }}

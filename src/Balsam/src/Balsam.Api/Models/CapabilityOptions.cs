@@ -14,6 +14,7 @@ namespace Balsam.Api.Models
         public const string Git = "Git";
         public const string S3 = "S3";
         public const string Authentication = "Authentication";
+        public const string Chat = "Chat";
     }
 
     public class ConfigureCapabilityOptions : IConfigureNamedOptions<CapabilityOptions>

@@ -12,6 +12,9 @@ using System.Text.RegularExpressions;
 using System.IO.Hashing;
 using Microsoft.AspNetCore.Mvc.TagHelpers;
 using RestSharp;
+using RocketChatChatProviderApiClient.Api;
+using System.Xml.Linq;
+using HandlebarsDotNet;
 
 namespace Balsam.Api
 {
@@ -20,27 +23,48 @@ namespace Balsam.Api
         private readonly CapabilityOptions _git;
         private readonly CapabilityOptions _s3;
         private readonly CapabilityOptions _authentication;
+        private readonly CapabilityOptions _chat;
         private readonly IBucketApi _s3Client;
         private readonly IGroupApi _oidcClient;
         private readonly HubRepositoryClient _hubRepositoryClient;
         private readonly IMemoryCache _memoryCache;
         private readonly IRepositoryApi _repositoryApi;
         private readonly ILogger<HubClient> _logger;
+        private readonly IAreaApi _chatClient;
 
 
-        public HubClient(ILogger<HubClient> logger, IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, IBucketApi s3Client, IRepositoryApi reposiotryApi, IGroupApi oidcClient)
+        public HubClient(ILogger<HubClient> logger, IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, IBucketApi s3Client, IRepositoryApi reposiotryApi, IGroupApi oidcClient, IAreaApi chatClient)
         {
             _logger = logger;
             _memoryCache = memoryCach;
             _s3Client = s3Client;
             _oidcClient = oidcClient;
+            _chatClient = chatClient;
            
             _hubRepositoryClient = hubRepoClient;
 
             _git = capabilityOptions.Get(Capabilities.Git);
             _s3 = capabilityOptions.Get(Capabilities.S3);
             _authentication = capabilityOptions.Get(Capabilities.Authentication);
+            _chat = capabilityOptions.Get(Capabilities.Chat);
             _repositoryApi = reposiotryApi;
+
+        }
+
+        static HubClient()
+        {
+            Handlebars.RegisterHelper("curlies", (writer, context, parameters) =>
+            {
+                if (parameters.Length == 1 && parameters.At<bool>(0) == true)
+                {
+                    writer.Write("{{");
+                }
+                else
+                {
+                    writer.Write("}}");
+                }
+
+            });
         }
 
         public async Task<List<BalsamProject>> GetProjects(bool includeBranches = true)
@@ -133,11 +157,11 @@ namespace Balsam.Api
 
             _logger.LogDebug($"create project information");
             var project = new BalsamProject(SanitizeName(preferredName), preferredName,  description);
-            string programPath = Path.Combine(_hubRepositoryClient.Path, "hub", project.Id);
+            string projectPath = Path.Combine(_hubRepositoryClient.Path, "hub", project.Id);
 
-            _logger.LogDebug($"Assure path exists {programPath}");
+            _logger.LogDebug($"Assure path exists {projectPath}");
 
-            DirectoryUtil.AssureDirectoryExists(programPath);
+            DirectoryUtil.AssureDirectoryExists(projectPath);
 
             _logger.LogDebug($"Begin call service providers");
 
@@ -171,8 +195,16 @@ namespace Balsam.Api
                 _logger.LogInformation($"Bucket {project.S3.BucketName} created");
             }
 
+            if (_chat.Enabled)
+            {
+                _logger.LogDebug("Begin the call to chatprovider");
+                var chatData = await _chatClient.CreateAreaAsync(new RocketChatChatProviderApiClient.Model.CreateAreaRequest(preferredName));
+                project.Chat = new ChatData(chatData.Id,chatData.Name);
+                _logger.LogInformation($"Channel created named {chatData.Name}");
+            }
+
                 
-            string propPath = Path.Combine(programPath, "properties.json");
+            string propPath = Path.Combine(projectPath, "properties.json");
 
             if (await CreateBranch(project, defaultBranchName, description, true))
             {
@@ -182,9 +214,37 @@ namespace Balsam.Api
             _hubRepositoryClient.PullChanges();
             // serialize JSON to a string and then write string to a file
             await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(project));
+
+            CreateProjectManifests(project, projectPath);
             _hubRepositoryClient.PersistChanges($"New program with id {project.Id}");
             _logger.LogInformation($"Project {project.Name}({project.Id}) created");
             return project;
+        }
+
+        private void CreateProjectManifests(BalsamProject project, string projectPath)
+        {
+            var context = new ProjectContext() { Project = project };
+
+            CreateManifests(context, projectPath, "projects");
+        }
+
+        private void CreateManifests(BalsamContext context, string destinationPath, string templateName)
+        {
+            var templatePath = System.IO.Path.Combine(_hubRepositoryClient.Path, "templates", templateName);
+
+            foreach (var file in System.IO.Directory.GetFiles(templatePath, "*.yaml"))
+            {
+                var source = System.IO.File.ReadAllText(file);
+
+                var template = Handlebars.Compile(source);
+
+                var result = template(context);
+
+                var destinationFilePath = System.IO.Path.Combine(destinationPath, System.IO.Path.GetFileName(file));
+
+                System.IO.File.WriteAllText(destinationFilePath, result);
+            }
+
         }
 
         private async Task<bool> CreateBranch(BalsamProject project, string branchName, string description, bool isDefault = false)

@@ -19,6 +19,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcProviderApiClient", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OidcProviderApiClient.Test", "src\OidcProviderApiClient.Test\OidcProviderApiClient.Test.csproj", "{75CBE72A-B84E-4E05-BB65-2E6C964FBBE2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketChatChatProviderApiClient", "src\RocketChatChatProviderApiClient\RocketChatChatProviderApiClient.csproj", "{045C92A1-6140-4BAD-AB99-7E45515FD1B6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketChatChatProviderApiClient.Test", "src\RocketChatChatProviderApiClient.Test\RocketChatChatProviderApiClient.Test.csproj", "{F4D20E54-2604-4E97-A43C-D38E94B665CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{75CBE72A-B84E-4E05-BB65-2E6C964FBBE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75CBE72A-B84E-4E05-BB65-2E6C964FBBE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75CBE72A-B84E-4E05-BB65-2E6C964FBBE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{045C92A1-6140-4BAD-AB99-7E45515FD1B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{045C92A1-6140-4BAD-AB99-7E45515FD1B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{045C92A1-6140-4BAD-AB99-7E45515FD1B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{045C92A1-6140-4BAD-AB99-7E45515FD1B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4D20E54-2604-4E97-A43C-D38E94B665CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4D20E54-2604-4E97-A43C-D38E94B665CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4D20E54-2604-4E97-A43C-D38E94B665CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4D20E54-2604-4E97-A43C-D38E94B665CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

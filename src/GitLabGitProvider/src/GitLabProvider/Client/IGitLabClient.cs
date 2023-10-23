@@ -7,5 +7,7 @@
         Task<bool> CreateBranch(string branchname, string repositoryId);
 
         Task<string?> CreatePAT(string userName);
+
+        Task<List<GitLabTreeFile>> GetFiles(string repositoryId, string branchName);
     }
 }
