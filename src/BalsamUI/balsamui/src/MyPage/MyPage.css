@@ -23,14 +23,6 @@ div.scroll {
    
 }
 
-.workspaceAddButton{
-     
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    /* position: relative; */
-} 
-
 .foreground{
 
     position: absolute;
@@ -51,22 +43,6 @@ div.scroll {
     position: relative;
     display: inline-block;
 }
-
-.cardContent{
-    
-}
-
-.grayLabel{
-    background-color: rgb(240, 240, 240);
-    
-    height: 20px;
-    width: 100px;
-
-    &.short{
-        width: 70px;
-    }
-}
-
 
 .branchWorkspaceContainer{
     display: inline-block;

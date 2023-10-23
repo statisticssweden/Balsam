@@ -1,6 +1,6 @@
 import { Card, CardContent, CardMedia, Fab, Skeleton, Typography } from "@mui/material";
 import { Fragment, PropsWithChildren } from "react";
-
+import './NewCard.css';
 
 export interface NewCardProperties<KeyType>{
     buttonContent?: any;
@@ -28,7 +28,6 @@ export default function NewCard<KeyType>(props: PropsWithChildren<NewCardPropert
         else {
             return <>
                         <Typography gutterBottom variant="h6" component="div">
-                            {/* <span className="grayLabel short"></span> */}
                             <Skeleton sx={{ width: "30%" }} animation="wave"></Skeleton>
                         </Typography>
                         <Typography variant="body2" color="text.secondary">

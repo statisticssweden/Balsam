@@ -4,10 +4,11 @@ import { useDispatch } from 'react-redux';
 import { postError, postSuccess } from '../Alerts/alertsSlice';
 import { Branch, Project, Template, Workspace} from '../services/BalsamAPIServices'
 import AppContext, { AppContextState } from '../configuration/AppContext';
-import { Accordion, AccordionDetails, AccordionSummary, Chip, Divider } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Chip, Divider } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import WorkspacesSection, { NewWorkspaceCardKeyType } from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog, { NewWorkspaceDialogProperties } from '../NewWorkspaceDialog/NewWorkspaceDialog';
+
 
 
 export default function MyPage() {
@@ -162,24 +163,33 @@ export default function MyPage() {
 
     }
 
+    function onOpenProjectClick(e: React.MouseEvent<HTMLButtonElement>, url: string)
+    {
+        //Prevent the accordion from toggling
+        e.stopPropagation();
+        window.open(url, "_blank");
+
+    }
+
     function renderProjectsTable(projs: Array<Project>) {
         return (
             <div aria-labelledby="tabelLabel">
                 {
                     projs.map((project) => {
-                       return (
+                        let openProjectUrl = `/project/${project.id}`
+                        return (
                         <Accordion defaultExpanded key={project.id}>
                             <AccordionSummary 
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls="panel1a-content"
-                                id="panel1a-header">
-                                    
-                                     {/* <Typography variant="h3" color="primary" >{project.name}</Typography> */}
+                                id="panel1a-header"
+                                >
+                                     <Button sx={{ minWidth:"0px",  padding:0, textTransform:"none" }} onClick={(e) => onOpenProjectClick(e, openProjectUrl) }  >
                                      <h3 className='projectHeader'>{project.name}</h3>
-                                     
-                                     <div>
+                                     </Button>
+                                     {/* <div>
                                      <p className="description"><em>{project.description}</em></p>
-                                     </div>
+                                     </div> */}
                                      
                             </AccordionSummary>
                             <AccordionDetails>

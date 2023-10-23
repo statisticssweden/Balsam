@@ -1,7 +1,4 @@
 import {Project, Branch, Workspace, Template} from '../services/BalsamAPIServices';
-// import Button from '@mui/material/Button';
-// import { Link } from 'react-router-dom';
-// import { Description, OpenInNew } from '@mui/icons-material';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
@@ -32,8 +29,6 @@ export default function ProjectPage() {
     const [templates, setTemplates] = useState<Array<Template>>();
     const [newWorkspaceDialogOpen, setNewWorkspaceDialogOpen] = useState(false);
     const appContext = useContext(AppContext) as AppContextState;
-    
-    // const { branch } = useSearchParams();
 
     const dispatch = useDispatch();
 
@@ -50,20 +45,24 @@ export default function ProjectPage() {
         let response = await promise;
         let files = response.data;
 
-        let readmeFile = files.find((file) => file.path.toLowerCase() === "/readme.md");
+        let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md");
 
-        HttpService.getTextFromUrl(readmeFile.contentUrl)
-            .then((text) => 
-            {   
-                setReadmeMarkdown(text);
-            })
-            .catch( () => {
-                setReadmeMarkdown("Fel vid inläsning av README.md"); //TODO: Language
-            });
+        if (readmeFile)
+        {
+            HttpService.getTextFromUrl(readmeFile.contentUrl)
+                .then((text) => 
+                {   
+                    setReadmeMarkdown(text);
+                })
+                .catch( () => {
+                    setReadmeMarkdown("Fel vid inläsning av README.md"); //TODO: Language
+                });
+        }
 
         let resourceFiles = files.filter((file) => {
-            return file.path.startsWith('/Resources/') || file.path.toLowerCase() === "/readme.md"
+            return file.path.startsWith('Resources/') || file.path.toLowerCase() === "readme.md"
         });
+    
 
         let resourcesArray = await Promise.all(resourceFiles.map( async (file): Promise<Resource> => {
             let name = file.name;
