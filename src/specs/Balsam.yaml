@@ -202,6 +202,12 @@ paths:
         - Workspace
       operationId: DeleteWorkspace
       description: Delete workspace
+      requestBody:
+        description: Definition of deleting a workspace
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteWorkspaceRequest'
       parameters:
         - name: workspaceId
           in: path
@@ -332,6 +338,20 @@ components:
         templateId:
           type: string
           description: The id of the template  
+        projectId:
+          type: string
+          description: The id of the project
+        branchId:
+          type: string
+          description: The id of the branch
+      
+    DeleteWorkspaceRequest:
+      type: object
+      description: Payload for deleting an existing workspace
+      required:
+        - "projectId"
+        - "branchId"
+      properties:
         projectId:
           type: string
           description: The id of the project
