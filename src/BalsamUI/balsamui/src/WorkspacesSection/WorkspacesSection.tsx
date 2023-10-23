@@ -1,5 +1,13 @@
+import NewCard from "../NewCard/NewCard";
 import WorkspaceCard from "../WorkspaceCard/WorkspaceCard";
 import { Template, Workspace } from "../services/BalsamAPIServices";
+import workspaceImage from '../assets/workspace.jpg'
+
+export interface NewWorkspaceCardKeyType
+{
+    projectId: string,
+    branchId: string
+}
 
 export interface WorkspaceSectionProperties
 {
@@ -8,10 +16,17 @@ export interface WorkspaceSectionProperties
     workspaces?: Array<Workspace>,
     templates?: Array<Template>,
     deleteWorkspaceCallback: (workspaceId: string) => void,
+    showNewCard?: boolean,
+    onNewClick?: (itemKey: any) => void
 }
 
 export default function WorkspacesSection(props: WorkspaceSectionProperties)
 {
+
+    const newCardContent = props.showNewCard 
+                ? <NewCard<NewWorkspaceCardKeyType> itemKey={{projectId: props.projectid, branchId: props.branch }} buttonContent={"Ny bearbetningsmiljö"} image={workspaceImage} onClick={props.onNewClick} />
+                : ""
+
 
     const renderWorkspaces = (workspaces: Array<Workspace>) => {
         return (
@@ -27,6 +42,7 @@ export default function WorkspacesSection(props: WorkspaceSectionProperties)
                     return (<WorkspaceCard templateName={templateName} workspace={workspace} deleteWorkspaceCallback={props.deleteWorkspaceCallback} key={workspace.id} />);
                 }
                 )}
+                {newCardContent}
             </div>
         )
 

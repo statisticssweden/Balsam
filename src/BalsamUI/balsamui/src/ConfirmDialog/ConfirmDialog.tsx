@@ -2,10 +2,10 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { PropsWithChildren } from 'react'
 
 export interface ConfirmDialogProperties{
-    onConfirm?: (key: any) => void,
-    onAbort?: (key: any) => void,
+    onConfirm?: (itemKey: any) => void,
+    onAbort?: (itemKey: any) => void,
     title: string,
-    key?: any
+    itemKey?: any
     open: boolean
 }
 
@@ -14,14 +14,14 @@ export default function ConfirmDialog(props: PropsWithChildren<ConfirmDialogProp
     function handleAbort()
     {
         if(props.onAbort) {
-            props.onAbort(props.key);
+            props.onAbort(props.itemKey);
         }
     }
 
     function handleConfirm()
     {
         if(props.onConfirm) {
-            props.onConfirm(props.key);
+            props.onConfirm(props.itemKey);
         }
     }
 

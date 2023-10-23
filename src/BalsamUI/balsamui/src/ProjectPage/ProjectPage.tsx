@@ -17,6 +17,7 @@ import ResourcesSection from '../ResourceSection/ResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
+import { Button } from '@mui/material';
 
 
 export default function ProjectPage() {
@@ -29,7 +30,7 @@ export default function ProjectPage() {
     const [resources, setResources] = useState<Array<Resource>>();
     const [workspaces, setWorkspaces] = useState<Array<Workspace>>();
     const [templates, setTemplates] = useState<Array<Template>>();
-
+    const [newWorkspaceDialogOpen, setNewWorkspaceDialogOpen] = useState(false);
     const appContext = useContext(AppContext) as AppContextState;
     
     // const { branch } = useSearchParams();
@@ -168,6 +169,7 @@ export default function ProjectPage() {
 
     const onNewWorkspaceDialogClosing = () => {
 
+        setNewWorkspaceDialogOpen(false);
         loadWorkspaces(id!, selectedBranch!);
     };
 
@@ -221,11 +223,15 @@ export default function ProjectPage() {
         return selectBranchesElement;
     }
 
+    const handleClickOpen = () => {
+        setNewWorkspaceDialogOpen(true);
+    };
+
     function renderNewWorkspaceDialog()
     {
         if (project && templates && selectedBranch)
         {
-            return (<NewWorkspaceDialog project={project!} selectedBranchId={selectedBranch!} templates={templates!} onClosing={onNewWorkspaceDialogClosing}></NewWorkspaceDialog>)
+            return (<NewWorkspaceDialog project={project!} open={newWorkspaceDialogOpen} selectedBranchId={selectedBranch!} templates={templates!} onClosing={onNewWorkspaceDialogClosing}></NewWorkspaceDialog>)
         }
     
         return "";
@@ -254,9 +260,12 @@ export default function ProjectPage() {
                 <ResourcesSection projectid={project.id} branch={selectedBranch!} resources={resources} />
                 <h3>Bearbetningsmiljöer</h3>
                 <div className='buttonrow'>
-                    { newWorkspaceDialog }
+                    <Button variant="contained" onClick={handleClickOpen}>
+                        +
+                    </Button>
                 </div>
                 <WorkspacesSection projectid={project.id} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
+                { newWorkspaceDialog }
             </div>
             );
     }
