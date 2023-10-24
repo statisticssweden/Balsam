@@ -68,9 +68,22 @@ namespace Balsam.Api.Controllers
             }
         }
 
-        public override Task<IActionResult> GetFiles([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId)
+        public async override Task<IActionResult> GetFiles([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var files = await _hubClient.GetGitBranchFiles(projectId, branchId);
+                if (files is null )
+                {
+                    return BadRequest(new Problem() { Status = 400, Type = "Fetch problem", Title = "Could not fetch files for repository branch" });
+                }
+                return Ok(files.Select(f => new BalsamApi.Server.Models.File() { Name  = f.Name, Path = f.Path, Type = f.Type == GitProviderApiClient.Model.File.TypeEnum.File?BalsamApi.Server.Models.File.TypeEnum.FileEnum: BalsamApi.Server.Models.File.TypeEnum.FolderEnum, ContentUrl = f.ContentUrl }).ToArray());
+
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not fetch files");
+            }
+            return BadRequest(new Problem() { Status = 400, Type = "Fetch problem", Title = "Could not fetch files for repository branch" });
         }
 
 
