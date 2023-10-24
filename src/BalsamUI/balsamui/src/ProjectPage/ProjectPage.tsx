@@ -1,4 +1,4 @@
-import {Project, Branch} from '../services/BalsamAPIServices';
+import {Project, Branch, Workspace, Template} from '../services/BalsamAPIServices';
 // import Button from '@mui/material/Button';
 // import { Link } from 'react-router-dom';
 // import { Description, OpenInNew } from '@mui/icons-material';
@@ -9,12 +9,14 @@ import MarkdownViewer from '../MarkdownViewer/MarkdownViewer';
 import { useDispatch } from 'react-redux';
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom'
-import { postError } from '../Alerts/alertsSlice';
+import { postError, postSuccess } from '../Alerts/alertsSlice';
 import './ProjectPage.css'
 import HttpService from '../services/HttpServices';
 import { Resource, ResourceType, getResourceType } from '../Model/Model';
 import ResourcesSection from '../ResourceSection/ResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
+import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
+import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
 
 
 export default function ProjectPage() {
@@ -25,6 +27,8 @@ export default function ProjectPage() {
     const [selectedBranch, setSelectedBranch] = useState<string>();
     const [readmeMarkdown, setReadmeMarkdown] = useState<string>();
     const [resources, setResources] = useState<Array<Resource>>();
+    const [workspaces, setWorkspaces] = useState<Array<Workspace>>();
+    const [templates, setTemplates] = useState<Array<Template>>();
 
     const appContext = useContext(AppContext) as AppContextState;
     
@@ -39,6 +43,9 @@ export default function ProjectPage() {
         }
 
         let promise = appContext.balsamApi.projectApi.getFiles(projectId, branch);
+        promise.catch(() => {
+            dispatch(postError("Det gick inte att ladda filer")); //TODO: Language
+        })
         let response = await promise;
         let files = response.data;
 
@@ -98,6 +105,30 @@ export default function ProjectPage() {
 
     };
 
+    const loadTemplates = async () => {
+        let promise = appContext.balsamApi.workspaceApi.listTemplates();
+        promise.catch(() => {
+            dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
+        })
+        let response = await promise;
+        setTemplates(response.data);
+    };
+
+
+    const loadWorkspaces = async (projectId: string, branchId: string) => {
+        if (branchId === null || typeof branchId === 'undefined') {
+            return;
+        }
+
+        let promise = appContext.balsamApi.workspaceApi.getWorkspace(projectId, branchId, true);
+        promise.catch(() => {
+            dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
+        })
+        let response = await promise;
+        setWorkspaces(response.data);
+    };
+
+
     useEffect(() => {
 
         setLoading(true);
@@ -126,11 +157,31 @@ export default function ProjectPage() {
     useEffect(() => {
         if (selectedBranch !== undefined)
         {
-            loadFiles(id as string, selectedBranch as string);
+            (async () =>  {
+                await loadFiles(id!, selectedBranch!);
+                await loadTemplates();
+                await loadWorkspaces(id!, selectedBranch!)
+            })();
         }
 
     }, [selectedBranch]);
 
+    const onNewWorkspaceDialogClosing = () => {
+
+        loadWorkspaces(id!, selectedBranch!);
+    };
+
+    const deleteWorkspace = (workspaceId: string) => 
+    {
+        let promise = appContext.balsamApi.workspaceApi.deleteWorkspace(workspaceId);
+        promise.catch(() => {
+            dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
+        })
+        promise.then(() => {
+            dispatch(postSuccess("Bearbetningsmiljö borttagen.")); //TODO: Language
+            loadWorkspaces(id!, selectedBranch!);
+        })
+    }
 
     function renderReadme() {
         let readmeElement = readmeMarkdown
@@ -170,11 +221,22 @@ export default function ProjectPage() {
         return selectBranchesElement;
     }
 
+    function renderNewWorkspaceDialog()
+    {
+        if (project && templates && selectedBranch)
+        {
+            return (<NewWorkspaceDialog project={project!} selectedBranchId={selectedBranch!} templates={templates!} onClosing={onNewWorkspaceDialogClosing}></NewWorkspaceDialog>)
+        }
+    
+        return "";
+    }
+
+
     function renderProject(project: Project)
     {
         let readmeElement = renderReadme();
         let branchSelect = renderBranchSelect();
-        
+        let newWorkspaceDialog = renderNewWorkspaceDialog();
         return (
     
             <div>
@@ -191,7 +253,10 @@ export default function ProjectPage() {
                 <h3>Resurser</h3>
                 <ResourcesSection projectid={project.id} branch={selectedBranch!} resources={resources} />
                 <h3>Bearbetningsmiljöer</h3>
-                {/* <WorkAreasSection projectid={project.id} /> */}
+                <div className='buttonrow'>
+                    { newWorkspaceDialog }
+                </div>
+                <WorkspacesSection projectid={project.id} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
             </div>
             );
     }

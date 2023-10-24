@@ -97,7 +97,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         }
         else{
             setProjectNameError(false);
-            setProjectNameHelperText("")
+            setProjectNameHelperText("");
         }
     }
 
@@ -124,7 +124,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         }
         else{
             setBranchNameError(false);
-            setBranchNameHelperText("")
+            setBranchNameHelperText("");
         }
     }
 

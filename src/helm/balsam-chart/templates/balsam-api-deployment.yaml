@@ -34,6 +34,8 @@ spec:
           value: "http://s3-provider.balsam-system.svc.cluster.local/api/v1"
         - name: Capabilities__AUTHENTICATION__ServiceLocation
           value: "http://oidc-provider.balsam-system.svc.cluster.local/api/v1"
+        - name: Capabilities__CHAT__ServiceLocation
+          value: "http://chat-provider.balsam-system.svc.cluster.local/api/v1"
         resources:
           requests:
             memory: "200Mi"

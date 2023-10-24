@@ -22,7 +22,11 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../../base';
 // @ts-ignore
+import { CreateKnowledgeLibraryRequest } from '../../BalsamAPI/Model';
+// @ts-ignore
 import { KnowledgeLibrary } from '../../BalsamAPI/Model';
+// @ts-ignore
+import { KnowledgeLibraryCreatedResponse } from '../../BalsamAPI/Model';
 // @ts-ignore
 import { Problem } from '../../BalsamAPI/Model';
 /**
@@ -31,6 +35,39 @@ import { Problem } from '../../BalsamAPI/Model';
  */
 export const KnowledgeLibraryApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * Create a new connection to a knowledge library
+         * @param {CreateKnowledgeLibraryRequest} [createKnowledgeLibraryRequest] Definition of a new Knowledge library connection
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createKnowledgeLibrary: async (createKnowledgeLibraryRequest?: CreateKnowledgeLibraryRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/knowledge-libraries`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(createKnowledgeLibraryRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * Removes knowledge library
          * @param {string} libraryId id for the knowledge library
@@ -104,6 +141,16 @@ export const KnowledgeLibraryApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = KnowledgeLibraryApiAxiosParamCreator(configuration)
     return {
         /**
+         * Create a new connection to a knowledge library
+         * @param {CreateKnowledgeLibraryRequest} [createKnowledgeLibraryRequest] Definition of a new Knowledge library connection
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createKnowledgeLibrary(createKnowledgeLibraryRequest?: CreateKnowledgeLibraryRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<KnowledgeLibraryCreatedResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createKnowledgeLibrary(createKnowledgeLibraryRequest, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Removes knowledge library
          * @param {string} libraryId id for the knowledge library
          * @param {*} [options] Override http request option.
@@ -133,6 +180,15 @@ export const KnowledgeLibraryApiFactory = function (configuration?: Configuratio
     const localVarFp = KnowledgeLibraryApiFp(configuration)
     return {
         /**
+         * Create a new connection to a knowledge library
+         * @param {CreateKnowledgeLibraryRequest} [createKnowledgeLibraryRequest] Definition of a new Knowledge library connection
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createKnowledgeLibrary(createKnowledgeLibraryRequest?: CreateKnowledgeLibraryRequest, options?: any): AxiosPromise<KnowledgeLibraryCreatedResponse> {
+            return localVarFp.createKnowledgeLibrary(createKnowledgeLibraryRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Removes knowledge library
          * @param {string} libraryId id for the knowledge library
          * @param {*} [options] Override http request option.
@@ -159,6 +215,17 @@ export const KnowledgeLibraryApiFactory = function (configuration?: Configuratio
  * @extends {BaseAPI}
  */
 export class KnowledgeLibraryApi extends BaseAPI {
+    /**
+     * Create a new connection to a knowledge library
+     * @param {CreateKnowledgeLibraryRequest} [createKnowledgeLibraryRequest] Definition of a new Knowledge library connection
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof KnowledgeLibraryApi
+     */
+    public createKnowledgeLibrary(createKnowledgeLibraryRequest?: CreateKnowledgeLibraryRequest, options?: AxiosRequestConfig) {
+        return KnowledgeLibraryApiFp(this.configuration).createKnowledgeLibrary(createKnowledgeLibraryRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * Removes knowledge library
      * @param {string} libraryId id for the knowledge library
