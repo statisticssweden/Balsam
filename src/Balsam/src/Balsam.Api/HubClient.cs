@@ -15,6 +15,8 @@ using RestSharp;
 using RocketChatChatProviderApiClient.Api;
 using System.Xml.Linq;
 using HandlebarsDotNet;
+using System.Runtime.CompilerServices;
+using BalsamApi.Server.Models;
 
 namespace Balsam.Api
 {
@@ -215,26 +217,60 @@ namespace Balsam.Api
             // serialize JSON to a string and then write string to a file
             await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(project));
 
-            CreateProjectManifests(project, projectPath);
+            await CreateProjectManifests(project, projectPath);
             _hubRepositoryClient.PersistChanges($"New program with id {project.Id}");
             _logger.LogInformation($"Project {project.Name}({project.Id}) created");
             return project;
         }
 
-        private void CreateProjectManifests(BalsamProject project, string projectPath)
+        public async Task<BalsamWorkspace?> CreateWorkspace(string projectId, string branchId, string templateId, string name, string userName, string userMail)
+        {
+            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
+
+            if (!System.IO.Directory.Exists(branchPath))
+            {
+                return null;
+            }
+
+            var workspace = new BalsamWorkspace(Guid.NewGuid().ToString(), name, templateId);
+
+            var workspacePath = Path.Combine(branchPath, userName, workspace.Id);
+
+            DirectoryUtil.AssureDirectoryExists(workspacePath);
+
+            var project = await GetProject(projectId);
+            var branch = project.Branches.FirstOrDefault(b => b.Id == branchId);
+
+            string propPath = Path.Combine(workspacePath, "properties.json");
+            _hubRepositoryClient.PullChanges();
+            // serialize JSON to a string and then write string to a file
+            await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(workspace));
+            await CreateWorkspaceManifests(project, branch, workspace, workspacePath, templateId);
+            _hubRepositoryClient.PersistChanges($"New workspace with id {project.Id}");
+
+            return workspace;
+        }
+
+        private async Task CreateWorkspaceManifests(BalsamProject project, BalsamBranch branch, BalsamWorkspace workspace, string workspacePath, string templateId)
+        {
+            var context = new WorkspaceContext(project, branch, workspace);
+            await CreateManifests(context, workspacePath, "workspaces" + Path.PathSeparator +  templateId);
+        }
+
+        private async Task CreateProjectManifests(BalsamProject project, string projectPath)
         {
             var context = new ProjectContext() { Project = project };
 
-            CreateManifests(context, projectPath, "projects");
+            await CreateManifests(context, projectPath, "projects");
         }
 
-        private void CreateManifests(BalsamContext context, string destinationPath, string templateName)
+        private async Task CreateManifests(BalsamContext context, string destinationPath, string templateName)
         {
             var templatePath = System.IO.Path.Combine(_hubRepositoryClient.Path, "templates", templateName);
 
             foreach (var file in System.IO.Directory.GetFiles(templatePath, "*.yaml"))
             {
-                var source = System.IO.File.ReadAllText(file);
+                var source = await System.IO.File.ReadAllTextAsync(file);
 
                 var template = Handlebars.Compile(source);
 
@@ -242,7 +278,7 @@ namespace Balsam.Api
 
                 var destinationFilePath = System.IO.Path.Combine(destinationPath, System.IO.Path.GetFileName(file));
 
-                System.IO.File.WriteAllText(destinationFilePath, result);
+                await System.IO.File.WriteAllTextAsync(destinationFilePath, result);
             }
 
         }

@@ -9,14 +9,31 @@ namespace Balsam.Api.Controllers
     [ApiController]
     public class WorkspaceController : BalsamApi.Server.Controllers.WorkspaceApiController
     {
+        private readonly HubClient _hubClient;
+        private readonly ILogger<ProjectController> _logger;
+
+        public WorkspaceController(ILogger<ProjectController> logger, HubClient hubClient)
+        {
+            _logger = logger;
+            _hubClient = hubClient; 
+        }
+
         public override Task<IActionResult> CreateKnowledgeLibrary([FromBody] CreateKnowledgeLibraryRequest? createKnowledgeLibraryRequest)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<IActionResult> CreateWorkspace([FromBody] CreateWorkspaceRequest? createWorkspaceRequest)
+        public async override Task<IActionResult> CreateWorkspace([FromBody] CreateWorkspaceRequest? createWorkspaceRequest)
         {
-            throw new NotImplementedException();
+            if (createWorkspaceRequest is null)
+            {
+                return BadRequest(new Problem() { Status = 400, Title = "Missing parameters", Detail = "Missing input parameter(s)" });
+            }
+            var username = this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+            
+            await _hubClient.CreateWorkspace(createWorkspaceRequest.ProjectId, createWorkspaceRequest.BranchId, createWorkspaceRequest.Name, createWorkspaceRequest.TemplateId, username, "TODO");
+
+            return Ok(new WorkspaceCreatedResponse());
         }
 
         public override Task<IActionResult> DeleteWorkspace([FromRoute(Name = "workspaceId"), Required] string workspaceId)
