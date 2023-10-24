@@ -107,7 +107,7 @@ namespace Balsam.Api.Controllers
             if (!listAll)
             {
                 var userGroups = User.Claims.Where(x => x.Type == "groups");
-                projects = projects.Where(x => userGroups.Any(o => o.Value == x.Oidc?.GroupName)).ToList();
+                projects = projects.Where(x => userGroups.Any(o => string.Equals(o.Value, x.Oidc?.GroupName, StringComparison.OrdinalIgnoreCase))).ToList();
             }
 
             var projectListResponse = new ProjectListResponse
