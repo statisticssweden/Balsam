@@ -1,7 +1,4 @@
 import {Project, Branch, Workspace, Template} from '../services/BalsamAPIServices';
-// import Button from '@mui/material/Button';
-// import { Link } from 'react-router-dom';
-// import { Description, OpenInNew } from '@mui/icons-material';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
@@ -17,6 +14,7 @@ import ResourcesSection from '../ResourceSection/ResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
+import { Button } from '@mui/material';
 
 
 export default function ProjectPage() {
@@ -29,10 +27,8 @@ export default function ProjectPage() {
     const [resources, setResources] = useState<Array<Resource>>();
     const [workspaces, setWorkspaces] = useState<Array<Workspace>>();
     const [templates, setTemplates] = useState<Array<Template>>();
-
+    const [newWorkspaceDialogOpen, setNewWorkspaceDialogOpen] = useState(false);
     const appContext = useContext(AppContext) as AppContextState;
-    
-    // const { branch } = useSearchParams();
 
     const dispatch = useDispatch();
 
@@ -49,20 +45,24 @@ export default function ProjectPage() {
         let response = await promise;
         let files = response.data;
 
-        let readmeFile = files.find((file) => file.path.toLowerCase() === "/readme.md");
+        let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md");
 
-        HttpService.getTextFromUrl(readmeFile.contentUrl)
-            .then((text) => 
-            {   
-                setReadmeMarkdown(text);
-            })
-            .catch( () => {
-                setReadmeMarkdown("Fel vid inläsning av README.md"); //TODO: Language
-            });
+        if (readmeFile)
+        {
+            HttpService.getTextFromUrl(readmeFile.contentUrl)
+                .then((text) => 
+                {   
+                    setReadmeMarkdown(text);
+                })
+                .catch( () => {
+                    setReadmeMarkdown("Fel vid inläsning av README.md"); //TODO: Language
+                });
+        }
 
         let resourceFiles = files.filter((file) => {
-            return file.path.startsWith('/Resources/') || file.path.toLowerCase() === "/readme.md"
+            return file.path.startsWith('Resources/') || file.path.toLowerCase() === "readme.md"
         });
+    
 
         let resourcesArray = await Promise.all(resourceFiles.map( async (file): Promise<Resource> => {
             let name = file.name;
@@ -168,6 +168,7 @@ export default function ProjectPage() {
 
     const onNewWorkspaceDialogClosing = () => {
 
+        setNewWorkspaceDialogOpen(false);
         loadWorkspaces(id!, selectedBranch!);
     };
 
@@ -221,11 +222,15 @@ export default function ProjectPage() {
         return selectBranchesElement;
     }
 
+    const handleClickOpen = () => {
+        setNewWorkspaceDialogOpen(true);
+    };
+
     function renderNewWorkspaceDialog()
     {
         if (project && templates && selectedBranch)
         {
-            return (<NewWorkspaceDialog project={project!} selectedBranchId={selectedBranch!} templates={templates!} onClosing={onNewWorkspaceDialogClosing}></NewWorkspaceDialog>)
+            return (<NewWorkspaceDialog project={project!} open={newWorkspaceDialogOpen} selectedBranchId={selectedBranch!} templates={templates!} onClosing={onNewWorkspaceDialogClosing}></NewWorkspaceDialog>)
         }
     
         return "";
@@ -254,9 +259,12 @@ export default function ProjectPage() {
                 <ResourcesSection projectid={project.id} branch={selectedBranch!} resources={resources} />
                 <h3>Bearbetningsmiljöer</h3>
                 <div className='buttonrow'>
-                    { newWorkspaceDialog }
+                    <Button variant="contained" onClick={handleClickOpen}>
+                        +
+                    </Button>
                 </div>
                 <WorkspacesSection projectid={project.id} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
+                { newWorkspaceDialog }
             </div>
             );
     }

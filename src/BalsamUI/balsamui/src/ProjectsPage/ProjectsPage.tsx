@@ -23,7 +23,7 @@ export default function ProjectsPage() {
             let promise = appContext.balsamApi.projectApi.listProjects(true);
             promise.catch(() => {
                 
-                dispatch(postError("Det gick inte att ladda projekt"))
+                dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
             })
 
             let listProjectsResponse = await promise;

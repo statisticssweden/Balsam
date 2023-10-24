@@ -19,7 +19,6 @@ export interface WorkspaceCardProperties {
     deleteWorkspaceCallback: (workspaceId: string) => void,
 }
 
-
 export default function WorkspaceCard(props : WorkspaceCardProperties) {
 
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);

@@ -1,4 +1,4 @@
-import {useState, Fragment, useEffect, useContext, useRef} from 'react';
+import {useState, Fragment, useEffect, useContext} from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -19,10 +19,10 @@ export interface NewWorkspaceDialogProperties
     selectedBranchId: string,
     templates: Array<Template>,
     onClosing: () => void,
+    open: boolean,
 }
 
 export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
-    const [open, setOpen] = useState(false);
     const [workspaceName, setWorkspaceName] = useState<string>("");
     const [workspaceNameError, setWorkspaceNameError] = useState(false);
     const [workspaceNameHelperText, setWorkspaceNameHelperText] = useState("")
@@ -35,15 +35,9 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
 
     const appContext = useContext(AppContext) as AppContextState;
 
-    // const nameInputRef = useRef();
-    
-    // useEffect(() => {
-    //     nameInputRef!.current.focus();
-    // }, []);
-    
     useEffect(() => {
         setTemplateId( props.templates[0].id );
-    }, []);
+    }, [props.templates]);
 
     useEffect(() => {
         setBranchName(props.project.branches.find((b) => b.id === props.selectedBranchId)?.name)
@@ -60,17 +54,12 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
     {
         let projectNameValid = validateWorkspaceName(workspaceName).length == 0;
         setOkEnabled(projectNameValid)
-
     }
 
     const showNewItemCreatedAlert = (message: string, workspaceUrl: string) => 
     {
         dispatch(postSuccess(message, {caption: "Öppna", href: workspaceUrl} )); //TODO: Language
     }
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
 
     const resetDialog = () => {
         setWorkspaceName("");
@@ -79,19 +68,17 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
     };
 
     const handleCancel = () => {
-        setOpen(false);
         props.onClosing();
         resetDialog();
     };
 
     const handleClose = () => {
-        setOpen(false);
         props.onClosing();
         resetDialog();
     };
 
     const workspaceNameChanged = (name: string) => {
-        name = name.trim();
+        //name = name.trim();
         setWorkspaceName(name);
         let errors = validateWorkspaceName(name);
 
@@ -127,7 +114,7 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
     const handleCreate = () => {
 
         let workspace : CreateWorkspaceRequest = {
-            name: workspaceName,
+            name: workspaceName.trim(),
             projectId: props.project.id,
             branchId: props.selectedBranchId,
             templateId: templateId!,
@@ -135,7 +122,6 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
 
         appContext.balsamApi.workspaceApi.createWorkspace(workspace).then((response => {
             
-            setOpen(false);
             props.onClosing();
             resetDialog();
 
@@ -150,67 +136,69 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
         });
     };
 
-    return (
-        <Fragment>
-            {/* TODO: seperate button from dialog */}
-            <Button variant="contained" onClick={handleClickOpen}>
-                +
-            </Button>
-            
-            <Dialog
-                open={open}
-                onClose={handleClose}
-                fullWidth={true}
-                disableRestoreFocus 
-            >
-                <DialogTitle>Skapa bearbetningsmiljö</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Ange information om bearbetningsmiljön
-                    </DialogContentText>
-                    <Box
-                        noValidate
-                        sx={{
-                            display:'flex',
-                            flexDirection: 'column',
-                            m:'auto'
-                        }}
-                        component='form'>
-                        {/* TODO: Language */}
-                        <FormControl sx={{ mt: 4}}>
-                            <TextField id="project-name" disabled  variant='standard' label="Projekt" value={props.project.name} aria-describedby="Namn på projekt" />
-                        </FormControl>
-                        <FormControl sx={{ mt: 4}}>
-                            <TextField id="branch-name" disabled  variant='standard' label="Branch" value={branchName} aria-describedby="Namn på branch" />
-                        </FormControl>
-                        <FormControl sx={{ mt: 4}}>
-                            <TextField id="name-input" autoFocus inputRef={(input) => input && input.focus()} error={workspaceNameError} helperText={workspaceNameHelperText} label="Namn på bearbetningsmiljö" variant='standard' required value={workspaceName} onChange={e => workspaceNameChanged(e.target.value)} aria-describedby="Namn på bearbetningsmiljö" />
-                        </FormControl>
-                        <FormControl variant="standard" sx={{ mt: 4, minWidth: 120 }}>
-                            <InputLabel id="template-select-label">Mall</InputLabel>
-                            <Select
-                                id="template-select"
-                                labelId="template-select-label"
-                                value={templateId}
-                                variant='standard'
-                                onChange={(e) => setTemplateId(e.target.value)}
-                                label="Mall"
-                                aria-describedby="Mall" 
-                                >
+
+    function renderDialog()
+    {
+        return (
+            <Fragment>
+                <Dialog
+                    open={props.open}
+                    onClose={handleClose}
+                    fullWidth={true}
+                    disableRestoreFocus 
+                >
+                    <DialogTitle>Skapa bearbetningsmiljö</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Ange information om bearbetningsmiljön
+                        </DialogContentText>
+                        <Box
+                            noValidate
+                            sx={{
+                                display:'flex',
+                                flexDirection: 'column',
+                                m:'auto'
+                            }}
+                            component='form'>
+                            {/* TODO: Language */}
+                            <FormControl sx={{ mt: 4}}>
+                                <TextField id="project-name" disabled  variant='standard' label="Projekt" value={props.project.name} aria-describedby="Namn på projekt" />
+                            </FormControl>
+                            <FormControl sx={{ mt: 4}}>
+                                <TextField id="branch-name" disabled  variant='standard' label="Branch" value={branchName} aria-describedby="Namn på branch" />
+                            </FormControl>
+                            <FormControl sx={{ mt: 4}}>
+                                <TextField id="name-input" autoFocus inputRef={(input) => input && input.focus()} error={workspaceNameError} helperText={workspaceNameHelperText} label="Namn på bearbetningsmiljö" variant='standard' required value={workspaceName} onChange={e => workspaceNameChanged(e.target.value)} aria-describedby="Namn på bearbetningsmiljö" />
+                            </FormControl>
+                            <FormControl variant="standard" sx={{ mt: 4, minWidth: 120 }}>
+                                <InputLabel id="template-select-label">Mall</InputLabel>
+                                <Select
+                                    id="template-select"
+                                    labelId="template-select-label"
+                                    value={templateId}
+                                    variant='standard'
+                                    onChange={(e) => setTemplateId(e.target.value)}
+                                    label="Mall"
+                                    aria-describedby="Mall" 
+                                    >
+                                
+                                {props.templates.map(template => (
+                                    <MenuItem key={template.id} value={template.id}>{template.name}</MenuItem>
+                                ))}
+                                </Select>
+                            </FormControl>
                             
-                            {props.templates.map(template => (
-                                <MenuItem key={template.id} value={template.id}>{template.name}</MenuItem>
-                            ))}
-                            </Select>
-                        </FormControl>
-                        
-                    </Box>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCancel} >Avbryt</Button>
-                    <Button onClick={handleCreate} disabled={!okEnabled}>Skapa</Button>
-                </DialogActions>
-            </Dialog>
-        </Fragment>
-    );
+                        </Box>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCancel} >Avbryt</Button>
+                        <Button onClick={handleCreate} disabled={!okEnabled}>Skapa</Button>
+                    </DialogActions>
+                </Dialog>
+            </Fragment>
+        );
+
+    }
+
+    return templateId ? renderDialog() : "";
 }
