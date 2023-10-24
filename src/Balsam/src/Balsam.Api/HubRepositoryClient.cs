@@ -6,7 +6,6 @@ namespace Balsam.Api
 {
     public class HubRepositoryClient
     {
-
         private readonly string _repositoryPath;
         private readonly Repository _repository;
         private readonly string _userId;
@@ -23,7 +22,7 @@ namespace Balsam.Api
             _password = options.Value.Password;
             _mail = options.Value.Mail??"noreply@balsam.local";
 
-            //Asure credentials
+            //Assure credentials
             if (string.IsNullOrEmpty(_userId) || string.IsNullOrEmpty(_password)) {
                 _logger.LogWarning("Missing hub repository credentials");
             }
@@ -77,8 +76,6 @@ namespace Balsam.Api
             var signature = new Signature(_userId, _mail, DateTimeOffset.Now);
             Commands.Pull(_repository, signature, pullOptions);
         }
-
-        
 
     }
 }

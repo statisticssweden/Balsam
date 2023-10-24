@@ -1,6 +1,5 @@
 ﻿using Balsam.Api.Models;
 using BalsamApi.Server.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
@@ -8,25 +7,22 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Balsam.Api.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class ProjectController : BalsamApi.Server.Controllers.ProjectApiController
     {
-
-        private readonly CapabilityOptions _git;
-        private readonly CapabilityOptions _authentication;
         private readonly HubClient _hubClient;
         private readonly ILogger<ProjectController> _logger;
 
 
-        public ProjectController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, ILogger<ProjectController> logger,HubClient hubClient)
+        public ProjectController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, ILogger<ProjectController> logger, HubClient hubClient)
         {
             _hubClient = hubClient;
             _logger = logger;
-            _git = capabilityOptions.Get(Capabilities.Git);
-            _authentication = capabilityOptions.Get(Capabilities.Authentication);
+            capabilityOptions.Get(Capabilities.Git);
+            capabilityOptions.Get(Capabilities.Authentication);
         }
 
         public override Task<IActionResult> CreateBranch([FromRoute(Name = "projectId"), Required] string projectId, [FromBody] CreateBranchRequest? createBranchRequest)
@@ -46,7 +42,6 @@ namespace Balsam.Api.Controllers
             _logger.LogInformation($"The user is {username}");
             try
             {
-
                 BalsamProject? project = await _hubClient.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName, username);
 
                 if (project == null)
@@ -93,7 +88,8 @@ namespace Balsam.Api.Controllers
             {
                 var balsamProject = await _hubClient.GetProject(projectId);
 
-                if (balsamProject is null) {
+                if (balsamProject is null)
+                {
                     return BadRequest(new Problem() { Title = "Project with given id can not be found", Status = 400, Type = "Can not find project" });
                 }
 
@@ -101,7 +97,7 @@ namespace Balsam.Api.Controllers
                 evt.Id = balsamProject.Id;
                 evt.Name = balsamProject.Name;
                 evt.Description = balsamProject.Description;
-                evt.GitUrl = balsamProject.Git is null?"": balsamProject.Git.Path;
+                evt.GitUrl = balsamProject.Git is null ? "" : balsamProject.Git.Path;
                 evt.Branches = balsamProject.Branches.Select(b => new Branch() { Id = b.Id, Description = b.Description, Name = b.Name, IsDefault = b.IsDefault }).ToList();
 
                 return Ok(evt);
@@ -116,30 +112,46 @@ namespace Balsam.Api.Controllers
 
         public override async Task<IActionResult> ListProjects([FromQuery(Name = "all")] bool? all)
         {
-            _logger.LogDebug($"Hit ListProject");
-            var projects = await _hubClient.GetProjects();
-            var projectListResponse = new ProjectListResponse();
+            var listAll = all ?? true;
+            _logger.LogDebug($"Hit ListProject viewAll={listAll}", listAll);
 
-            projectListResponse.Projects = MapProject(projects);
+            var projects = await _hubClient.GetProjects();
+
+            if (!listAll)
+            {
+                var userGroups = User.Claims.Where(x => x.Type == "groups");
+                projects = projects.Where(x => userGroups.Any(o => string.Equals(o.Value, x.Oidc?.GroupName, StringComparison.OrdinalIgnoreCase))).ToList();
+            }
+
+            var projectListResponse = new ProjectListResponse
+            {
+                Projects = MapProject(projects)
+            };
+
             return Ok(projectListResponse);
         }
 
         private List<Project> MapProject(List<BalsamProject> projects)
         {
-            return projects.Select(project => new Project() {   Id = project.Id, 
-                                                                Name = project.Name, 
-                                                                Description = project.Description, 
-                                                                Branches = MapBranches(project.Branches) }).ToList();
+            return projects.Select(project => new Project()
+            {
+                Id = project.Id,
+                Name = project.Name,
+                Description = project.Description,
+                Branches = MapBranches(project.Branches)
+            }).ToList();
         }
 
         private List<Branch> MapBranches(List<BalsamBranch> branches)
         {
-            return branches.Select(branch => new Branch() { Id = branch.Id, 
-                                                            Description = branch.Description, 
-                                                            Name = branch.Name, 
-                                                            IsDefault = branch.IsDefault }).ToList();
+            return branches.Select(branch => new Branch()
+            {
+                Id = branch.Id,
+                Description = branch.Description,
+                Name = branch.Name,
+                IsDefault = branch.IsDefault
+            }).ToList();
         }
-
 
     }
 }
