@@ -38,7 +38,6 @@ namespace Balsam.Api.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpGet]
         public override Task<IActionResult> ListTemplates()
         {
             var workspaceTemplates = _hubClient.ListWorkspaceTemplates();
