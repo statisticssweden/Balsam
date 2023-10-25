@@ -11,13 +11,13 @@ namespace Balsam.Api.Controllers
     [Authorize]
     public class WorkspaceController : BalsamApi.Server.Controllers.WorkspaceApiController
     {
+        private readonly ILogger<WorkspaceController> _logger;
         private readonly HubClient _hubClient;
-        private readonly ILogger<ProjectController> _logger;
 
-        public WorkspaceController(ILogger<ProjectController> logger, HubClient hubClient)
+        public WorkspaceController(ILogger<WorkspaceController> logger, HubClient hubClient)
         {
             _logger = logger;
-            _hubClient = hubClient; 
+            _hubClient = hubClient;
         }
 
         public override Task<IActionResult> CreateKnowledgeLibrary([FromBody] CreateKnowledgeLibraryRequest? createKnowledgeLibraryRequest)
@@ -65,13 +65,20 @@ namespace Balsam.Api.Controllers
 
         public override Task<IActionResult> ListTemplates()
         {
-            //var templates = new List<Template>();
+            var workspaceTemplates = _hubClient.ListWorkspaceTemplates();
+            var templates = workspaceTemplates
+                .Select(x => new Template { Id = x.Id, Name = x.Name, Description = x.Description });
+            if (templates.Any())
+            {
+                return Task.FromResult<IActionResult>(Ok(templates));
+            }
 
-            //templates.Add(new Template() { Id = "JYP_PyTorch", Name = "Jupyter with PyTorch", Description = "Jupyter with PyTorch 2.0 CPU only" });
-            //templates.Add(new Template() { Id = "JYP_SciKit", Name = "Jupyter with Scikit Learn ", Description = "Jupyter with scikit-learn 1.2" });
-
-            //return Ok(templates.ToArray());
-            throw new NotImplementedException();
+            return Task.FromResult<IActionResult>(BadRequest(new Problem
+            {
+                Detail = "No workspace templates found in hub repository",
+                Status = 417,
+                Title = "No workspace template found"
+            }));
         }
     }
 }
