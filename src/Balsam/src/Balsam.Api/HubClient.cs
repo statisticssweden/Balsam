@@ -234,7 +234,7 @@ namespace Balsam.Api
                 return null;
             }
 
-            var workspace = new BalsamWorkspace(Guid.NewGuid().ToString(), name, templateId);
+            var workspace = new BalsamWorkspace(CreateWorkspaceId(name), name, templateId);
 
             var workspacePath = Path.Combine(branchPath, userName, workspace.Id);
 
@@ -338,6 +338,23 @@ namespace Balsam.Api
             name = name.Replace(" ", "-"); //replaces spaches with hypen
             name = Regex.Replace(name, @"[^a-z0-9\-]", ""); // make sure that only a-z or digit or hypen removes all other characters
             name = name.Substring(0,Math.Min(50 - crcHash.Length, name.Length)) + "-" + crcHash; //Assures max size of 50 characters
+
+            return name;
+
+        }
+
+        private static string CreateWorkspaceId(string name)
+        {
+            var crc32 = new Crc32();
+
+            crc32.Append(System.Text.Encoding.ASCII.GetBytes(name + Guid.NewGuid().ToString()));
+            var hash = crc32.GetCurrentHash();
+            var crcHash = string.Join("", hash.Select(b => b.ToString("x2").ToLower()).Reverse());
+
+            name = name.ToLower(); //Only lower charachters allowed
+            name = name.Replace(" ", "-"); //replaces spaches with hypen
+            name = Regex.Replace(name, @"[^a-z0-9\-]", ""); // make sure that only a-z or digit or hypen removes all other characters
+            name = name.Substring(0, Math.Min(50 - crcHash.Length, name.Length)) + "-" + crcHash; //Assures max size of 50 characters
 
             return name;
 
