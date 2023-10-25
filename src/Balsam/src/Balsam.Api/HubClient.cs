@@ -32,7 +32,7 @@ namespace Balsam.Api
         private readonly IUserApi _gitUserClient;
 
 
-        public HubClient(ILogger<HubClient> logger, IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, IBucketApi s3Client, IRepositoryApi reposiotryApi, IGroupApi oidcClient, IAreaApi chatClient, IUserApi gitUserClient)
+        public HubClient(ILogger<HubClient> logger, IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCache, HubRepositoryClient hubRepoClient, IBucketApi s3Client, IRepositoryApi reposiotryApi, IGroupApi oidcClient, IAreaApi chatClient, IUserApi gitUserClient)
         {
             _logger = logger;
             _memoryCache = memoryCache;
