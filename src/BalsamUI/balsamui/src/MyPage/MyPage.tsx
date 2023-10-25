@@ -8,6 +8,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Button, Chip, Divider } 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import WorkspacesSection, { NewWorkspaceCardKeyType } from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog, { NewWorkspaceDialogProperties } from '../NewWorkspaceDialog/NewWorkspaceDialog';
+import { AxiosResponse } from 'axios';
 
 
 
@@ -26,33 +27,31 @@ export default function MyPage() {
         setLoading(true);
 
         const fetchData = async () => {
-            let promise = appContext.balsamApi.projectApi.listProjects(false);
-            promise.catch(() => {
+            appContext.balsamApi.projectApi.listProjects(false)
+            .catch(() => {
                 
                 dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
             })
-
-            let listProjectsResponse = await promise;
-            
-            setProjects(listProjectsResponse.data.projects);
-            setLoading(false);
+            .then((response) => {
+                setProjects(response?.data.projects);
+                setLoading(false);
+            })
         }
 
         fetchData()
             .catch(console.error);
         
-        
-
     }
 
     const loadWorkspaces = async () => {
 
-        let promise = appContext.balsamApi.workspaceApi.getWorkspace(undefined, undefined, false);
-        promise.catch(() => {
-            dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
-        })
-        let response = await promise;
-        setWorkspaces(response.data);
+        appContext.balsamApi.workspaceApi.getWorkspace(undefined, undefined, false)
+            .catch(() => {
+                dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
+            })
+            .then((response) => {
+                setWorkspaces(response?.data);
+            })
     };
 
     useEffect(() => {
@@ -66,27 +65,32 @@ export default function MyPage() {
    
     const deleteWorkspace = (workspaceId: string) => 
     {
-        let promise = appContext.balsamApi.workspaceApi.deleteWorkspace(workspaceId);
-        promise.catch(() => {
-            dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
-        })
-        promise.then(() => {
-            dispatch(postSuccess("Bearbetningsmiljö borttagen.")); //TODO: Language
-            
-            //Faster than reloading all
-            if (workspaces){
-                setWorkspaces(workspaces.filter( w => w.id !== workspaceId));
-            }
-        })
+        appContext.balsamApi.workspaceApi.deleteWorkspace(workspaceId)
+            .catch(() => {
+                dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
+            })
+            .then(() => {
+                dispatch(postSuccess("Bearbetningsmiljö borttagen.")); //TODO: Language
+                
+                //Faster than reloading all
+                if (workspaces){
+                    setWorkspaces(workspaces.filter( w => w.id !== workspaceId));
+                }
+            });
     }
     
     const loadTemplates = async () => {
-        let promise = appContext.balsamApi.workspaceApi.listTemplates();
-        promise.catch(() => {
+        appContext.balsamApi.workspaceApi.listTemplates()
+        .catch(() => {
             dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
         })
-        let response = await promise;
-        setTemplates(response.data);
+        .then((response) => {
+            let axResponse = response as AxiosResponse<Template[], any>
+            if (axResponse)
+            {
+                setTemplates(axResponse.data);
+            }
+        })
     };
 
     const onNewWorkspaceDialogClosing = () => {
@@ -187,10 +191,6 @@ export default function MyPage() {
                                      <Button sx={{ minWidth:"0px",  padding:0, textTransform:"none" }} onClick={(e) => onOpenProjectClick(e, openProjectUrl) }  >
                                      <h3 className='projectHeader'>{project.name}</h3>
                                      </Button>
-                                     {/* <div>
-                                     <p className="description"><em>{project.description}</em></p>
-                                     </div> */}
-                                     
                             </AccordionSummary>
                             <AccordionDetails>
                                 

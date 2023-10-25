@@ -49,7 +49,7 @@ export default function WorkspacesSection(props: WorkspaceSectionProperties)
     }
     
     let contents = props.workspaces === undefined
-        ? <p><em>Laddar resurser...</em></p>
+        ? <p><em>Laddar bearbetningsmiljöer...</em></p>
         : renderWorkspaces(props.workspaces!);
 
     return (<div>

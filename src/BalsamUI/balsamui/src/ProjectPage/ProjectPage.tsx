@@ -1,4 +1,4 @@
-import {Project, Branch, Workspace, Template} from '../services/BalsamAPIServices';
+import {Project, Branch, Workspace, Template, ModelFile} from '../services/BalsamAPIServices';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
@@ -15,6 +15,7 @@ import AppContext, { AppContextState } from '../configuration/AppContext';
 import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
 import { Button } from '@mui/material';
+import { AxiosResponse } from 'axios';
 
 
 export default function ProjectPage() {
@@ -38,80 +39,86 @@ export default function ProjectPage() {
             return;
         }
 
-        let promise = appContext.balsamApi.projectApi.getFiles(projectId, branch);
-        promise.catch(() => {
+        appContext.balsamApi.projectApi.getFiles(projectId, branch)
+        .catch(() => {
             dispatch(postError("Det gick inte att ladda filer")); //TODO: Language
         })
-        let response = await promise;
-        let files = response.data;
-
-        let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md");
-
-        if (readmeFile)
-        {
-            HttpService.getTextFromUrl(readmeFile.contentUrl)
-                .then((text) => 
-                {   
-                    setReadmeMarkdown(text);
-                })
-                .catch( () => {
-                    setReadmeMarkdown("Fel vid inläsning av README.md"); //TODO: Language
-                });
-        }
-
-        let resourceFiles = files.filter((file) => {
-            return file.path.startsWith('Resources/') || file.path.toLowerCase() === "readme.md"
-        });
-    
-
-        let resourcesArray = await Promise.all(resourceFiles.map( async (file): Promise<Resource> => {
-            let name = file.name;
-            name = name.replace(/\.[^/.]+$/, "");
+        .then(async (response) => {
             
-            let type = getResourceType(file.name);
-            let linkUrl: string = "";
-            
-            let description = "";
-            switch (type) {
-                case ResourceType.Md:
-                    description = "Markdownfil som går att läsa i gränssnittet"; //TODO: Language
-                    break;
-                case ResourceType.Url:
-                    let content = await HttpService.getTextFromUrl(file.contentUrl);
-                    let matches = content.match(/URL\s*=\s*(\S*)/)
-                    linkUrl =  matches !== null && matches.length > 0 ? matches[0] : "";
-                    description = file.contentUrl;
+            //TODO: Response should be typed
+            let axResponse = response as AxiosResponse<any[], any>;
 
-                    break;
-                case ResourceType.Document:
-                    description = file.name;
-                    break;
-                default:
-                    description = file.name;
+            let files = axResponse.data as Array<ModelFile>;
+
+            let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md");
+
+            if (readmeFile)
+            {
+                HttpService.getTextFromUrl(readmeFile.contentUrl)
+                    .then((text) => 
+                    {   
+                        setReadmeMarkdown(text);
+                    })
+                    .catch( () => {
+                        setReadmeMarkdown("Fel vid inläsning av README.md"); //TODO: Language
+                    });
             }
 
+            let resourceFiles = files.filter((file) => {
+                return file.path.startsWith('Resources/') || file.path.toLowerCase() === "readme.md"
+            });
+        
 
-            return { 
-                name: name,
-                description: description,
-                type: type,
-                linkUrl: linkUrl,
-                contentUrl: file.contentUrl,
-                filePath: file.path
+            let resourcesArray = await Promise.all(resourceFiles.map( async (file): Promise<Resource> => {
+                let name = file.name;
+                name = name.replace(/\.[^/.]+$/, "");
+                
+                let type = getResourceType(file.name);
+                let linkUrl: string = "";
+                
+                let description = "";
+                switch (type) {
+                    case ResourceType.Md:
+                        description = "Markdownfil som går att läsa i gränssnittet"; //TODO: Language
+                        break;
+                    case ResourceType.Url:
+                        let content = await HttpService.getTextFromUrl(file.contentUrl);
+                        let matches = content.match(/URL\s*=\s*(\S*)/)
+                        linkUrl =  matches !== null && matches.length > 0 ? matches[0] : "";
+                        description = file.contentUrl;
+
+                        break;
+                    case ResourceType.Document:
+                        description = file.name;
+                        break;
+                    default:
+                        description = file.name;
                 }
-        }));
 
-        setResources(resourcesArray);
+
+                return { 
+                    name: name,
+                    description: description,
+                    type: type,
+                    linkUrl: linkUrl,
+                    contentUrl: file.contentUrl,
+                    filePath: file.path
+                    }
+            }));
+
+            setResources(resourcesArray);
+        });
 
     };
 
     const loadTemplates = async () => {
-        let promise = appContext.balsamApi.workspaceApi.listTemplates();
-        promise.catch(() => {
+        appContext.balsamApi.workspaceApi.listTemplates()
+        .catch(() => {
             dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
         })
-        let response = await promise;
-        setTemplates(response.data);
+        .then((response) => {
+            setTemplates(response?.data);
+        })
     };
 
 
@@ -120,12 +127,13 @@ export default function ProjectPage() {
             return;
         }
 
-        let promise = appContext.balsamApi.workspaceApi.getWorkspace(projectId, branchId, true);
-        promise.catch(() => {
-            dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
-        })
-        let response = await promise;
-        setWorkspaces(response.data);
+        appContext.balsamApi.workspaceApi.getWorkspace(projectId, branchId, true)
+            .catch(() => {
+                dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
+            })
+            .then((response) => {
+                setWorkspaces(response?.data);
+            });
     };
 
 
@@ -133,20 +141,18 @@ export default function ProjectPage() {
 
         setLoading(true);
         const fetchData = async () => {
-            let promise = appContext.balsamApi.projectApi.getProject(id as string);
-
-            promise.catch(() => {
+            appContext.balsamApi.projectApi.getProject(id as string)
+            .catch(() => {
                 
                 dispatch(postError("Det gick inte att ladda projektet")); //TODO: Language
             })
+            .then((response) => {
+                setProject(response?.data);
+                setBranches(response?.data.branches);
+                setSelectedBranch(response?.data.branches.find((b) => b.isDefault)?.id); 
+                setLoading(false);
 
-            let response = await promise;
-            setProject(response.data);
-            setBranches(response.data.branches);
-            setSelectedBranch(response.data.branches.find((b) => b.isDefault)?.id); 
-            setLoading(false);
-
-
+            });
         };
 
         fetchData()

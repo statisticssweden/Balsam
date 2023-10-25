@@ -25,7 +25,7 @@ export interface ModelFile {
      * @type {string}
      * @memberof ModelFile
      */
-    'path'?: string;
+    'path': string;
     /**
      * The name
      * @type {string}
@@ -37,13 +37,13 @@ export interface ModelFile {
      * @type {string}
      * @memberof ModelFile
      */
-    'type'?: ModelFileTypeEnum;
+    'type': ModelFileTypeEnum;
     /**
      * Url to the raw content of the file
      * @type {string}
      * @memberof ModelFile
      */
-    'contentUrl'?: string;
+    'contentUrl': string;
 }
 
 export const ModelFileTypeEnum = {

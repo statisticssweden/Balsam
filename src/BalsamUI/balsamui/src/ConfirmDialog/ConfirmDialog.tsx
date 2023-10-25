@@ -30,9 +30,7 @@ export default function ConfirmDialog(props: PropsWithChildren<ConfirmDialogProp
         return (
             props.children ? 
                 <DialogContent>
-                    <DialogContentText>
-                        {props.children}
-                    </DialogContentText>
+                    {props.children}
                 </DialogContent>
                 : ""
         );

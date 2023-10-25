@@ -20,18 +20,15 @@ export default function ProjectsPage() {
         setLoading(true);
 
         const fetchData = async () => {
-            let promise = appContext.balsamApi.projectApi.listProjects(true);
-            promise.catch(() => {
+            appContext.balsamApi.projectApi.listProjects(true)
+            .catch(() => {
                 
                 dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
             })
-
-            let listProjectsResponse = await promise;
-            
-            setProjects(listProjectsResponse.data.projects);
-            setLoading(false);
-
-
+            .then((response) => {
+                setProjects(response?.data.projects);
+                setLoading(false);
+            })
         }
 
         fetchData()
