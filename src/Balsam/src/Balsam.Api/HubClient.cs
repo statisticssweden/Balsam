@@ -96,6 +96,25 @@ namespace Balsam.Api
             return projects;
         }
 
+        public async Task<BalsamProject?> GetProject(string projectId, bool includeBranches = true)
+        {
+            
+            var projectPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId);
+            var propsFile = Path.Combine(projectPath, "properties.json");
+
+            if (!System.IO.File.Exists(propsFile))
+            {
+                return null;
+            }
+            var project = JsonConvert.DeserializeObject<BalsamProject>(await System.IO.File.ReadAllTextAsync(propsFile));
+            if (project != null && includeBranches)
+            {
+                project.Branches = await ReadBranches(projectPath);
+            }
+            return project; 
+
+        }
+
         public async Task<BalsamProject?> GetProject(string projectId)
         {
             var projectPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId);
@@ -137,6 +156,20 @@ namespace Balsam.Api
                 }
             }
             return branches;
+        }
+
+        private async Task<BalsamBranch?> GetBranch(string projectId, string branchId)
+        {
+
+            var propsFile = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId, "properties.json");
+            
+            if (!System.IO.File.Exists(propsFile))
+            {
+                return null;
+            }
+
+            var branch = JsonConvert.DeserializeObject<BalsamBranch>(await System.IO.File.ReadAllTextAsync(propsFile));
+            return branch;
         }
 
         private async Task<bool> ProjectExists(string projectName)
@@ -187,7 +220,7 @@ namespace Balsam.Api
             {
                 _logger.LogDebug($"Begin call Git");
                 var gitData = await _repositoryApi.CreateRepositoryAsync(new CreateRepositoryRequest( preferredName,description, defaultBranchName));
-                project.Git = new GitData() { Name = gitData.Name, Path = gitData.Path };
+                project.Git = new GitData() { Id = gitData.Id, Name = gitData.Name, Path = gitData.Path };
                 _logger.LogInformation($"Git repository {project.Git.Name} created");
             }
 
@@ -326,7 +359,18 @@ namespace Balsam.Api
             return true;
         }
 
-        private static string SanitizeName(string name)
+        public async Task<List<GitProviderApiClient.Model.File>?> GetGitBranchFiles(string projectId, string branchId)
+        {
+            var project = await GetProject(projectId);
+            var branch = await GetBranch(projectId, branchId);
+            if (project is null || branch is null || project.Git is null)
+            { 
+                return null; 
+            }
+            return _repositoryApi.GetFilesInBranch(project.Git.Id, branch.Name);
+        }
+
+        private  string SanitizeName(string name)
         {
             var crc32 = new Crc32();
 
