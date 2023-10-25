@@ -33,15 +33,17 @@ namespace Balsam.Api
         private readonly IRepositoryApi _repositoryApi;
         private readonly ILogger<HubClient> _logger;
         private readonly IAreaApi _chatClient;
+        private readonly IUserApi _gitUserClient;
 
 
-        public HubClient(ILogger<HubClient> logger, IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, IBucketApi s3Client, IRepositoryApi reposiotryApi, IGroupApi oidcClient, IAreaApi chatClient)
+        public HubClient(ILogger<HubClient> logger, IOptionsSnapshot<CapabilityOptions> capabilityOptions, IMemoryCache memoryCach, HubRepositoryClient hubRepoClient, IBucketApi s3Client, IRepositoryApi reposiotryApi, IGroupApi oidcClient, IAreaApi chatClient, IUserApi gitUserClient)
         {
             _logger = logger;
             _memoryCache = memoryCach;
             _s3Client = s3Client;
             _oidcClient = oidcClient;
             _chatClient = chatClient;
+            _gitUserClient = gitUserClient;
            
             _hubRepositoryClient = hubRepoClient;
 
@@ -223,7 +225,7 @@ namespace Balsam.Api
             return project;
         }
 
-        public async Task<BalsamWorkspace?> CreateWorkspace(string projectId, string branchId, string templateId, string name, string userName, string userMail)
+        public async Task<BalsamWorkspace?> CreateWorkspace(string projectId, string branchId, string name, string templateId,  string userName, string userMail)
         {
             var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
 
@@ -238,23 +240,31 @@ namespace Balsam.Api
 
             DirectoryUtil.AssureDirectoryExists(workspacePath);
 
+
             var project = await GetProject(projectId);
             var branch = project.Branches.FirstOrDefault(b => b.Id == branchId);
+            string gitPAT = "";
+            if (_git.Enabled)
+            {
+                var patResponse = await _gitUserClient.CreatePATAsync(userName);
+                gitPAT = patResponse.Token;
+            }
+            var user = new UserInfo(userName, userMail, gitPAT);
 
             string propPath = Path.Combine(workspacePath, "properties.json");
             _hubRepositoryClient.PullChanges();
             // serialize JSON to a string and then write string to a file
             await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(workspace));
-            await CreateWorkspaceManifests(project, branch, workspace, workspacePath, templateId);
+            await CreateWorkspaceManifests(project, branch, workspace, user, workspacePath, templateId);
             _hubRepositoryClient.PersistChanges($"New workspace with id {project.Id}");
 
             return workspace;
         }
 
-        private async Task CreateWorkspaceManifests(BalsamProject project, BalsamBranch branch, BalsamWorkspace workspace, string workspacePath, string templateId)
+        private async Task CreateWorkspaceManifests(BalsamProject project, BalsamBranch branch, BalsamWorkspace workspace, UserInfo user, string workspacePath, string templateId)
         {
-            var context = new WorkspaceContext(project, branch, workspace);
-            await CreateManifests(context, workspacePath, "workspaces" + Path.PathSeparator +  templateId);
+            var context = new WorkspaceContext(project, branch, workspace, user);
+            await CreateManifests(context, workspacePath, "workspaces" + Path.DirectorySeparatorChar +  templateId);
         }
 
         private async Task CreateProjectManifests(BalsamProject project, string projectPath)
@@ -316,10 +326,8 @@ namespace Balsam.Api
             return true;
         }
 
-        private  string SanitizeName(string name)
+        private static string SanitizeName(string name)
         {
-
-            _logger.LogDebug($"Begin sanitize {name}");
             var crc32 = new Crc32();
 
             crc32.Append(System.Text.Encoding.ASCII.GetBytes(name));
@@ -330,8 +338,6 @@ namespace Balsam.Api
             name = name.Replace(" ", "-"); //replaces spaches with hypen
             name = Regex.Replace(name, @"[^a-z0-9\-]", ""); // make sure that only a-z or digit or hypen removes all other characters
             name = name.Substring(0,Math.Min(50 - crcHash.Length, name.Length)) + "-" + crcHash; //Assures max size of 50 characters
-
-            _logger.LogDebug($"End sanitize {name}");
 
             return name;
 

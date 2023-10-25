@@ -23,6 +23,9 @@ builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<GitProviderApiClient.Api.IRepositoryApi>(
     new GitProviderApiClient.Api.RepositoryApi(
         builder.Configuration.GetSection($"Capabilities:{Capabilities.Git}:ServiceLocation").Value??"git-provider.balsam-system.svc.cluster.local"));
+builder.Services.AddSingleton<GitProviderApiClient.Api.IUserApi>(
+    new GitProviderApiClient.Api.UserApi(
+        builder.Configuration.GetSection($"Capabilities:{Capabilities.Git}:ServiceLocation").Value ?? "git-provider.balsam-system.svc.cluster.local"));
 
 builder.Services.AddSingleton<S3ProviderApiClient.Api.IBucketApi>(
     new S3ProviderApiClient.Api.BucketApi(
@@ -61,6 +64,7 @@ builder.Services.AddAuthentication(options =>
 {
     cfg.RequireHttpsMetadata = false;
     cfg.SaveToken = true;
+   
 
     cfg.TokenValidationParameters = new TokenValidationParameters()
     {
