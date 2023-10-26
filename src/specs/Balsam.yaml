@@ -141,6 +141,45 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
+  /projects/{projectId}/branches/{branchId}/files/{fileId}:
+    get:
+      tags: 
+        - Project
+      operationId: GetFile
+      description: Get file contents
+      parameters:
+        - name: projectId
+          in: path
+          description: the identity of the project.
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: path
+          description: The identity of the branch.
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          description: The identity of the file.
+          required: true
+          schema:
+            type: string            
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string          
+            "*/*":
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
   /workspaces:
     post:
       tags: 
@@ -448,7 +487,6 @@ components:
         - "path"
         - "name"
         - "type"
-        - "contentUrl"
       properties:
         path:
           type: string
@@ -577,6 +615,7 @@ components:
         - "templateId"
         - "projectId"
         - "branchId"
+        - "url"
       properties:
         id:
           type: string
@@ -593,6 +632,9 @@ components:
         branchId:
           type: string
           description: The id of the branch
+        url:
+          type: string
+          description: The url to the workspace
 
     Problem:
       type: object
