@@ -111,6 +111,42 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400NoRepo'  
 
+  /repos/{repositoryId}/branches/{branchId}/files/{fileId}:
+    get:
+      tags: 
+        - Repository
+      operationId: GetFile
+      description: Get file contents
+      parameters:
+        - name: repositoryId
+          in: path
+          description: The id of the repository.
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: path
+          description: The identity of the branch.
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          description: The identity of the file.
+          required: true
+          schema:
+            type: string            
+      responses:
+        '200':
+          description: Success
+          content:
+            "*/*":
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
   /users/{id}/PAT:
     post:
       tags: 
