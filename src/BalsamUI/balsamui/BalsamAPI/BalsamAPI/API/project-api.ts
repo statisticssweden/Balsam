@@ -112,6 +112,47 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Get file contents
+         * @param {string} projectId the identity of the project.
+         * @param {string} branchId The identity of the branch.
+         * @param {string} fileId The identity of the file.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFile: async (projectId: string, branchId: string, fileId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'projectId' is not null or undefined
+            assertParamExists('getFile', 'projectId', projectId)
+            // verify required parameter 'branchId' is not null or undefined
+            assertParamExists('getFile', 'branchId', branchId)
+            // verify required parameter 'fileId' is not null or undefined
+            assertParamExists('getFile', 'fileId', fileId)
+            const localVarPath = `/projects/{projectId}/branches/{branchId}/files/{fileId}`
+                .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)))
+                .replace(`{${"branchId"}}`, encodeURIComponent(String(branchId)))
+                .replace(`{${"fileId"}}`, encodeURIComponent(String(fileId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Get files for a branch for a project
          * @param {string} projectId the identity of the project.
          * @param {string} branchId The identity of the branch.
@@ -247,6 +288,18 @@ export const ProjectApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
+         * Get file contents
+         * @param {string} projectId the identity of the project.
+         * @param {string} branchId The identity of the branch.
+         * @param {string} fileId The identity of the file.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getFile(projectId: string, branchId: string, fileId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getFile(projectId, branchId, fileId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Get files for a branch for a project
          * @param {string} projectId the identity of the project.
          * @param {string} branchId The identity of the branch.
@@ -307,6 +360,17 @@ export const ProjectApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.createProject(createProjectRequest, options).then((request) => request(axios, basePath));
         },
         /**
+         * Get file contents
+         * @param {string} projectId the identity of the project.
+         * @param {string} branchId The identity of the branch.
+         * @param {string} fileId The identity of the file.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getFile(projectId: string, branchId: string, fileId: string, options?: any): AxiosPromise<string> {
+            return localVarFp.getFile(projectId, branchId, fileId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Get files for a branch for a project
          * @param {string} projectId the identity of the project.
          * @param {string} branchId The identity of the branch.
@@ -365,6 +429,19 @@ export class ProjectApi extends BaseAPI {
      */
     public createProject(createProjectRequest?: CreateProjectRequest, options?: AxiosRequestConfig) {
         return ProjectApiFp(this.configuration).createProject(createProjectRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get file contents
+     * @param {string} projectId the identity of the project.
+     * @param {string} branchId The identity of the branch.
+     * @param {string} fileId The identity of the file.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectApi
+     */
+    public getFile(projectId: string, branchId: string, fileId: string, options?: AxiosRequestConfig) {
+        return ProjectApiFp(this.configuration).getFile(projectId, branchId, fileId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

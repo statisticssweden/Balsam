@@ -43,7 +43,7 @@ export interface ModelFile {
      * @type {string}
      * @memberof ModelFile
      */
-    'contentUrl': string;
+    'contentUrl'?: string;
 }
 
 export const ModelFileTypeEnum = {
