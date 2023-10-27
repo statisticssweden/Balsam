@@ -65,6 +65,23 @@ namespace GitProvider.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Get file contents</remarks>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="fileId">The identity of the file.</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpGet]
+        [Route("/api/v1/repos/{repositoryId}/branches/{branchId}/files/{fileId}")]
+        [ValidateModelState]
+        [SwaggerOperation("GetFile")]
+        [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Success")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> GetFile([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromRoute (Name = "branchId")][Required]string branchId, [FromRoute (Name = "fileId")][Required]string fileId);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Gets file descriptions of all files in a git branch for specified repository</remarks>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>

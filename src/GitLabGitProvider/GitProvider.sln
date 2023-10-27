@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27428.2043
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitProvider", "src\GitProvider\GitProvider.csproj", "{D926D7F5-B211-4A2B-A496-141D61955892}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GitProvider", "src\GitProvider\GitProvider.csproj", "{443706E4-626B-4801-8566-7F8EC25B286F}"
 EndProject
 Global
     GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
         Release|Any CPU = Release|Any CPU
     EndGlobalSection
     GlobalSection(ProjectConfigurationPlatforms) = postSolution
-        {D926D7F5-B211-4A2B-A496-141D61955892}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-        {D926D7F5-B211-4A2B-A496-141D61955892}.Debug|Any CPU.Build.0 = Debug|Any CPU
-        {D926D7F5-B211-4A2B-A496-141D61955892}.Release|Any CPU.ActiveCfg = Release|Any CPU
-        {D926D7F5-B211-4A2B-A496-141D61955892}.Release|Any CPU.Build.0 = Release|Any CPU
+        {443706E4-626B-4801-8566-7F8EC25B286F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+        {443706E4-626B-4801-8566-7F8EC25B286F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+        {443706E4-626B-4801-8566-7F8EC25B286F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+        {443706E4-626B-4801-8566-7F8EC25B286F}.Release|Any CPU.Build.0 = Release|Any CPU
     EndGlobalSection
     GlobalSection(SolutionProperties) = preSolution
         HideSolutionNode = FALSE
