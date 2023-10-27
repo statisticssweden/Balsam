@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom'
 import MarkdownViewer from '../MarkdownViewer/MarkdownViewer'
 import HttpService from '../services/HttpServices';
+import { Paper } from '@mui/material';
 
 export default function ResoruceMarkdownPage() {
     const [markdown, setMarkdown] = useState<string>();
@@ -41,8 +42,9 @@ export default function ResoruceMarkdownPage() {
         return (
             <div>
                 <h2>{resourceName}</h2>
-
-                <MarkdownViewer markdown={markdown} />
+                <Paper sx={{padding:7}} elevation={3}>
+                    <MarkdownViewer markdown={markdown} />
+                </Paper>
             </div>
         );
     }

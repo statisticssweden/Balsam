@@ -1,8 +1,12 @@
+import { ModelFile, ModelFileTypeEnum } from "../services/BalsamAPIServices";
+
 export enum ResourceType {
     Document,
     Url,
     Md,
+    Folder
 }
+
 export interface Resource
 {
     name: string,
@@ -13,16 +17,21 @@ export interface Resource
     filePath: string,
 }
 
-export const getResourceType = (fileName: string): ResourceType => 
+export const getResourceType = (file: ModelFile): ResourceType => 
 {
-    if(fileName.toLocaleUpperCase().endsWith(".url"))
+    if (file.type === ModelFileTypeEnum.Folder)
+    {
+        return ResourceType.Folder;
+    }
+    if(file.name.toLocaleUpperCase().endsWith(".url"))
     {
         return ResourceType.Url;
     }
-    else if (fileName.toLowerCase().endsWith(".md"))
+    else if (file.name.toLowerCase().endsWith(".md"))
     {
         return ResourceType.Md;
     }
+    
 
     return ResourceType.Document;
 };

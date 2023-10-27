@@ -14,7 +14,9 @@ import store from './App/store.ts';
 const theme = createTheme(
   {
     palette: {
-      primary: { main: '#1976d2' },
+      background: {
+        default: "#F0F0F0"
+      },
     },
   },
   svSE,

@@ -1,4 +1,4 @@
-import {Project, Branch, Workspace, Template, ModelFile} from '../services/BalsamAPIServices';
+import {Project, Branch, Workspace, Template, ModelFile, ModelFileTypeEnum} from '../services/BalsamAPIServices';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
@@ -9,14 +9,18 @@ import { useParams } from 'react-router-dom'
 import { postError, postSuccess } from '../Alerts/alertsSlice';
 import './ProjectPage.css'
 import HttpService from '../services/HttpServices';
-import { Resource, ResourceType, getResourceType } from '../Model/Model';
+import { Resource } from '../Model/Model';
 import ResourcesSection from '../ResourceSection/ResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
-import { Button } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Tab, Tabs } from '@mui/material';
 import { AxiosResponse } from 'axios';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+import CustomTabPanel from '../CustomTabPanel/CustomTabPanel';
+import FileTree, { convertToFileTreeNodes, getAllIds } from '../FileTree/FileTree';
+import Resources from '../Resources/Resources';
 
 export default function ProjectPage() {
     const [project, setProject] = useState<Project>();
@@ -30,8 +34,86 @@ export default function ProjectPage() {
     const [templates, setTemplates] = useState<Array<Template>>();
     const [newWorkspaceDialogOpen, setNewWorkspaceDialogOpen] = useState(false);
     const appContext = useContext(AppContext) as AppContextState;
-
+    const [selectedTab, setSelectedTab] = useState(0);
+    const [files, setFiles] = useState<Array<ModelFile>>();
+    
+    
     const dispatch = useDispatch();
+
+    const filesMockData: ModelFile[] = [ 
+        { 
+            path: 'README.md',
+            name: 'README.md',
+            type: ModelFileTypeEnum.File,
+            contentUrl: "https://raw.githubusercontent.com/statisticssweden/Balsam/main/README.md"
+        } as ModelFile,
+        { 
+            path: 'Resources/scb.se.url',
+            name: 'scb.se.url',
+            type: ModelFileTypeEnum.File,
+            contentUrl: "https://raw.githubusercontent.com/statisticssweden/Balsam/main/README.md"
+        } as ModelFile, 
+        { 
+            path: 'Resources',
+            name: 'Resources',
+            type: ModelFileTypeEnum.Folder,
+            contentUrl: ""
+        } as ModelFile,
+        { 
+            path: 'Resources/Tutorial/Tutorial.ipynb',
+            name: 'Tutorial.ipynb',
+            type: ModelFileTypeEnum.File,
+            contentUrl: ""
+        } as ModelFile,
+        { 
+            path: 'Resources/Tutorial/README.md',
+            name: 'README.md',
+            type: ModelFileTypeEnum.File,
+            contentUrl: "https://raw.githubusercontent.com/statisticssweden/Balsam/main/README.md"
+        } as ModelFile,
+        { 
+            path: 'Resources/Tutorial',
+            name: 'Tutorial',
+            type: ModelFileTypeEnum.Folder,
+            contentUrl: ""
+        } as ModelFile,    
+        { 
+            path: 'Code',
+            name: 'Code',
+            type: ModelFileTypeEnum.Folder,
+            contentUrl: ""
+        } as ModelFile,
+        { 
+            path: 'Code/Kodning/Kodning.ipynb',
+            name: 'Tutorial.ipynb',
+            type: ModelFileTypeEnum.File,
+            contentUrl: ""
+        } as ModelFile,
+        { 
+            path: 'Code/Kodning/etl.py',
+            name: 'etl.py',
+            type: ModelFileTypeEnum.File,
+            contentUrl: ""
+        } as ModelFile,
+        { 
+            path: 'Code/Kodning',
+            name: 'Tutorial',
+            type: ModelFileTypeEnum.Folder,
+            contentUrl: ""
+        } as ModelFile    
+    ];
+
+    function loadReadmeContent(readmeFile: ModelFile)
+    {
+        HttpService.getTextFromUrl(readmeFile.contentUrl)
+        .then((text) => 
+        {   
+            setReadmeMarkdown(text);
+        })
+        .catch( () => {
+            setReadmeMarkdown("Fel vid inläsning av README.md"); //TODO: Language
+        });
+    }
 
     const loadFiles = async (projectId: string, branch: string) => {
 
@@ -45,66 +127,24 @@ export default function ProjectPage() {
         })
         .then(async (response) => {
             
-            //TODO: Response should be typed
+            //TODO: Response should be typed, change OpenApi spec
             let axResponse = response as AxiosResponse<any[], any>;
 
-            let files = axResponse.data as Array<ModelFile>;
+            //let files = axResponse.data as Array<ModelFile>;
+            let files = filesMockData; //TODO: Only for testing
 
-            let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md");
+            setFiles(files);
+
+            let resourceFiles = Resources.getResourceFiles(files);
+            let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md" || file.path.toLowerCase() === "/readme.md");
 
             if (readmeFile)
             {
-                HttpService.getTextFromUrl(readmeFile.contentUrl)
-                    .then((text) => 
-                    {   
-                        setReadmeMarkdown(text);
-                    })
-                    .catch( () => {
-                        setReadmeMarkdown("Fel vid inläsning av README.md"); //TODO: Language
-                    });
+                loadReadmeContent(readmeFile);
+                resourceFiles.push(readmeFile);
             }
-
-            let resourceFiles = files.filter((file) => {
-                return file.path.startsWith('Resources/') || file.path.toLowerCase() === "readme.md"
-            });
         
-
-            let resourcesArray = await Promise.all(resourceFiles.map( async (file): Promise<Resource> => {
-                let name = file.name;
-                name = name.replace(/\.[^/.]+$/, "");
-                
-                let type = getResourceType(file.name);
-                let linkUrl: string = "";
-                
-                let description = "";
-                switch (type) {
-                    case ResourceType.Md:
-                        description = "Markdownfil som går att läsa i gränssnittet"; //TODO: Language
-                        break;
-                    case ResourceType.Url:
-                        let content = await HttpService.getTextFromUrl(file.contentUrl);
-                        let matches = content.match(/URL\s*=\s*(\S*)/)
-                        linkUrl =  matches !== null && matches.length > 0 ? matches[0] : "";
-                        description = file.contentUrl;
-
-                        break;
-                    case ResourceType.Document:
-                        description = file.name;
-                        break;
-                    default:
-                        description = file.name;
-                }
-
-
-                return { 
-                    name: name,
-                    description: description,
-                    type: type,
-                    linkUrl: linkUrl,
-                    contentUrl: file.contentUrl,
-                    filePath: file.path
-                    }
-            }));
+            let resourcesArray = await Resources.convertToResources(resourceFiles, HttpService.getTextFromUrl )
 
             setResources(resourcesArray);
         });
@@ -202,7 +242,7 @@ export default function ProjectPage() {
 
     const selectedBranchChanged = (event: SelectChangeEvent<string>) => {
         setSelectedBranch(event.target.value);
-        //TODO: Ladda om projekt
+        //TODO: Reload project content
     };
 
     function renderBranchSelect() {
@@ -241,15 +281,39 @@ export default function ProjectPage() {
     
         return "";
     }
+    
+    const handleTabChange = (_event: React.SyntheticEvent, newTab: number) => {
+        setSelectedTab(newTab);
+    };
 
+    function renderFilesTree()
+    {
+        if (files === undefined)
+        {
+            return;
+        }
+
+        let fileTree = convertToFileTreeNodes(files);
+        let allIds = getAllIds(fileTree);
+
+        return (<FileTree fileTree={fileTree} defaultExpanded={allIds}></FileTree>);
+    }
 
     function renderProject(project: Project)
     {
         let readmeElement = renderReadme();
         let branchSelect = renderBranchSelect();
         let newWorkspaceDialog = renderNewWorkspaceDialog();
+        let filesElement = renderFilesTree();
+
+        function tabProps(index: number) {
+            return {
+                id: `simple-tab-${index}`,
+                'aria-controls': `simple-tabpanel-${index}`,
+            };
+        }
+
         return (
-    
             <div>
                 <div className="project-header">
                     <div><h2>{project.name}</h2></div>
@@ -260,17 +324,46 @@ export default function ProjectPage() {
                         </div>
                     </div>
                 </div>
-                {readmeElement}
-                <h3>Resurser</h3>
-                <ResourcesSection projectid={project.id} branch={selectedBranch!} resources={resources} />
-                <h3>Bearbetningsmiljöer</h3>
-                <div className='buttonrow'>
-                    <Button variant="contained" onClick={handleClickOpen}>
-                        +
-                    </Button>
-                </div>
-                <WorkspacesSection projectid={project.id} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
-                { newWorkspaceDialog }
+                <Accordion defaultExpanded >
+                    <Box sx={{ width: '100%' }}>
+                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <Tabs value={selectedTab} onChange={handleTabChange} aria-label="Tabbar för filer och resurser">
+                                <Tab label="README.md" {...tabProps(0)} />
+                                <Tab label="Resurser" {...tabProps(1)} />
+                                <Tab label="Filer" {...tabProps(2)} />
+                            </Tabs>
+                        </Box>
+                        <CustomTabPanel value={selectedTab} index={0}>
+                            {readmeElement}
+                        </CustomTabPanel>
+                        <CustomTabPanel value={selectedTab} index={1}>
+                            <ResourcesSection projectid={project.id} branch={selectedBranch!} resources={resources} />
+                        </CustomTabPanel>
+                        <CustomTabPanel value={selectedTab} index={2}>
+                            {filesElement}
+                        </CustomTabPanel>
+                    </Box>
+                </Accordion>  
+
+                <Accordion defaultExpanded >
+                    <AccordionSummary 
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="workspace-accordion-summary"
+                        >
+                        Bearbetningsmiljöer            
+                    </AccordionSummary>
+                    <Divider></Divider>
+                    <AccordionDetails>
+                        <div className='buttonrow'>
+                            <Button variant="contained" onClick={handleClickOpen}>
+                                +
+                            </Button>
+                        </div>
+                        <WorkspacesSection projectid={project.id} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
+                        { newWorkspaceDialog }
+                    </AccordionDetails>
+                </Accordion>
             </div>
             );
     }

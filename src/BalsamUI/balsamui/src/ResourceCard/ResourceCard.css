@@ -5,9 +5,7 @@
     height: 112px;
 }
 
-.cardmediaicon
-{
-    font-size: 140px;
-    margin:auto;
-    width: fit-content;
+.icon-container{
+    background-color: #fafafa;
+    text-align: center;
 }
