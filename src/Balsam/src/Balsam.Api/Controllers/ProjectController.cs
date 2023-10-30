@@ -153,5 +153,9 @@ namespace Balsam.Api.Controllers
             }).ToList();
         }
 
+        public override Task<IActionResult> GetFile([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId, [FromRoute(Name = "fileId"), Required] string fileId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
