@@ -30,6 +30,7 @@ namespace BalsamApi.Server.Models
         /// The identifier
         /// </summary>
         /// <value>The identifier</value>
+        [Required]
         [DataMember(Name="id", EmitDefaultValue=false)]
         public string Id { get; set; }
 
@@ -37,6 +38,7 @@ namespace BalsamApi.Server.Models
         /// The name
         /// </summary>
         /// <value>The name</value>
+        [Required]
         [DataMember(Name="name", EmitDefaultValue=false)]
         public string Name { get; set; }
 
@@ -48,8 +50,16 @@ namespace BalsamApi.Server.Models
         public string Description { get; set; }
 
         /// <summary>
+        /// Url to the repository
+        /// </summary>
+        /// <value>Url to the repository</value>
+        [DataMember(Name="gitUrl", EmitDefaultValue=false)]
+        public string GitUrl { get; set; }
+
+        /// <summary>
         /// Gets or Sets Branches
         /// </summary>
+        [Required]
         [DataMember(Name="branches", EmitDefaultValue=false)]
         public List<Branch> Branches { get; set; }
 
@@ -64,6 +74,7 @@ namespace BalsamApi.Server.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  GitUrl: ").Append(GitUrl).Append("\n");
             sb.Append("  Branches: ").Append(Branches).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -117,6 +128,11 @@ namespace BalsamApi.Server.Models
                     Description.Equals(other.Description)
                 ) && 
                 (
+                    GitUrl == other.GitUrl ||
+                    GitUrl != null &&
+                    GitUrl.Equals(other.GitUrl)
+                ) && 
+                (
                     Branches == other.Branches ||
                     Branches != null &&
                     other.Branches != null &&
@@ -140,6 +156,8 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + Name.GetHashCode();
                     if (Description != null)
                     hashCode = hashCode * 59 + Description.GetHashCode();
+                    if (GitUrl != null)
+                    hashCode = hashCode * 59 + GitUrl.GetHashCode();
                     if (Branches != null)
                     hashCode = hashCode * 59 + Branches.GetHashCode();
                 return hashCode;

@@ -115,6 +115,7 @@ Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *RepositoryApi* | [**CreateBranch**](docs/RepositoryApi.md#createbranch) | **POST** /repos/{repositoryId}/branches | 
 *RepositoryApi* | [**CreateRepository**](docs/RepositoryApi.md#createrepository) | **POST** /repos | 
+*RepositoryApi* | [**GetFile**](docs/RepositoryApi.md#getfile) | **GET** /repos/{repositoryId}/branches/{branchId}/files/{fileId} | 
 *RepositoryApi* | [**GetFilesInBranch**](docs/RepositoryApi.md#getfilesinbranch) | **GET** /repos/{repositoryId}/branches/{branchId}/files | 
 *UserApi* | [**CreatePAT**](docs/UserApi.md#createpat) | **POST** /users/{id}/PAT | 
 

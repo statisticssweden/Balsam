@@ -30,7 +30,6 @@ namespace BalsamApi.Server.Models
         /// URL to the git repository
         /// </summary>
         /// <value>URL to the git repository</value>
-        [Required]
         [DataMember(Name="gitUrl", EmitDefaultValue=false)]
         public string GitUrl { get; set; }
 
@@ -60,6 +59,7 @@ namespace BalsamApi.Server.Models
         /// <summary>
         /// Gets or Sets Branches
         /// </summary>
+        [Required]
         [DataMember(Name="branches", EmitDefaultValue=false)]
         public List<Branch> Branches { get; set; }
 

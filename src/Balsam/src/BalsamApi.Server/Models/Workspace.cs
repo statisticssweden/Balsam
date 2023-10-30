@@ -30,6 +30,7 @@ namespace BalsamApi.Server.Models
         /// The identifier
         /// </summary>
         /// <value>The identifier</value>
+        [Required]
         [DataMember(Name="id", EmitDefaultValue=false)]
         public string Id { get; set; }
 
@@ -37,6 +38,7 @@ namespace BalsamApi.Server.Models
         /// The name
         /// </summary>
         /// <value>The name</value>
+        [Required]
         [DataMember(Name="name", EmitDefaultValue=false)]
         public string Name { get; set; }
 
@@ -44,6 +46,7 @@ namespace BalsamApi.Server.Models
         /// The id of the template that the workspace is based on.
         /// </summary>
         /// <value>The id of the template that the workspace is based on.</value>
+        [Required]
         [DataMember(Name="templateId", EmitDefaultValue=false)]
         public string TemplateId { get; set; }
 
@@ -51,6 +54,7 @@ namespace BalsamApi.Server.Models
         /// The id of the project
         /// </summary>
         /// <value>The id of the project</value>
+        [Required]
         [DataMember(Name="projectId", EmitDefaultValue=false)]
         public string ProjectId { get; set; }
 
@@ -58,8 +62,17 @@ namespace BalsamApi.Server.Models
         /// The id of the branch
         /// </summary>
         /// <value>The id of the branch</value>
+        [Required]
         [DataMember(Name="branchId", EmitDefaultValue=false)]
         public string BranchId { get; set; }
+
+        /// <summary>
+        /// The url to the workspace
+        /// </summary>
+        /// <value>The url to the workspace</value>
+        [Required]
+        [DataMember(Name="url", EmitDefaultValue=false)]
+        public string Url { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -74,6 +87,7 @@ namespace BalsamApi.Server.Models
             sb.Append("  TemplateId: ").Append(TemplateId).Append("\n");
             sb.Append("  ProjectId: ").Append(ProjectId).Append("\n");
             sb.Append("  BranchId: ").Append(BranchId).Append("\n");
+            sb.Append("  Url: ").Append(Url).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -134,6 +148,11 @@ namespace BalsamApi.Server.Models
                     BranchId == other.BranchId ||
                     BranchId != null &&
                     BranchId.Equals(other.BranchId)
+                ) && 
+                (
+                    Url == other.Url ||
+                    Url != null &&
+                    Url.Equals(other.Url)
                 );
         }
 
@@ -157,6 +176,8 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + ProjectId.GetHashCode();
                     if (BranchId != null)
                     hashCode = hashCode * 59 + BranchId.GetHashCode();
+                    if (Url != null)
+                    hashCode = hashCode * 59 + Url.GetHashCode();
                 return hashCode;
             }
         }
