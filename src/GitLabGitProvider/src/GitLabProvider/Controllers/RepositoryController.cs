@@ -48,9 +48,18 @@ namespace GitLabProvider.Controllers
             return BadRequest(new Problem() { Type = "404", Title = "Could not create repository" });
         }
 
-        public override Task<IActionResult> GetFile([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromRoute(Name = "branchId"), Required] string branchId, [FromRoute(Name = "fileId"), Required] string fileId)
+        public async override Task<IActionResult> GetFile([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromRoute(Name = "branchId"), Required] string branchId, [FromRoute(Name = "fileId"), Required] string fileId)
         {
-            throw new NotImplementedException();
+            var file = await _gitLabClient.GetFile(repositoryId, branchId, fileId);
+
+            if (file != null)
+            {
+                Response.Headers.Add("content-disposition", "inline");
+                return file;
+            }
+
+            return BadRequest(new Problem() { Status = 404, Type = "file not found", Detail = "Can not find the file" });
+
         }
 
         public async override Task<IActionResult> GetFilesInBranch([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromRoute(Name = "branchId"), Required] string branchId)
