@@ -380,7 +380,7 @@ namespace Balsam.Api
 
             try
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, $"{_git.ServiceLocation}/api/v1/projects/{projectId}/branches/{branchId}/files/{fileId}");
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_git.ServiceLocation}/repos/{project.Git.Id}/branches/{branch.GitBranch}/files/{fileId}");
 
                 var httpClient = new HttpClient();
 
