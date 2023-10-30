@@ -153,9 +153,18 @@ namespace Balsam.Api.Controllers
             }).ToList();
         }
 
-        public override Task<IActionResult> GetFile([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId, [FromRoute(Name = "fileId"), Required] string fileId)
+        public async override Task<IActionResult> GetFile([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId, [FromRoute(Name = "fileId"), Required] string fileId)
         {
-            throw new NotImplementedException();
+            var file = await _hubClient.GetFile(projectId, branchId, fileId);
+
+            if (file != null)
+            {
+                Response.Headers.Add("content-disposition", "inline");
+                return file;
+            }
+
+            return BadRequest(new Problem() { Status = 404, Type = "file not found", Detail = "Can not find the file" });
+
         }
     }
 }
