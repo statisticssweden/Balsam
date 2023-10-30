@@ -388,3 +388,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+src/Balsam/.openapi-generator/FILES
+src/Balsam/README.md
+src/Balsam/.openapi-generator/VERSION
+src/Balsam/api/openapi.yaml
+src/Balsam/appveyor.yml
