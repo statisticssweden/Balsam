@@ -91,7 +91,7 @@ namespace BalsamApi.Server.Controllers
         [Route("/api/v1/projects/{projectId}/branches/{branchId}/files")]
         [ValidateModelState]
         [SwaggerOperation("GetFiles")]
-        [SwaggerResponse(statusCode: 200, type: typeof(List<File>), description: "Success")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<RepoFile>), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
         public abstract Task<IActionResult> GetFiles([FromRoute (Name = "projectId")][Required]string projectId, [FromRoute (Name = "branchId")][Required]string branchId);
 
