@@ -72,7 +72,12 @@ namespace Balsam.Api.Controllers
                 {
                     return BadRequest(new Problem() { Status = 400, Type = "Fetch problem", Title = "Could not fetch files for repository branch" });
                 }
-                return Ok(files.Select(f => new BalsamApi.Server.Models.RepoFile() { Name  = f.Name, Path = f.Path, Type = f.Type == GitProviderApiClient.Model.RepoFile.TypeEnum.File?BalsamApi.Server.Models.RepoFile.TypeEnum.FileEnum: BalsamApi.Server.Models.RepoFile.TypeEnum.FolderEnum, ContentUrl = f.ContentUrl }).ToArray());
+                return Ok(files.Select(f => new BalsamApi.Server.Models.RepoFile() 
+                            { Name  = f.Name, 
+                              Path = f.Path, 
+                              Type = f.Type == GitProviderApiClient.Model.RepoFile.TypeEnum.File?BalsamApi.Server.Models.RepoFile.TypeEnum.FileEnum: BalsamApi.Server.Models.RepoFile.TypeEnum.FolderEnum, 
+                              ContentUrl = f.ContentUrl,
+                              Id = f.Id}).ToArray());
 
             } catch (Exception ex)
             {

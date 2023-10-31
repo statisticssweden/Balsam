@@ -27,6 +27,14 @@ namespace BalsamApi.Server.Models
     public class RepoFile : IEquatable<RepoFile>
     {
         /// <summary>
+        /// The identifier for the file
+        /// </summary>
+        /// <value>The identifier for the file</value>
+        [Required]
+        [DataMember(Name="id", EmitDefaultValue=false)]
+        public string Id { get; set; }
+
+        /// <summary>
         /// The full relative path
         /// </summary>
         /// <value>The full relative path</value>
@@ -88,6 +96,7 @@ namespace BalsamApi.Server.Models
         {
             var sb = new StringBuilder();
             sb.Append("class RepoFile {\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Path: ").Append(Path).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Type: ").Append(Type).Append("\n");
@@ -129,6 +138,11 @@ namespace BalsamApi.Server.Models
 
             return 
                 (
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
+                ) && 
+                (
                     Path == other.Path ||
                     Path != null &&
                     Path.Equals(other.Path)
@@ -160,6 +174,8 @@ namespace BalsamApi.Server.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
+                    if (Id != null)
+                    hashCode = hashCode * 59 + Id.GetHashCode();
                     if (Path != null)
                     hashCode = hashCode * 59 + Path.GetHashCode();
                     if (Name != null)
