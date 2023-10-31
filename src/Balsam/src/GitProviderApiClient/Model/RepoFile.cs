@@ -66,12 +66,19 @@ namespace GitProviderApiClient.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="RepoFile" /> class.
         /// </summary>
+        /// <param name="id">identifier for the file (required).</param>
         /// <param name="path">The full relative path (required).</param>
         /// <param name="name">The name (required).</param>
         /// <param name="type">Description of the template (required).</param>
         /// <param name="contentUrl">Url to the raw content of the file (required).</param>
-        public RepoFile(string path = default(string), string name = default(string), TypeEnum type = default(TypeEnum), string contentUrl = default(string))
+        public RepoFile(string id = default(string), string path = default(string), string name = default(string), TypeEnum type = default(TypeEnum), string contentUrl = default(string))
         {
+            // to ensure "id" is required (not null)
+            if (id == null)
+            {
+                throw new ArgumentNullException("id is a required property for RepoFile and cannot be null");
+            }
+            this.Id = id;
             // to ensure "path" is required (not null)
             if (path == null)
             {
@@ -92,6 +99,13 @@ namespace GitProviderApiClient.Model
             }
             this.ContentUrl = contentUrl;
         }
+
+        /// <summary>
+        /// identifier for the file
+        /// </summary>
+        /// <value>identifier for the file</value>
+        [DataMember(Name = "id", IsRequired = true, EmitDefaultValue = true)]
+        public string Id { get; set; }
 
         /// <summary>
         /// The full relative path
@@ -122,6 +136,7 @@ namespace GitProviderApiClient.Model
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("class RepoFile {\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Path: ").Append(Path).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Type: ").Append(Type).Append("\n");
@@ -162,6 +177,11 @@ namespace GitProviderApiClient.Model
             }
             return 
                 (
+                    this.Id == input.Id ||
+                    (this.Id != null &&
+                    this.Id.Equals(input.Id))
+                ) && 
+                (
                     this.Path == input.Path ||
                     (this.Path != null &&
                     this.Path.Equals(input.Path))
@@ -191,6 +211,10 @@ namespace GitProviderApiClient.Model
             unchecked // Overflow is fine, just wrap
             {
                 int hashCode = 41;
+                if (this.Id != null)
+                {
+                    hashCode = (hashCode * 59) + this.Id.GetHashCode();
+                }
                 if (this.Path != null)
                 {
                     hashCode = (hashCode * 59) + this.Path.GetHashCode();

@@ -76,11 +76,12 @@ namespace GitLabProvider.Controllers
 
             }
 
-            var filesResponse = files.Select(f => new GitProvider.Models.File()
+            var filesResponse = files.Select(f => new GitProvider.Models.RepoFile()
             {
+                Id = f.id,
                 Name = f.name,
                 Path = f.path,
-                Type = string.Compare(f.type, "blob", true) == 0 ? GitProvider.Models.File.TypeEnum.FileEnum : GitProvider.Models.File.TypeEnum.FolderEnum,
+                Type = string.Compare(f.type, "blob", true) == 0 ? GitProvider.Models.RepoFile.TypeEnum.FileEnum : GitProvider.Models.RepoFile.TypeEnum.FolderEnum,
                 ContentUrl = $"{_baseUrl}/api/v4/projects/{repositoryId}/repository/files/{Uri.EscapeDataString(f.path)}/raw?ref={branchId}"
             }); 
 

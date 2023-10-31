@@ -91,7 +91,7 @@ namespace GitProvider.Controllers
         [Route("/api/v1/repos/{repositoryId}/branches/{branchId}/files")]
         [ValidateModelState]
         [SwaggerOperation("GetFilesInBranch")]
-        [SwaggerResponse(statusCode: 200, type: typeof(List<File>), description: "Success")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<RepoFile>), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
         public abstract Task<IActionResult> GetFilesInBranch([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromRoute (Name = "branchId")][Required]string branchId);
     }

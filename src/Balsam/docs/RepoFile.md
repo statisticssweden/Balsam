@@ -5,6 +5,7 @@ File information
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Id** | **string** | identifier for the file | 
 **Path** | **string** | The full relative path | 
 **Name** | **string** | The name | 
 **Type** | **string** | Description of the template | 
