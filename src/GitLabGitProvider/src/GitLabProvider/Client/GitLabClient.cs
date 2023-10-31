@@ -151,7 +151,7 @@ namespace GitLabProvider.Client
                     Content = new FormUrlEncodedContent(new KeyValuePair<string?, string?>[]
                     {
                         new("name", patName),
-                        new("expires_at", DateTime.Now.AddMonths(12).ToString("yyyy-MM-dd")),
+                        new("expires_at", DateTime.Now.AddMonths(11).ToString("yyyy-MM-dd")),
                         new("scopes", "api")
                     })
                 };
@@ -167,7 +167,7 @@ namespace GitLabProvider.Client
             } 
             catch (Exception ex)
             {
-                _logger.LogError($"Could not create token for user: {userName}({userId})", ex);
+                _logger.LogError(ex,"Could not create token for user: {userName}({userId})", userName, userId);
             }
             return null;
         }
