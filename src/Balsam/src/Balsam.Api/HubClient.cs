@@ -358,7 +358,7 @@ namespace Balsam.Api
             return true;
         }
 
-        public async Task<List<GitProviderApiClient.Model.File>?> GetGitBranchFiles(string projectId, string branchId)
+        public async Task<List<GitProviderApiClient.Model.RepoFile>?> GetGitBranchFiles(string projectId, string branchId)
         {
             var project = await GetProject(projectId);
             var branch = await GetBranch(projectId, branchId);
