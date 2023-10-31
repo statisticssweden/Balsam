@@ -1,34 +1,35 @@
 import { Resource, ResourceType, getResourceType } from "../Model/Model";
-import { ModelFile, ModelFileTypeEnum } from "../services/BalsamAPIServices";
+import { toRepoFileTypeEnum } from "../ReposFiles/RepoFiles";
+import { RepoFile, RepoFileTypeEnum } from "../services/BalsamAPIServices";
 
-function getResourceFolders(files: ModelFile[])
+function getResourceFolders(files: RepoFile[])
     {
         let filteredFiles = files.filter((file) => {
-            return file.type === ModelFileTypeEnum.Folder 
+            return toRepoFileTypeEnum(file.type) === RepoFileTypeEnum.Folder 
             && file.path.startsWith("Resources/")
             && file.path.split("/").length === 2
         });
         return filteredFiles;
     }
 
-function getFirstLevelResoruceFiles(files: ModelFile[])
+function getFirstLevelResoruceFiles(files: RepoFile[])
 {
     let filteredFiles = files.filter((file) => {
-        return file.type === ModelFileTypeEnum.File 
+        return toRepoFileTypeEnum(file.type) === RepoFileTypeEnum.File 
         && file.path.startsWith("Resources/")
         && file.path.split("/").length === 2
     });
     return filteredFiles;
 }
 
-export function getResourceFiles(files: ModelFile[])
+export function getResourceFiles(files: RepoFile[])
 {
     let resourceFiles = getResourceFolders(files);
     resourceFiles.concat(getFirstLevelResoruceFiles(files));
     return resourceFiles;
 }
 
-export async function convertToResources(files: ModelFile[], getContentCallback: (url: string) => Promise<string>)
+export async function convertToResources(files: RepoFile[], projectId: string, branchId: string, getContentCallback: (fileId: string) => Promise<string>) : Promise<Array<Resource>>
 {
     let resourcesArray = await Promise.all(files.map( async (file): Promise<Resource> => {
         let name = file.name;
@@ -46,10 +47,14 @@ export async function convertToResources(files: ModelFile[], getContentCallback:
                 description = "Markdownfil som går att läsa i gränssnittet"; //TODO: Language
                 break;
             case ResourceType.Url:
-                let content = await getContentCallback(file.contentUrl);
-                let matches = content.match(/URL\s*=\s*(\S*)/)
-                linkUrl =  matches !== null && matches.length > 0 ? matches[0] : "";
-                description = file.contentUrl;
+                if(file.contentUrl)
+                {
+                    let content = await getContentCallback(file.contentUrl);
+                    let matches = content.match(/URL\s*=\s*(\S*)/)
+                    linkUrl =  matches !== null && matches.length > 0 ? matches[0] : "";
+
+                    description = linkUrl;
+                }
 
                 break;
             case ResourceType.Document:
@@ -61,11 +66,14 @@ export async function convertToResources(files: ModelFile[], getContentCallback:
 
 
         return { 
+            projectId: projectId,
+            branchId: branchId,
             name: name,
+            fileName: file.name,
             description: description,
             type: type,
             linkUrl: linkUrl,
-            contentUrl: file.contentUrl,
+            fileId: file.contentUrl,
             filePath: file.path
             }
     }));

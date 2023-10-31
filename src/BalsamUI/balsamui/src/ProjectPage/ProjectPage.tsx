@@ -1,4 +1,4 @@
-import {Project, Branch, Workspace, Template, ModelFile, ModelFileTypeEnum} from '../services/BalsamAPIServices';
+import {Project, Branch, Workspace, Template, RepoFile} from '../services/BalsamAPIServices';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
@@ -8,7 +8,6 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom'
 import { postError, postSuccess } from '../Alerts/alertsSlice';
 import './ProjectPage.css'
-import HttpService from '../services/HttpServices';
 import { Resource } from '../Model/Model';
 import ResourcesSection from '../ResourceSection/ResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
@@ -35,93 +34,30 @@ export default function ProjectPage() {
     const [newWorkspaceDialogOpen, setNewWorkspaceDialogOpen] = useState(false);
     const appContext = useContext(AppContext) as AppContextState;
     const [selectedTab, setSelectedTab] = useState(0);
-    const [files, setFiles] = useState<Array<ModelFile>>();
+    const [files, setFiles] = useState<Array<RepoFile>>();
     
     
     const dispatch = useDispatch();
 
-    const filesMockData: ModelFile[] = [ 
-        { 
-            path: 'README.md',
-            name: 'README.md',
-            type: ModelFileTypeEnum.File,
-            contentUrl: "https://raw.githubusercontent.com/statisticssweden/Balsam/main/README.md"
-        } as ModelFile,
-        { 
-            path: 'Resources/scb.se.url',
-            name: 'scb.se.url',
-            type: ModelFileTypeEnum.File,
-            contentUrl: "https://raw.githubusercontent.com/statisticssweden/Balsam/main/README.md"
-        } as ModelFile, 
-        { 
-            path: 'Resources',
-            name: 'Resources',
-            type: ModelFileTypeEnum.Folder,
-            contentUrl: ""
-        } as ModelFile,
-        { 
-            path: 'Resources/Tutorial/Tutorial.ipynb',
-            name: 'Tutorial.ipynb',
-            type: ModelFileTypeEnum.File,
-            contentUrl: ""
-        } as ModelFile,
-        { 
-            path: 'Resources/Tutorial/README.md',
-            name: 'README.md',
-            type: ModelFileTypeEnum.File,
-            contentUrl: "https://raw.githubusercontent.com/statisticssweden/Balsam/main/README.md"
-        } as ModelFile,
-        { 
-            path: 'Resources/Tutorial',
-            name: 'Tutorial',
-            type: ModelFileTypeEnum.Folder,
-            contentUrl: ""
-        } as ModelFile,    
-        { 
-            path: 'Code',
-            name: 'Code',
-            type: ModelFileTypeEnum.Folder,
-            contentUrl: ""
-        } as ModelFile,
-        { 
-            path: 'Code/Kodning/Kodning.ipynb',
-            name: 'Tutorial.ipynb',
-            type: ModelFileTypeEnum.File,
-            contentUrl: ""
-        } as ModelFile,
-        { 
-            path: 'Code/Kodning/etl.py',
-            name: 'etl.py',
-            type: ModelFileTypeEnum.File,
-            contentUrl: ""
-        } as ModelFile,
-        { 
-            path: 'Code/Kodning',
-            name: 'Tutorial',
-            type: ModelFileTypeEnum.Folder,
-            contentUrl: ""
-        } as ModelFile    
-    ];
-
-    function loadReadmeContent(readmeFile: ModelFile)
+    function loadReadmeContent(projectId: string, branchId: string, fileId: string)
     {
-        HttpService.getTextFromUrl(readmeFile.contentUrl)
-        .then((text) => 
+        appContext.balsamApi.projectApi.getFile(projectId, branchId, fileId)
+        .then((response) => 
         {   
-            setReadmeMarkdown(text);
+            setReadmeMarkdown(response.data);
         })
         .catch( () => {
             setReadmeMarkdown("Fel vid inläsning av README.md"); //TODO: Language
         });
     }
 
-    const loadFiles = async (projectId: string, branch: string) => {
+    const loadFiles = async (projectId: string, branchId: string) => {
 
-        if (branch === null || typeof branch === 'undefined') {
+        if (branchId === null || typeof branchId === 'undefined') {
             return;
         }
 
-        appContext.balsamApi.projectApi.getFiles(projectId, branch)
+        appContext.balsamApi.projectApi.getFiles(projectId, branchId)
         .catch(() => {
             dispatch(postError("Det gick inte att ladda filer")); //TODO: Language
         })
@@ -130,21 +66,23 @@ export default function ProjectPage() {
             //TODO: Response should be typed, change OpenApi spec
             let axResponse = response as AxiosResponse<any[], any>;
 
-            //let files = axResponse.data as Array<ModelFile>;
-            let files = filesMockData; //TODO: Only for testing
+            let files = axResponse.data as Array<RepoFile>;
 
             setFiles(files);
 
             let resourceFiles = Resources.getResourceFiles(files);
             let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md" || file.path.toLowerCase() === "/readme.md");
 
-            if (readmeFile)
+            if (readmeFile && readmeFile.contentUrl)
             {
-                loadReadmeContent(readmeFile);
+                loadReadmeContent(projectId, branchId, readmeFile.contentUrl!);
                 resourceFiles.push(readmeFile);
             }
-        
-            let resourcesArray = await Resources.convertToResources(resourceFiles, HttpService.getTextFromUrl )
+
+            let resourcesArray = await Resources.convertToResources(resourceFiles, projectId, branchId, async (fileId): Promise<string> => {
+                let promise = appContext.balsamApi.projectApi.getFile(projectId, branchId, fileId);
+                return (await promise).data;
+            });
 
             setResources(resourcesArray);
         });

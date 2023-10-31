@@ -193,10 +193,11 @@ export default function MyPage() {
                                      </Button>
                             </AccordionSummary>
                             <AccordionDetails>
-                                
+                                <div className='cards'>
                                 {project.branches.map((branch) => {
                                     return renderBranchContent(project.id, branch)
                                 })}
+                                </div>
                             </AccordionDetails>
                         </Accordion>
                        )

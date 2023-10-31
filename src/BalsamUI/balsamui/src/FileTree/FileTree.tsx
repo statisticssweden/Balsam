@@ -4,8 +4,10 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FolderIcon from '@mui/icons-material/Folder';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { PropsWithChildren } from "react";
-import { ModelFile, ModelFileTypeEnum } from "../services/BalsamAPIServices";
+import { RepoFile, RepoFileTypeEnum } from "../services/BalsamAPIServices";
 import pathListToTree, { TreeNode } from 'path-list-to-tree';
+import { toRepoFileTypeEnum } from "../ReposFiles/RepoFiles";
+// import { toNumber } from "../ReposFiles/RepoFiles";
 
 export interface FileTreeNode 
     {
@@ -15,26 +17,27 @@ export interface FileTreeNode
         children: FileTreeNode[]
     }
 
-function toFileTree(tree: TreeNode[], files: Array<ModelFile>, currentPath: string) : FileTreeNode[]
+function toFileTree(tree: TreeNode[], files: Array<RepoFile>, currentPath: string) : FileTreeNode[]
 {
     //TODO: This is a fix because pathListToTree returns empty node
     let cleanTree = tree.filter(f => f.name !== undefined);
 
     return cleanTree.map((node) => {
         let path = currentPath.length > 0 ?  currentPath + "/" + node.name : node.name;
+        let type = files.find((f) => {return f.path === path} )?.type ?? RepoFileTypeEnum.File;
         let fileNode: FileTreeNode = 
         {
             path: path,
             name: node.name,
             children: toFileTree(node.children, files, path),
-            isFolder: files.find((f) => {return f.path === path} )?.type === ModelFileTypeEnum.Folder
+            isFolder: toRepoFileTypeEnum(type) === RepoFileTypeEnum.Folder
         }
 
         return fileNode;
 
     });
 }
-export function convertToFileTreeNodes(files: ModelFile[])
+export function convertToFileTreeNodes(files: RepoFile[])
 {
     let filePaths = files.map((f) => f.path);
     let tree = pathListToTree(filePaths);

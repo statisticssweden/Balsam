@@ -35,6 +35,8 @@ import { ProjectCreatedResponse } from '../../BalsamAPI/Model';
 import { ProjectListResponse } from '../../BalsamAPI/Model';
 // @ts-ignore
 import { ProjectResponse } from '../../BalsamAPI/Model';
+// @ts-ignore
+import { RepoFile } from '../../BalsamAPI/Model';
 /**
  * ProjectApi - axios parameter creator
  * @export
@@ -306,7 +308,7 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFiles(projectId: string, branchId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<any>>> {
+        async getFiles(projectId: string, branchId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<RepoFile>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getFiles(projectId, branchId, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
@@ -377,7 +379,7 @@ export const ProjectApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFiles(projectId: string, branchId: string, options?: any): AxiosPromise<Array<any>> {
+        getFiles(projectId: string, branchId: string, options?: any): AxiosPromise<Array<RepoFile>> {
             return localVarFp.getFiles(projectId, branchId, options).then((request) => request(axios, basePath));
         },
         /**

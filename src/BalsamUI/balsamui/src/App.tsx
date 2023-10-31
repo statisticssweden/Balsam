@@ -15,6 +15,7 @@ import { getConfig } from './configuration/configuration';
 import { getBalsamAPI } from './services/BalsamAPIServices';
 import { postError } from './Alerts/alertsSlice';
 import MyPage from './MyPage/MyPage';
+import ResoruceFolderPage from './ResourceFolderPage/ResourceFolderPage';
 
 
 function App() {
@@ -57,7 +58,8 @@ function App() {
                         <Route path="/" element={<MyPage />} />
                         <Route path="/projects/" element={<ProjectsPage />} />
                         <Route path="/project/:id" element={<ProjectPage />} />
-                        <Route path="resorucemarkdown" element={<ResoruceMarkdownPage />} />
+                        <Route path="resorucemarkdown/:projectId/:branchId/:fileId" element={<ResoruceMarkdownPage />} />
+                        <Route path="resourcefolder/:projectId/:branchId/" element={<ResoruceFolderPage />} />
                     </Routes>
                 </div>
                 </AppContext.Provider>
