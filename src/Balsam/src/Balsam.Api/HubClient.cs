@@ -238,7 +238,7 @@ namespace Balsam.Api
 
             string propPath = Path.Combine(projectPath, "properties.json");
 
-            if (await CreateBranch(project, "", defaultBranchName, description, true) != null)
+            if (await CreateBranch(project, defaultBranchName, description, true) != null)
             {
                 _logger.LogInformation($"Default Balsam branch {defaultBranchName} created");
             }
