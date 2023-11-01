@@ -235,6 +235,7 @@ paths:
                 $ref: '#/components/schemas/WorkspaceListResponse'
         '400':
           $ref: '#/components/responses/ErrorResponse400'
+
   /workspaces/{workspaceId}:
     delete:
       tags: 
@@ -242,6 +243,18 @@ paths:
       operationId: DeleteWorkspace
       description: Delete workspace
       parameters:
+        - name: projectId
+          in: query
+          description: id for the project
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: query
+          description: id for the branch
+          required: true
+          schema:
+            type: string
         - name: workspaceId
           in: path
           description: id id for the workspace
@@ -371,6 +384,20 @@ components:
         templateId:
           type: string
           description: The id of the template  
+        projectId:
+          type: string
+          description: The id of the project
+        branchId:
+          type: string
+          description: The id of the branch
+      
+    DeleteWorkspaceRequest:
+      type: object
+      description: Payload for deleting an existing workspace
+      required:
+        - "projectId"
+        - "branchId"
+      properties:
         projectId:
           type: string
           description: The id of the project

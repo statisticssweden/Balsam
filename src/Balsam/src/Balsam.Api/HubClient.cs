@@ -13,6 +13,8 @@ using System.IO.Hashing;
 using RocketChatChatProviderApiClient.Api;
 using HandlebarsDotNet;
 using File = System.IO.File;
+using BalsamApi.Server.Models;
+using System.Xml.Linq;
 
 namespace Balsam.Api
 {
@@ -287,6 +289,29 @@ namespace Balsam.Api
             return workspace;
         }
 
+        public async Task<string> DeleteWorkspace(string projectId, string branchId, string workspaceId, string userName)
+        {
+            _hubRepositoryClient.PullChanges();
+            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
+
+            if (!System.IO.Directory.Exists(branchPath))
+            {
+                return null;
+            }
+
+            var workspacePath = Path.Combine(branchPath, userName, workspaceId);
+
+            DirectoryUtil.AssureDirectoryExists(workspacePath);
+
+            if (System.IO.Directory.Exists(workspacePath))
+            {
+                EmptyDirectory(workspacePath);
+                System.IO.Directory.Delete(workspacePath, true);
+            }
+
+            _hubRepositoryClient.PersistChanges($"Deleted workspace with id {workspaceId}");
+            return "workspace deleted";
+        }
         private async Task CreateWorkspaceManifests(BalsamProject project, BalsamBranch branch, BalsamWorkspace workspace, UserInfo user, string workspacePath, string templateId)
         {
             var context = new WorkspaceContext(project, branch, workspace, user);
@@ -381,6 +406,19 @@ namespace Balsam.Api
 
             return name;
 
+        }
+
+        private static void EmptyDirectory(string directory)
+        {
+            var di = new DirectoryInfo(directory);
+            foreach (var file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (var dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
         }
 
         private static string CreateWorkspaceId(string name)
