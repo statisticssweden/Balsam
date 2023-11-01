@@ -4,7 +4,7 @@
     {
         Task<RepositoryInfo?> CreateProjectRepo(string repoName, string description, string defaultBranchName);
 
-        Task<bool> CreateBranch(string branchname, string repositoryId);
+        Task<bool> CreateBranch(string repositoryId, string fromBranch, string branchName);
 
         Task<string?> CreatePAT(string userName);
 
