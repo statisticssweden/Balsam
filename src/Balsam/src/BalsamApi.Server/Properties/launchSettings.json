@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "BalsamApi.Server": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

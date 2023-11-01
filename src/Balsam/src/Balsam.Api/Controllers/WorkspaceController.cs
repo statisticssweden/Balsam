@@ -20,10 +20,10 @@ namespace Balsam.Api.Controllers
             _hubClient = hubClient;
         }
 
-        public override Task<IActionResult> CreateKnowledgeLibrary([FromBody] CreateKnowledgeLibraryRequest? createKnowledgeLibraryRequest)
-        {
-            throw new NotImplementedException();
-        }
+        //public override Task<IActionResult> CreateKnowledgeLibrary([FromBody] CreateKnowledgeLibraryRequest? createKnowledgeLibraryRequest)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public async override Task<IActionResult> CreateWorkspace([FromBody] CreateWorkspaceRequest? createWorkspaceRequest)
         {
@@ -53,9 +53,31 @@ namespace Balsam.Api.Controllers
            
         }
 
-        public override Task<IActionResult> DeleteWorkspace([FromRoute(Name = "workspaceId"), Required] string workspaceId)
+
+        public async override Task<IActionResult> DeleteWorkspace([FromRoute(Name = "workspaceId"), Required] string workspaceId, [FromQuery(Name = "projectId")] string? projectId, [FromQuery(Name = "branchId")] string? branchId)
         {
-            throw new NotImplementedException();
+            if (workspaceId is null)
+            {
+                return BadRequest(new Problem() { Status = 400, Title = "Missing parameters", Detail = "Missing input parameter(s)" });
+            }
+            var userName = this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+            try
+            {
+                var workspace = await _hubClient.DeleteWorkspace(projectId, branchId, workspaceId, userName);
+
+                if (workspace == null)
+                {
+                    return BadRequest(new Problem() { Status = 400, Type = "Could not delete workspace", Title = "Could not create workspace due to error" });
+                }
+
+                return Ok($"workspace {workspaceId} deleted.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not delete workspace");
+            }
+            return BadRequest(new Problem() { Status = 400, Type = "Could not delete workspace", Title = "Internal error when created error" });
+
         }
 
         public override Task<IActionResult> GetWorkspace([FromQuery(Name = "projectId")] string? projectId, [FromQuery(Name = "branchId")] string? branchId, [FromQuery(Name = "all")] bool? all)

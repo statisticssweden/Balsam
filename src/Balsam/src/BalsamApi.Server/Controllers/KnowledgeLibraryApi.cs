@@ -32,6 +32,22 @@ namespace BalsamApi.Server.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Create a new connection to a knowledge library</remarks>
+        /// <param name="createKnowledgeLibraryRequest">Definition of a new Knowledge library connection</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpPost]
+        [Route("/api/v1/knowledge-libraries")]
+        [Consumes("application/json")]
+        [ValidateModelState]
+        [SwaggerOperation("CreateKnowledgeLibrary")]
+        [SwaggerResponse(statusCode: 200, type: typeof(KnowledgeLibraryCreatedResponse), description: "Success")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> CreateKnowledgeLibrary([FromBody]CreateKnowledgeLibraryRequest? createKnowledgeLibraryRequest);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Removes knowledge library</remarks>
         /// <param name="libraryId">id for the knowledge library</param>
         /// <response code="200">Success</response>

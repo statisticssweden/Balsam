@@ -30,6 +30,7 @@ namespace BalsamApi.Server.Models
         /// The full relative path
         /// </summary>
         /// <value>The full relative path</value>
+        [Required]
         [DataMember(Name="path", EmitDefaultValue=false)]
         public string Path { get; set; }
 
@@ -68,6 +69,7 @@ namespace BalsamApi.Server.Models
         /// Description of the template
         /// </summary>
         /// <value>Description of the template</value>
+        [Required]
         [DataMember(Name="type", EmitDefaultValue=true)]
         public TypeEnum Type { get; set; }
 
