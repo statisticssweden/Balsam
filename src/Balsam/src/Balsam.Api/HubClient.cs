@@ -14,10 +14,6 @@ using RocketChatChatProviderApiClient.Api;
 using HandlebarsDotNet;
 using File = System.IO.File;
 using Microsoft.AspNetCore.Mvc;
-using LibGit2Sharp;
-using System.Net.Http.Headers;
-using BalsamApi.Server.Models;
-using System.Xml.Linq;
 
 namespace Balsam.Api
 {
