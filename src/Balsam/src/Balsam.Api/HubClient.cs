@@ -13,8 +13,7 @@ using System.IO.Hashing;
 using RocketChatChatProviderApiClient.Api;
 using HandlebarsDotNet;
 using File = System.IO.File;
-using BalsamApi.Server.Models;
-using System.Xml.Linq;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Balsam.Api
 {
@@ -380,7 +379,7 @@ namespace Balsam.Api
             return true;
         }
 
-        public async Task<List<GitProviderApiClient.Model.File>?> GetGitBranchFiles(string projectId, string branchId)
+        public async Task<List<GitProviderApiClient.Model.RepoFile>?> GetGitBranchFiles(string projectId, string branchId)
         {
             var project = await GetProject(projectId);
             var branch = await GetBranch(projectId, branchId);
@@ -390,6 +389,38 @@ namespace Balsam.Api
             }
             return _repositoryApi.GetFilesInBranch(project.Git.Id, branch.Name);
         }
+
+        public async Task<FileContentResult?> GetFile(string projectId, string branchId, string fileId)
+        {
+            var project = await GetProject(projectId);
+            var branch = await GetBranch(projectId, branchId);
+            if (project is null || branch is null || project.Git is null)
+            {
+                return null;
+            }
+
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_git.ServiceLocation}/repos/{project.Git.Id}/branches/{branch.GitBranch}/files/{fileId}");
+
+                var httpClient = new HttpClient();
+
+                var response = await httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsByteArrayAsync();
+                    return new FileContentResult(data, response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not read files from repository");
+            }
+
+            return null;
+        }
+
 
         private string SanitizeName(string name)
         {

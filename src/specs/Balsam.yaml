@@ -505,16 +505,20 @@ components:
     FileListResponse:
       type: array
       items:
-        $ref: '#/components/schemas/File' 
+        $ref: '#/components/schemas/RepoFile' 
 
-    File:
+    RepoFile:
       type: object
       description: File information
       required:
+        - 'id'
         - "path"
         - "name"
         - "type"
       properties:
+        id:
+          type: string 
+          description: The identifier for the file
         path:
           type: string
           description: The full relative path 

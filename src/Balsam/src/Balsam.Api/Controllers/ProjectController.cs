@@ -72,7 +72,12 @@ namespace Balsam.Api.Controllers
                 {
                     return BadRequest(new Problem() { Status = 400, Type = "Fetch problem", Title = "Could not fetch files for repository branch" });
                 }
-                return Ok(files.Select(f => new BalsamApi.Server.Models.File() { Name  = f.Name, Path = f.Path, Type = f.Type == GitProviderApiClient.Model.File.TypeEnum.File?BalsamApi.Server.Models.File.TypeEnum.FileEnum: BalsamApi.Server.Models.File.TypeEnum.FolderEnum, ContentUrl = f.ContentUrl }).ToArray());
+                return Ok(files.Select(f => new BalsamApi.Server.Models.RepoFile() 
+                            { Name  = f.Name, 
+                              Path = f.Path, 
+                              Type = f.Type == GitProviderApiClient.Model.RepoFile.TypeEnum.File?BalsamApi.Server.Models.RepoFile.TypeEnum.FileEnum: BalsamApi.Server.Models.RepoFile.TypeEnum.FolderEnum, 
+                              ContentUrl = f.ContentUrl,
+                              Id = f.Id}).ToArray());
 
             } catch (Exception ex)
             {
@@ -153,9 +158,18 @@ namespace Balsam.Api.Controllers
             }).ToList();
         }
 
-        public override Task<IActionResult> GetFile([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId, [FromRoute(Name = "fileId"), Required] string fileId)
+        public async override Task<IActionResult> GetFile([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId, [FromRoute(Name = "fileId"), Required] string fileId)
         {
-            throw new NotImplementedException();
+            var file = await _hubClient.GetFile(projectId, branchId, fileId);
+
+            if (file != null)
+            {
+                Response.Headers.Add("content-disposition", "inline");
+                return file;
+            }
+
+            return BadRequest(new Problem() { Status = 404, Type = "file not found", Detail = "Can not find the file" });
+
         }
     }
 }

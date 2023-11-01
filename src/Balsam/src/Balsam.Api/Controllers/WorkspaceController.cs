@@ -20,11 +20,6 @@ namespace Balsam.Api.Controllers
             _hubClient = hubClient;
         }
 
-        //public override Task<IActionResult> CreateKnowledgeLibrary([FromBody] CreateKnowledgeLibraryRequest? createKnowledgeLibraryRequest)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
         public async override Task<IActionResult> CreateWorkspace([FromBody] CreateWorkspaceRequest? createWorkspaceRequest)
         {
             if (createWorkspaceRequest is null)

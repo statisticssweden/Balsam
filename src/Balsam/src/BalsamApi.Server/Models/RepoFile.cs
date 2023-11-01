@@ -1,7 +1,7 @@
 /*
- * GitProvider
+ * BalsamApi
  *
- * This a service contract for the GitProvider in Balsam.
+ * This is the API for createing Baslam artifcats.
  *
  * The version of the OpenAPI document: 2.0
  * 
@@ -16,16 +16,24 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using GitProvider.Converters;
+using BalsamApi.Server.Converters;
 
-namespace GitProvider.Models
+namespace BalsamApi.Server.Models
 { 
     /// <summary>
     /// File information
     /// </summary>
     [DataContract]
-    public class File : IEquatable<File>
+    public class RepoFile : IEquatable<RepoFile>
     {
+        /// <summary>
+        /// The identifier for the file
+        /// </summary>
+        /// <value>The identifier for the file</value>
+        [Required]
+        [DataMember(Name="id", EmitDefaultValue=false)]
+        public string Id { get; set; }
+
         /// <summary>
         /// The full relative path
         /// </summary>
@@ -77,7 +85,6 @@ namespace GitProvider.Models
         /// Url to the raw content of the file
         /// </summary>
         /// <value>Url to the raw content of the file</value>
-        [Required]
         [DataMember(Name="contentUrl", EmitDefaultValue=false)]
         public string ContentUrl { get; set; }
 
@@ -88,7 +95,8 @@ namespace GitProvider.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class File {\n");
+            sb.Append("class RepoFile {\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Path: ").Append(Path).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Type: ").Append(Type).Append("\n");
@@ -115,20 +123,25 @@ namespace GitProvider.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((File)obj);
+            return obj.GetType() == GetType() && Equals((RepoFile)obj);
         }
 
         /// <summary>
-        /// Returns true if File instances are equal
+        /// Returns true if RepoFile instances are equal
         /// </summary>
-        /// <param name="other">Instance of File to be compared</param>
+        /// <param name="other">Instance of RepoFile to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(File other)
+        public bool Equals(RepoFile other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
+                (
+                    Id == other.Id ||
+                    Id != null &&
+                    Id.Equals(other.Id)
+                ) && 
                 (
                     Path == other.Path ||
                     Path != null &&
@@ -161,6 +174,8 @@ namespace GitProvider.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
+                    if (Id != null)
+                    hashCode = hashCode * 59 + Id.GetHashCode();
                     if (Path != null)
                     hashCode = hashCode * 59 + Path.GetHashCode();
                     if (Name != null)
@@ -176,12 +191,12 @@ namespace GitProvider.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(File left, File right)
+        public static bool operator ==(RepoFile left, RepoFile right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(File left, File right)
+        public static bool operator !=(RepoFile left, RepoFile right)
         {
             return !Equals(left, right);
         }

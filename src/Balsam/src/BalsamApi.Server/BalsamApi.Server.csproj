@@ -11,7 +11,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>BalsamApi.Server</AssemblyName>
     <PackageId>BalsamApi.Server</PackageId>
-    <UserSecretsId>87579586-5121-426e-b19a-3354e03465ad</UserSecretsId>
+    <UserSecretsId>be2f4d02-b8bc-4bb4-8b45-234549793945</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
