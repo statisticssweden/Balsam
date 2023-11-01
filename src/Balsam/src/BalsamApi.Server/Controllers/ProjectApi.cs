@@ -65,6 +65,23 @@ namespace BalsamApi.Server.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Get file contents</remarks>
+        /// <param name="projectId">the identity of the project.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="fileId">The identity of the file.</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpGet]
+        [Route("/api/v1/projects/{projectId}/branches/{branchId}/files/{fileId}")]
+        [ValidateModelState]
+        [SwaggerOperation("GetFile")]
+        [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Success")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> GetFile([FromRoute (Name = "projectId")][Required]string projectId, [FromRoute (Name = "branchId")][Required]string branchId, [FromRoute (Name = "fileId")][Required]string fileId);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Get files for a branch for a project</remarks>
         /// <param name="projectId">the identity of the project.</param>
         /// <param name="branchId">The identity of the branch.</param>
@@ -74,7 +91,7 @@ namespace BalsamApi.Server.Controllers
         [Route("/api/v1/projects/{projectId}/branches/{branchId}/files")]
         [ValidateModelState]
         [SwaggerOperation("GetFiles")]
-        [SwaggerResponse(statusCode: 200, type: typeof(List<File>), description: "Success")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<RepoFile>), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
         public abstract Task<IActionResult> GetFiles([FromRoute (Name = "projectId")][Required]string projectId, [FromRoute (Name = "branchId")][Required]string branchId);
 

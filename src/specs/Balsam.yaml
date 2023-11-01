@@ -235,6 +235,7 @@ paths:
                 $ref: '#/components/schemas/WorkspaceListResponse'
         '400':
           $ref: '#/components/responses/ErrorResponse400'
+
   /workspaces/{workspaceId}:
     delete:
       tags: 
@@ -242,6 +243,18 @@ paths:
       operationId: DeleteWorkspace
       description: Delete workspace
       parameters:
+        - name: projectId
+          in: query
+          description: id for the project
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: query
+          description: id for the branch
+          required: true
+          schema:
+            type: string
         - name: workspaceId
           in: path
           description: id id for the workspace
@@ -364,7 +377,6 @@ components:
         - "templateId"
         - "projectId"
         - "branchId"
-        - "url"
       properties:
         name:
           type: string
@@ -378,9 +390,7 @@ components:
         branchId:
           type: string
           description: The id of the branch
-        url:
-          type: string
-          description: The url to the workspace
+     
 
     CreateKnowledgeLibraryRequest:
       type: object
@@ -482,16 +492,20 @@ components:
     FileListResponse:
       type: array
       items:
-        $ref: '#/components/schemas/File' 
+        $ref: '#/components/schemas/RepoFile' 
 
-    File:
+    RepoFile:
       type: object
       description: File information
       required:
+        - 'id'
         - "path"
         - "name"
         - "type"
       properties:
+        id:
+          type: string 
+          description: The identifier for the file
         path:
           type: string
           description: The full relative path 
