@@ -49,6 +49,8 @@ namespace BalsamApi.Server.Controllers
         /// 
         /// </summary>
         /// <remarks>Delete workspace</remarks>
+        /// <param name="projectId">id for the project</param>
+        /// <param name="branchId">id for the branch</param>
         /// <param name="workspaceId">id id for the workspace</param>
         /// <response code="200">Success</response>
         /// <response code="400">Error respsone for 400</response>
@@ -57,7 +59,7 @@ namespace BalsamApi.Server.Controllers
         [ValidateModelState]
         [SwaggerOperation("DeleteWorkspace")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> DeleteWorkspace([FromRoute (Name = "workspaceId")][Required]string workspaceId);
+        public abstract Task<IActionResult> DeleteWorkspace([FromQuery (Name = "projectId")][Required()]string projectId, [FromQuery (Name = "branchId")][Required()]string branchId, [FromRoute (Name = "workspaceId")][Required]string workspaceId);
 
         /// <summary>
         /// 
