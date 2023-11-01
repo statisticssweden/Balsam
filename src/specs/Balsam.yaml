@@ -204,7 +204,7 @@ paths:
     get:
       tags: 
         - Workspace
-      operationId: GetWorkspace
+      operationId: ListWorkspaces
       description: Get workspaces      
       parameters:
         - name: projectId
@@ -461,6 +461,7 @@ components:
         - "projectId"
         - "branchId"
         - "name"
+        - "url"
       properties:
         id:
           type: string
@@ -474,7 +475,9 @@ components:
         name:
           type: string
           description: The branch name
-
+        url:
+          type: string
+          description: Url to the workspace
     KnowledgeLibraryCreatedResponse:
       type: object
       description: Connection to a knowledge library created response
