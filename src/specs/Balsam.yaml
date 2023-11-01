@@ -364,6 +364,7 @@ components:
         - "templateId"
         - "projectId"
         - "branchId"
+        - "url"
       properties:
         name:
           type: string
@@ -377,6 +378,9 @@ components:
         branchId:
           type: string
           description: The id of the branch
+        url:
+          type: string
+          description: The url to the workspace
 
     CreateKnowledgeLibraryRequest:
       type: object
