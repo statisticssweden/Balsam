@@ -13,6 +13,7 @@ using System.IO.Hashing;
 using RocketChatChatProviderApiClient.Api;
 using HandlebarsDotNet;
 using File = System.IO.File;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Balsam.Api
 {
@@ -287,6 +288,29 @@ namespace Balsam.Api
             return workspace;
         }
 
+        public async Task<string> DeleteWorkspace(string projectId, string branchId, string workspaceId, string userName)
+        {
+            _hubRepositoryClient.PullChanges();
+            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
+
+            if (!System.IO.Directory.Exists(branchPath))
+            {
+                return null;
+            }
+
+            var workspacePath = Path.Combine(branchPath, userName, workspaceId);
+
+            DirectoryUtil.AssureDirectoryExists(workspacePath);
+
+            if (System.IO.Directory.Exists(workspacePath))
+            {
+                EmptyDirectory(workspacePath);
+                System.IO.Directory.Delete(workspacePath, true);
+            }
+
+            _hubRepositoryClient.PersistChanges($"Deleted workspace with id {workspaceId}");
+            return "workspace deleted";
+        }
         private async Task CreateWorkspaceManifests(BalsamProject project, BalsamBranch branch, BalsamWorkspace workspace, UserInfo user, string workspacePath, string templateId)
         {
             var context = new WorkspaceContext(project, branch, workspace, user);
@@ -355,7 +379,7 @@ namespace Balsam.Api
             return true;
         }
 
-        public async Task<List<GitProviderApiClient.Model.File>?> GetGitBranchFiles(string projectId, string branchId)
+        public async Task<List<GitProviderApiClient.Model.RepoFile>?> GetGitBranchFiles(string projectId, string branchId)
         {
             var project = await GetProject(projectId);
             var branch = await GetBranch(projectId, branchId);
@@ -365,6 +389,38 @@ namespace Balsam.Api
             }
             return _repositoryApi.GetFilesInBranch(project.Git.Id, branch.Name);
         }
+
+        public async Task<FileContentResult?> GetFile(string projectId, string branchId, string fileId)
+        {
+            var project = await GetProject(projectId);
+            var branch = await GetBranch(projectId, branchId);
+            if (project is null || branch is null || project.Git is null)
+            {
+                return null;
+            }
+
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_git.ServiceLocation}/repos/{project.Git.Id}/branches/{branch.GitBranch}/files/{fileId}");
+
+                var httpClient = new HttpClient();
+
+                var response = await httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsByteArrayAsync();
+                    return new FileContentResult(data, response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not read files from repository");
+            }
+
+            return null;
+        }
+
 
         private string SanitizeName(string name)
         {
@@ -381,6 +437,19 @@ namespace Balsam.Api
 
             return name;
 
+        }
+
+        private static void EmptyDirectory(string directory)
+        {
+            var di = new DirectoryInfo(directory);
+            foreach (var file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (var dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
         }
 
         private static string CreateWorkspaceId(string name)

@@ -59,6 +59,20 @@ namespace GitLabProvider.Controllers
             return BadRequest(new Problem() { Type = "404", Title = "Could not create repository" });
         }
 
+        public async override Task<IActionResult> GetFile([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromRoute(Name = "branchId"), Required] string branchId, [FromRoute(Name = "fileId"), Required] string fileId)
+        {
+            var file = await _gitLabClient.GetFile(repositoryId, branchId, fileId);
+
+            if (file != null)
+            {
+                Response.Headers.Add("content-disposition", "inline");
+                return file;
+            }
+
+            return BadRequest(new Problem() { Status = 404, Type = "file not found", Detail = "Can not find the file" });
+
+        }
+
         public async override Task<IActionResult> GetFilesInBranch([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromRoute(Name = "branchId"), Required] string branchId)
         {
             List<GitLabTreeFile> files;
@@ -73,11 +87,12 @@ namespace GitLabProvider.Controllers
 
             }
 
-            var filesResponse = files.Select(f => new GitProvider.Models.File()
+            var filesResponse = files.Select(f => new GitProvider.Models.RepoFile()
             {
+                Id = f.id,
                 Name = f.name,
                 Path = f.path,
-                Type = string.Compare(f.type, "blob", true) == 0 ? GitProvider.Models.File.TypeEnum.FileEnum : GitProvider.Models.File.TypeEnum.FolderEnum,
+                Type = string.Compare(f.type, "blob", true) == 0 ? GitProvider.Models.RepoFile.TypeEnum.FileEnum : GitProvider.Models.RepoFile.TypeEnum.FolderEnum,
                 ContentUrl = $"{_baseUrl}/api/v4/projects/{repositoryId}/repository/files/{Uri.EscapeDataString(f.path)}/raw?ref={branchId}"
             }); 
 

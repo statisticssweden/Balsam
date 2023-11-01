@@ -30,6 +30,7 @@ namespace BalsamApi.Server.Models
         /// The identifier
         /// </summary>
         /// <value>The identifier</value>
+        [Required]
         [DataMember(Name="id", EmitDefaultValue=false)]
         public string Id { get; set; }
 
@@ -37,6 +38,7 @@ namespace BalsamApi.Server.Models
         /// The name
         /// </summary>
         /// <value>The name</value>
+        [Required]
         [DataMember(Name="name", EmitDefaultValue=false)]
         public string Name { get; set; }
 
@@ -51,7 +53,8 @@ namespace BalsamApi.Server.Models
         /// If the branch is the default branch of the project
         /// </summary>
         /// <value>If the branch is the default branch of the project</value>
-        [DataMember(Name="IsDefault", EmitDefaultValue=true)]
+        [Required]
+        [DataMember(Name="isDefault", EmitDefaultValue=true)]
         public bool IsDefault { get; set; }
 
         /// <summary>

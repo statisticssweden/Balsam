@@ -189,11 +189,15 @@ components:
       type: object
       description: File information
       required:
+        - "id"
         - "path"
         - "name"
         - "type"
         - "contentUrl"
       properties:
+        id:
+          type: string
+          description: identifier for the file
         path:
           type: string
           description: The full relative path 

@@ -1,4 +1,6 @@
-﻿namespace GitLabProvider.Client
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace GitLabProvider.Client
 {
     public interface IGitLabClient
     {
@@ -9,5 +11,7 @@
         Task<string?> CreatePAT(string userName);
 
         Task<List<GitLabTreeFile>> GetFiles(string repositoryId, string branchName);
+
+        Task<FileContentResult> GetFile(string repositoryId, string branchName, string fileId);
     }
 }
