@@ -59,6 +59,14 @@ namespace GitProvider.Models
         public string Path { get; set; }
 
         /// <summary>
+        /// The name of the default git branch
+        /// </summary>
+        /// <value>The name of the default git branch</value>
+        [Required]
+        [DataMember(Name="defaultBranchName", EmitDefaultValue=false)]
+        public string DefaultBranchName { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -70,6 +78,7 @@ namespace GitProvider.Models
             sb.Append("  PreferredName: ").Append(PreferredName).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Path: ").Append(Path).Append("\n");
+            sb.Append("  DefaultBranchName: ").Append(DefaultBranchName).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -125,6 +134,11 @@ namespace GitProvider.Models
                     Path == other.Path ||
                     Path != null &&
                     Path.Equals(other.Path)
+                ) && 
+                (
+                    DefaultBranchName == other.DefaultBranchName ||
+                    DefaultBranchName != null &&
+                    DefaultBranchName.Equals(other.DefaultBranchName)
                 );
         }
 
@@ -146,6 +160,8 @@ namespace GitProvider.Models
                     hashCode = hashCode * 59 + Name.GetHashCode();
                     if (Path != null)
                     hashCode = hashCode * 59 + Path.GetHashCode();
+                    if (DefaultBranchName != null)
+                    hashCode = hashCode * 59 + DefaultBranchName.GetHashCode();
                 return hashCode;
             }
         }

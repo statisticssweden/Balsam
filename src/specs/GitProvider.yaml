@@ -248,6 +248,7 @@ components:
         - "preferredName"
         - "name"
         - "path"
+        - "defaultBranchName"
       properties:
         id:
           type: string
@@ -261,6 +262,10 @@ components:
         path:
           type: string
           description: The path to the repository that can be used for clone it.
+        defaultBranchName:
+          type: string
+          description: The name of the default git branch
+
 
     BranchCreatedResponse:
       type: object

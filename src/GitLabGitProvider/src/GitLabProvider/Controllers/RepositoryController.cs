@@ -48,12 +48,12 @@ namespace GitLabProvider.Controllers
 
         public async override Task<IActionResult> CreateRepository([FromBody] CreateRepositoryRequest? createRepositoryRequest)
         {
-            //TODO return branchname
-            if (!(createRepositoryRequest is null)) { 
-                var repoInfo =  await _gitLabClient.CreateProjectRepo(createRepositoryRequest.Name, createRepositoryRequest.Description, SantitazeBranchName(createRepositoryRequest.DefaultBranchName));
+            if (!(createRepositoryRequest is null)) {
+                var branchName = SantitazeBranchName(createRepositoryRequest.DefaultBranchName);
+                var repoInfo =  await _gitLabClient.CreateProjectRepo(createRepositoryRequest.Name, createRepositoryRequest.Description, branchName);
                 if (repoInfo != null)
                 {
-                    return Ok(new RepositoryCreatedResponse() { Name = repoInfo.Name, PreferredName = createRepositoryRequest.Name, Path = repoInfo.Url, Id = repoInfo.Id });
+                    return Ok(new RepositoryCreatedResponse() { Name = repoInfo.Name, PreferredName = createRepositoryRequest.Name, Path = repoInfo.Url, Id = repoInfo.Id, DefaultBranchName = branchName });
                 }
             }
             return BadRequest(new Problem() { Type = "404", Title = "Could not create repository" });
