@@ -14,6 +14,7 @@ using RocketChatChatProviderApiClient.Api;
 using HandlebarsDotNet;
 using File = System.IO.File;
 using Microsoft.AspNetCore.Mvc;
+using BalsamApi.Server.Models;
 
 namespace Balsam.Api
 {
@@ -261,7 +262,7 @@ namespace Balsam.Api
                 return null;
             }
 
-            var workspace = new BalsamWorkspace(CreateWorkspaceId(name), name, templateId);
+            var workspace = new BalsamWorkspace(CreateWorkspaceId(name), name, templateId, projectId, branchId);
 
             var workspacePath = Path.Combine(branchPath, userName, workspace.Id);
 
@@ -497,5 +498,168 @@ namespace Balsam.Api
             _logger.LogDebug("End ListWorkspaceTemplates");
             return workspaceTemplates;
         }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspaces()
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            foreach (var projectPath in Directory.GetDirectories(hubPath))
+            {
+                foreach (var branchPath in Directory.GetDirectories(projectPath))
+                {
+                    foreach (var userPath in Directory.GetDirectories(branchPath))
+                    {
+                        foreach (var workspacePath in Directory.GetDirectories(userPath))
+                        {
+                            var propsFile = Path.Combine(workspacePath, "properties.json");
+                            var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                            if (workspace == null) continue;
+                            workspaces.Add(workspace);
+                        }
+                    }
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspacesByUser(string userId, List<string> projectIds)
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            foreach (var projectId in projectIds)
+            {
+                var projectPath = Path.Combine(hubPath, projectId);
+                if (Directory.Exists(projectPath))
+                {
+                    foreach (var branchPath in Directory.GetDirectories(projectPath))
+                    {
+                        var userPath = Path.Combine(hubPath, userId);
+
+                        if (System.IO.Directory.Exists(userPath))
+                        {
+                            foreach (var workspacePath in Directory.GetDirectories(userPath))
+                            {
+                                var propsFile = Path.Combine(workspacePath, "properties.json");
+                                var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                                if (workspace == null) continue;
+                                workspaces.Add(workspace);
+                            }
+                        }
+                    }
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspacesByProject(string projectId)
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            var projectPath = Path.Combine(hubPath, projectId);
+
+            if (System.IO.Directory.Exists(projectPath))
+            {
+                foreach (var branchPath in Directory.GetDirectories(projectPath))
+                {
+                    foreach (var userPath in Directory.GetDirectories(branchPath))
+                    {
+                        foreach (var workspacePath in Directory.GetDirectories(userPath))
+                        {
+                            var propsFile = Path.Combine(workspacePath, "properties.json");
+                            var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                            if (workspace == null) continue;
+                            workspaces.Add(workspace);
+                        }
+                    }
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspacesByProjectAndBranch(string projectId, string branchId)
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            var branchPath = Path.Combine(hubPath, projectId, branchId);
+
+            if (System.IO.Directory.Exists(branchPath))
+            {
+                foreach (var userPath in Directory.GetDirectories(branchPath))
+                {
+                    foreach (var workspacePath in Directory.GetDirectories(userPath))
+                    {
+                        var propsFile = Path.Combine(workspacePath, "properties.json");
+                        var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                        if (workspace == null) continue;
+                        workspaces.Add(workspace);
+                    }
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspacesByProjectAndUser(string projectId, string userId)
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            var projectPath = Path.Combine(hubPath, projectId);
+
+            if (System.IO.Directory.Exists(projectPath))
+            {
+                foreach (var branchPath in Directory.GetDirectories(projectPath))
+                {
+                    var userPath = Path.Combine(branchPath, userId);
+                    if (Directory.Exists(userPath))
+                    {
+                        foreach (var workspacePath in Directory.GetDirectories(userPath))
+                        {
+                            var propsFile = Path.Combine(workspacePath, "properties.json");
+                            var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                            if (workspace == null) continue;
+                            workspaces.Add(workspace);
+                        }
+                    }
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspacesByProjectBranchAndUser(string projectId, string branchId, string userId)
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            var userPath = Path.Combine(hubPath, projectId, branchId, userId);
+
+            if (System.IO.Directory.Exists(userPath))
+            {
+                foreach (var workspacePath in Directory.GetDirectories(userPath))
+                {
+                    var propsFile = Path.Combine(workspacePath, "properties.json");
+                    var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                    if (workspace == null) continue;
+                    workspaces.Add(workspace);
+                }
+            }
+            return workspaces;
+        }
+
     }
 }

@@ -59,6 +59,14 @@ namespace BalsamApi.Server.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// Url to the workspace
+        /// </summary>
+        /// <value>Url to the workspace</value>
+        [Required]
+        [DataMember(Name="url", EmitDefaultValue=false)]
+        public string Url { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -70,6 +78,7 @@ namespace BalsamApi.Server.Models
             sb.Append("  ProjectId: ").Append(ProjectId).Append("\n");
             sb.Append("  BranchId: ").Append(BranchId).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  Url: ").Append(Url).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -125,6 +134,11 @@ namespace BalsamApi.Server.Models
                     Name == other.Name ||
                     Name != null &&
                     Name.Equals(other.Name)
+                ) && 
+                (
+                    Url == other.Url ||
+                    Url != null &&
+                    Url.Equals(other.Url)
                 );
         }
 
@@ -146,6 +160,8 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + BranchId.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
+                    if (Url != null)
+                    hashCode = hashCode * 59 + Url.GetHashCode();
                 return hashCode;
             }
         }
