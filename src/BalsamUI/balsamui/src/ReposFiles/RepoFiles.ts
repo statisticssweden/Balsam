@@ -1,19 +1,6 @@
 import { RepoFileTypeEnum } from "../services/BalsamAPIServices";
 
-export function toNumber(repoFileTypeEnum: RepoFileTypeEnum) : number {
-    switch(repoFileTypeEnum)
-    {
-        case RepoFileTypeEnum.File:
-            return 1;
-        case RepoFileTypeEnum.Folder:
-            return 2;
-        default:
-            throw(`${repoFileTypeEnum} not implemented in toNumber`);
-    }
-}
-
-
-//When response comes from aspnet type is number instead of RepoFileTypeEnum
+//When response comes from aspnet api type is a number instead of RepoFileTypeEnum
 export function toRepoFileTypeEnum(type: RepoFileTypeEnum | number ) : RepoFileTypeEnum
 {
     if (Number.isInteger(type))

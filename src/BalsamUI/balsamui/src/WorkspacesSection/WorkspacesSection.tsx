@@ -45,7 +45,6 @@ export default function WorkspacesSection(props: WorkspaceSectionProperties)
                 {newCardContent}
             </div>
         )
-
     }
     
     let contents = props.workspaces === undefined

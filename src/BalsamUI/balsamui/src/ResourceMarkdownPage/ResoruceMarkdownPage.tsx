@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom'
 import MarkdownViewer from '../MarkdownViewer/MarkdownViewer'
-import HttpService from '../services/HttpServices';
 import { Paper } from '@mui/material';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 
@@ -13,12 +12,9 @@ export default function ResoruceMarkdownPage() {
     const [resourceName, setResourceName] = useState<string>();
     const {projectId, branchId, fileId} = useParams<string>();
     const appContext = useContext(AppContext) as AppContextState;
-    
-    // const [fileId, setFileId] = useState<string>();
 
     useEffect(() => {
         setResourceName(searchParams.get("resourcename") || undefined );
-        // setFileId(searchParams.get("fileid") || undefined );
     }, [searchParams]);
 
     useEffect(() => {

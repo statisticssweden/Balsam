@@ -36,6 +36,5 @@ export const getResourceType = (file: RepoFile): ResourceType =>
         return ResourceType.Md;
     }
     
-
     return ResourceType.Document;
 };

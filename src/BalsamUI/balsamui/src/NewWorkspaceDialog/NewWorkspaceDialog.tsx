@@ -22,7 +22,7 @@ export interface NewWorkspaceDialogProperties
     open: boolean,
 }
 
-export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
+export default function NewWorkspaceDialog(props: NewWorkspaceDialogProperties ) {
     const [workspaceName, setWorkspaceName] = useState<string>("");
     const [workspaceNameError, setWorkspaceNameError] = useState(false);
     const [workspaceNameHelperText, setWorkspaceNameHelperText] = useState("")
@@ -52,7 +52,7 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
 
     const updateOkEnabled = (workspaceName: string) => 
     {
-        let projectNameValid = validateWorkspaceName(workspaceName).length == 0;
+        let projectNameValid = validateWorkspaceName(workspaceName).length === 0;
         setOkEnabled(projectNameValid)
     }
 

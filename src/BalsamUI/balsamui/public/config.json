@@ -1,3 +1,4 @@
 {
-    "apiurl": "http://localhost:1626/api/v1"
+    "apiurl": "http://localhost:1626/api/v1",
+    "defaultGitBranchName": "main"
 }

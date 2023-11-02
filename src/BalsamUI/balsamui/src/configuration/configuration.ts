@@ -3,6 +3,7 @@ const configFile = '/config.json'
 export interface AppConfiguration
 {
     apiurl: string
+    defaultGitBranchName: string
 }
 
 export const getConfig = async ():Promise<AppConfiguration> => 
@@ -23,7 +24,3 @@ export const getConfig = async ():Promise<AppConfiguration> =>
 
     return config as AppConfiguration;
 }
-
-// const config = await getConfig();
-
-// export default config;

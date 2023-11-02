@@ -20,7 +20,6 @@ export default function ProjectCard(properties : ProjectCardProperties) {
                 <CardMedia
                     sx={{ height: 140 }}
                     image={projectimage}
-                    title="green iguana"
                 />
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">

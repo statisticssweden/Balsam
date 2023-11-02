@@ -33,7 +33,7 @@ export async function convertToResources(files: RepoFile[], projectId: string, b
 {
     let resourcesArray = await Promise.all(files.map( async (file): Promise<Resource> => {
         let name = file.name;
-        name = name.replace(/\.[^/.]+$/, "");
+        name = name.replace(/\.[^/.]+$/, ""); //Remove file ending
         
         let type = getResourceType(file);
         let linkUrl: string = "";

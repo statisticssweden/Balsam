@@ -8,14 +8,21 @@ export interface AlertLink
   href: string  
 }
 
+export const Severity = {
+  sucess: 'success',
+  error: 'error',
+  info: 'info',
+  warning: 'warning'
+} as const;
+
+export type Severity = typeof Severity[keyof typeof Severity];
+
 export interface AlertItem {
   id: string,
   text: string,
-  //severity: 'success' | 'error' | 'info' | 'warning', //blir knas med prepare funktion
-  severity: string
+  severity: Severity
   link?: AlertLink
 }
-
 
 const initialState: Array<AlertItem> = [];
 
@@ -34,24 +41,24 @@ export const alertsSlice = createSlice({
           payload: {
             id: id,
             text: text,
-            severity: 'success',
+            severity: Severity.sucess,
             link: link,
             
-          }  
+          }  as AlertItem
         }
       },
 
     },
     postError: (state, action) => {
-      let newItem: AlertItem = { id: uuidv4(), severity: "error", text: action.payload};
+      let newItem: AlertItem = { id: uuidv4(), severity:  Severity.error, text: action.payload};
       state.push(newItem);
     },
     postInfo: (state, action) => {
-      let newItem: AlertItem = { id: uuidv4(), severity: "info", text: action.payload};
+      let newItem: AlertItem = { id: uuidv4(), severity: Severity.info, text: action.payload};
       state.push(newItem);
     },
     postWarning: (state, action) => {
-      let newItem: AlertItem = { id: uuidv4(), severity: "warning", text: action.payload};
+      let newItem: AlertItem = { id: uuidv4(), severity: Severity.warning, text: action.payload};
       state.push(newItem);
     },
     removeAlert: (state, action) => {

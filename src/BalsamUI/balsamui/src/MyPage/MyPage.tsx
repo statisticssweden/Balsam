@@ -10,8 +10,6 @@ import WorkspacesSection, { NewWorkspaceCardKeyType } from '../WorkspacesSection
 import NewWorkspaceDialog, { NewWorkspaceDialogProperties } from '../NewWorkspaceDialog/NewWorkspaceDialog';
 import { AxiosResponse } from 'axios';
 
-
-
 export default function MyPage() {
 
     const [projects, setProjects] = useState<Array<Project>>();
@@ -25,22 +23,15 @@ export default function MyPage() {
     const loadProjects = () =>
     {
         setLoading(true);
-
-        const fetchData = async () => {
-            appContext.balsamApi.projectApi.listProjects(false)
-            .catch(() => {
-                
-                dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
-            })
-            .then((response) => {
-                setProjects(response?.data.projects);
-                setLoading(false);
-            })
-        }
-
-        fetchData()
-            .catch(console.error);
-        
+        appContext.balsamApi.projectApi.listProjects(false)
+        .catch(() => {
+            
+            dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
+        })
+        .then((response) => {
+            setProjects(response?.data.projects);
+            setLoading(false);
+        })
     }
 
     const loadWorkspaces = async () => {
@@ -54,12 +45,24 @@ export default function MyPage() {
             })
     };
 
+    const loadTemplates = () => {
+        appContext.balsamApi.workspaceApi.listTemplates()
+        .catch(() => {
+            dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
+        })
+        .then((response) => {
+            let axResponse = response as AxiosResponse<Template[], any>
+            if (axResponse)
+            {
+                setTemplates(axResponse.data);
+            }
+        })
+    };
+
     useEffect(() => {
-        (async () =>  {
-            loadProjects();
-            await loadTemplates();
-            loadWorkspaces();
-        })();
+        loadProjects();
+        loadTemplates();
+        loadWorkspaces();
     }, [])
 
    
@@ -78,20 +81,6 @@ export default function MyPage() {
                 }
             });
     }
-    
-    const loadTemplates = async () => {
-        appContext.balsamApi.workspaceApi.listTemplates()
-        .catch(() => {
-            dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
-        })
-        .then((response) => {
-            let axResponse = response as AxiosResponse<Template[], any>
-            if (axResponse)
-            {
-                setTemplates(axResponse.data);
-            }
-        })
-    };
 
     const onNewWorkspaceDialogClosing = () => {
         
@@ -175,11 +164,16 @@ export default function MyPage() {
 
     }
 
-    function renderProjectsTable(projs: Array<Project>) {
+    function renderProjects() {
+        if (projects === undefined)
+        {
+            return "";
+        }
+
         return (
-            <div aria-labelledby="tabelLabel">
+            <div>
                 {
-                    projs.map((project) => {
+                    projects.map((project) => {
                         let openProjectUrl = `/project/${project.id}`
                         return (
                         <Accordion defaultExpanded key={project.id}>
@@ -189,7 +183,7 @@ export default function MyPage() {
                                 id="panel1a-header"
                                 >
                                      <Button sx={{ minWidth:"0px",  padding:0, textTransform:"none" }} onClick={(e) => onOpenProjectClick(e, openProjectUrl) }  >
-                                     <h3 className='projectHeader'>{project.name}</h3>
+                                        <h3 className='projectHeader'>{project.name}</h3>
                                      </Button>
                             </AccordionSummary>
                             <AccordionDetails>
@@ -213,7 +207,7 @@ export default function MyPage() {
 
     let contents = loading
         ? <p><em>Laddar...</em></p>
-        : renderProjectsTable(projects as Array<Project>);
+        : renderProjects();
 
     return (
         <div>

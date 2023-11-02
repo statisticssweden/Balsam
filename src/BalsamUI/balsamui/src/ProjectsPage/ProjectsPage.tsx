@@ -18,21 +18,16 @@ export default function ProjectsPage() {
     const loadData = () =>
     {
         setLoading(true);
-
-        const fetchData = async () => {
-            appContext.balsamApi.projectApi.listProjects(true)
-            .catch(() => {
-                
-                dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
-            })
-            .then((response) => {
-                setProjects(response?.data.projects);
-                setLoading(false);
-            })
-        }
-
-        fetchData()
-            .catch(console.error);
+        
+        appContext.balsamApi.projectApi.listProjects(true)
+        .catch(() => {
+            
+            dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
+        })
+        .then((response) => {
+            setProjects(response?.data.projects);
+            setLoading(false);
+        });
     }
 
     useEffect(() => {
@@ -40,36 +35,31 @@ export default function ProjectsPage() {
     }, [])
 
     const onNewProjectDialogClosing = () => {
-
         loadData();
-
     };
 
-    function renderProjectsTable(projs: Array<Project>) {
+    function renderProjects(projs: Array<Project>) {
         return (
 
-            <div className='cards' aria-labelledby="tabelLabel">
-                
+            <div className='cards' aria-labelledby="tabelLabel">         
                 {
                     projs.map((project) => {
                        return <ProjectCard project={project} key={project.id} />
                     })
                 }
-
-
             </div>
         );
     }
 
     let contents = loading
         ? <p><em>Laddar...</em></p>
-        : renderProjectsTable(projects as Array<Project>);
+        : renderProjects(projects as Array<Project>);
 
     return (
         <div>
             <h2 id="tabelLabel">Projekt och Undersökningar</h2>
             <div className='buttonrow'>
-                <NewProjectDialog onClosing={onNewProjectDialogClosing}></NewProjectDialog>
+                <NewProjectDialog onClosing={onNewProjectDialogClosing} ></NewProjectDialog>
             </div>
             {contents}
         </div>

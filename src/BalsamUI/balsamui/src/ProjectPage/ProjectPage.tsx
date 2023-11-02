@@ -36,7 +36,6 @@ export default function ProjectPage() {
     const [selectedTab, setSelectedTab] = useState(0);
     const [files, setFiles] = useState<Array<RepoFile>>();
     
-    
     const dispatch = useDispatch();
 
     function loadReadmeContent(projectId: string, branchId: string, fileId: string)
@@ -51,7 +50,7 @@ export default function ProjectPage() {
         });
     }
 
-    const loadFiles = async (projectId: string, branchId: string) => {
+    const loadFiles = (projectId: string, branchId: string) => {
 
         if (branchId === null || typeof branchId === 'undefined') {
             return;
@@ -89,7 +88,7 @@ export default function ProjectPage() {
 
     };
 
-    const loadTemplates = async () => {
+    const loadTemplates = () => {
         appContext.balsamApi.workspaceApi.listTemplates()
         .catch(() => {
             dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
@@ -100,7 +99,7 @@ export default function ProjectPage() {
     };
 
 
-    const loadWorkspaces = async (projectId: string, branchId: string) => {
+    const loadWorkspaces = (projectId: string, branchId: string) => {
         if (branchId === null || typeof branchId === 'undefined') {
             return;
         }
@@ -118,34 +117,28 @@ export default function ProjectPage() {
     useEffect(() => {
 
         setLoading(true);
-        const fetchData = async () => {
-            appContext.balsamApi.projectApi.getProject(id as string)
-            .catch(() => {
-                
-                dispatch(postError("Det gick inte att ladda projektet")); //TODO: Language
-            })
-            .then((response) => {
-                setProject(response?.data);
-                setBranches(response?.data.branches);
-                setSelectedBranch(response?.data.branches.find((b) => b.isDefault)?.id); 
-                setLoading(false);
+        
+        appContext.balsamApi.projectApi.getProject(id as string)
+        .catch(() => {
+            
+            dispatch(postError("Det gick inte att ladda projektet")); //TODO: Language
+        })
+        .then((response) => {
+            setProject(response?.data);
+            setBranches(response?.data.branches);
+            setSelectedBranch(response?.data.branches.find((b) => b.isDefault)?.id); 
+            setLoading(false);
 
-            });
-        };
-
-        fetchData()
-            .catch(console.error);
+        });
 
     }, [id]);
 
     useEffect(() => {
-        if (selectedBranch !== undefined)
+        if (id !== undefined && selectedBranch !== undefined)
         {
-            (async () =>  {
-                await loadFiles(id!, selectedBranch!);
-                await loadTemplates();
-                await loadWorkspaces(id!, selectedBranch!)
-            })();
+            loadFiles(id!, selectedBranch!);
+            loadTemplates();
+            loadWorkspaces(id!, selectedBranch!)
         }
 
     }, [selectedBranch]);
@@ -246,8 +239,8 @@ export default function ProjectPage() {
 
         function tabProps(index: number) {
             return {
-                id: `simple-tab-${index}`,
-                'aria-controls': `simple-tabpanel-${index}`,
+                id: `project-tab-${index}`,
+                'aria-controls': `project-tabpanel-${index}`,
             };
         }
 
@@ -275,7 +268,7 @@ export default function ProjectPage() {
                             {readmeElement}
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={1}>
-                            <ResourcesSection projectid={project.id} branch={selectedBranch!} resources={resources} />
+                            <ResourcesSection projectid={project.id} branchId={selectedBranch!} resources={resources} />
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={2}>
                             {filesElement}

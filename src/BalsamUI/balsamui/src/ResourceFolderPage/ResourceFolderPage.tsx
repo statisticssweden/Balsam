@@ -27,63 +27,66 @@ export default function ResoruceFolderPage() {
         setResourceFolderName(searchParams.get("folder") || undefined );
     }, [searchParams]);
 
+    function loadReadmeFileContent(projectId: string, branchId: string, readmeFile: RepoFile)
+    {
+        if (readmeFile.contentUrl)
+        {
+            appContext.balsamApi.projectApi.getFile(projectId, branchId, readmeFile.contentUrl)
+            .then((response) => 
+            {   
+                setMarkdown(response.data);
+
+                setLoading(false);
+            })
+            .catch( () => {
+                setMarkdown(`README.md i resursen ${resourceFolderName} gick inte att läsa`); //TODO: Language
+            });
+        } 
+        else 
+        {
+            setMarkdown(`README.md saknar innehåll`); //TODO: Language   
+        }  
+    }
+
     useEffect(() => {
 
         setLoading(true);
 
-        // declare the async data fetching function
-        const fetchData = async () => {
-            if (projectId !== undefined && branchId !== undefined && resourceFolderName !== undefined)
-            {
-                appContext.balsamApi.projectApi.getFiles(projectId, branchId)
-                .then((response) => 
-                {   
-                    let axResponse = response as AxiosResponse<any[], any>;
-                    let files = axResponse.data as Array<RepoFile>;
-                    
-                    let filesInResourceFolder = files.filter((file) => file.path.toLowerCase().startsWith(`Resources/${resourceFolderName}`.toLowerCase()));
-                    
-                    //Include Resources-folder to render tree correctly
-                    let resourceFolder = files.find(f=> f.path === `Resources`);
-                    if (resourceFolder)
-                    {
-                        filesInResourceFolder.push(resourceFolder);
-                    }
-
-                    setFiles(filesInResourceFolder);
-
-                    //let resourceFiles = Resources.getResourceFiles(filesInResourceFolder);
-                    let readmeFile = files.find((file) => file.path.toLowerCase() === `Resources/${resourceFolderName}/readme.md`.toLowerCase());
-
-                    if (readmeFile && readmeFile.contentUrl)
-                    {
-                        appContext.balsamApi.projectApi.getFile(projectId, branchId, readmeFile.contentUrl)
-                        .then((response) => 
-                        {   
-                            setMarkdown(response.data);
-
-                            setLoading(false);
-                        })
-                        .catch( () => {
-                            setMarkdown(`README.md i resursen ${resourceFolderName} gick inte att läsa`); //TODO: Language
-                        });
-                    } 
-                    else 
-                    {
-                        setMarkdown(`README.md saknas i mappen 'Resoruces/${resourceFolderName}'`); //TODO: Language   
-                    }  
-                    
-
-                })
-                .catch( () => {
-                    dispatch(postError(`Det gick inte att läsa filer för resursen ${resourceFolderName}`)); //TODO: Language
-                });
+        if (projectId !== undefined && branchId !== undefined && resourceFolderName !== undefined)
+        {
+            appContext.balsamApi.projectApi.getFiles(projectId, branchId)
+            .then((response) => 
+            {   
+                let axResponse = response as AxiosResponse<any[], any>;
+                let files = axResponse.data as Array<RepoFile>;
                 
-            }
-        }
+                let filesInResourceFolder = files.filter((file) => file.path.toLowerCase().startsWith(`Resources/${resourceFolderName}`.toLowerCase()));
+                
+                //Include Resources-folder to render tree correctly
+                let resourceFolder = files.find(f=> f.path === `Resources`);
+                if (resourceFolder)
+                {
+                    filesInResourceFolder.push(resourceFolder);
+                }
 
-        fetchData()
-            .catch(console.error);
+                setFiles(filesInResourceFolder);
+
+                let readmeFile = files.find((file) => file.path.toLowerCase() === `Resources/${resourceFolderName}/readme.md`.toLowerCase());
+
+                if (readmeFile)
+                {
+                    loadReadmeFileContent(projectId, branchId, readmeFile);
+                }
+                else {
+                    setMarkdown(`README.md saknas i mappen 'Resoruces/${resourceFolderName}'`); //TODO: Language   
+                }
+            })
+            .catch( () => {
+                dispatch(postError(`Det gick inte att läsa filer för resursen ${resourceFolderName}`)); //TODO: Language
+            });
+            
+        }
+       
 
     }, [resourceFolderName])
 
@@ -122,8 +125,8 @@ export default function ResoruceFolderPage() {
 
     function tabProps(index: number) {
         return {
-            id: `simple-tab-${index}`,
-            'aria-controls': `simple-tabpanel-${index}`,
+            id: `folder-tab-${index}`,
+            'aria-controls': `folder-tabpanel-${index}`,
         };
     }
 

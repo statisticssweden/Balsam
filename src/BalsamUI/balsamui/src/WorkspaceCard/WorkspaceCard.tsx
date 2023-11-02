@@ -28,7 +28,6 @@ export default function WorkspaceCard(props : WorkspaceCardProperties) {
     let image = workspaceImage;
     let workspaceTitle = props.workspace.name;
 
-
     cardActionAreaTo = "";
     
     function onDeleteConfirm()

@@ -4,7 +4,7 @@ import { Resource } from "../Model/Model";
 
 export interface ResourceSectionProperties{
     projectid: string,
-    branch: string,
+    branchId: string,
     resources?: Array<Resource>,
 }
 
