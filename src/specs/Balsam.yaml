@@ -204,7 +204,7 @@ paths:
     get:
       tags: 
         - Workspace
-      operationId: GetWorkspace
+      operationId: ListWorkspaces
       description: Get workspaces      
       parameters:
         - name: projectId
@@ -390,20 +390,7 @@ components:
         branchId:
           type: string
           description: The id of the branch
-      
-    DeleteWorkspaceRequest:
-      type: object
-      description: Payload for deleting an existing workspace
-      required:
-        - "projectId"
-        - "branchId"
-      properties:
-        projectId:
-          type: string
-          description: The id of the project
-        branchId:
-          type: string
-          description: The id of the branch
+     
 
     CreateKnowledgeLibraryRequest:
       type: object
@@ -474,6 +461,7 @@ components:
         - "projectId"
         - "branchId"
         - "name"
+        - "url"
       properties:
         id:
           type: string
@@ -487,7 +475,9 @@ components:
         name:
           type: string
           description: The branch name
-
+        url:
+          type: string
+          description: Url to the workspace
     KnowledgeLibraryCreatedResponse:
       type: object
       description: Connection to a knowledge library created response
