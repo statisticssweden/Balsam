@@ -92,7 +92,7 @@ namespace GitLabProvider.Client
             return null;           
         }
 
-        public async Task<bool> CreateBranch(string branchname, string repositoryId)
+        public async Task<bool> CreateBranch(string repositoryId, string fromBranch, string branchName)
         {
             var projectId = repositoryId;
 
@@ -102,8 +102,8 @@ namespace GitLabProvider.Client
                 {
                     Content = new FormUrlEncodedContent(new KeyValuePair<string?, string?>[]
                     {
-                        new("branch", branchname.ToLower()),
-                        new("ref", "main")
+                        new("branch", branchName),
+                        new("ref", fromBranch)
                     })
                 };
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);

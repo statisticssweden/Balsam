@@ -215,6 +215,7 @@ namespace Balsam.Api
             {
                 _logger.LogDebug($"Begin call Git");
                 var gitData = await _repositoryApi.CreateRepositoryAsync(new CreateRepositoryRequest(preferredName, description, defaultBranchName));
+                defaultBranchName = gitData.DefaultBranchName;
                 project.Git = new GitData() { Id = gitData.Id, Name = gitData.Name, Path = gitData.Path };
                 _logger.LogInformation($"Git repository {project.Git.Name} created");
             }
@@ -237,7 +238,7 @@ namespace Balsam.Api
 
             string propPath = Path.Combine(projectPath, "properties.json");
 
-            if (await CreateBranch(project, defaultBranchName, description, true))
+            if (await CreateBranch(project, defaultBranchName, description, true) != null)
             {
                 _logger.LogInformation($"Default Balsam branch {defaultBranchName} created");
             }
@@ -343,21 +344,34 @@ namespace Balsam.Api
 
         }
 
-        private async Task<bool> CreateBranch(BalsamProject project, string branchName, string description, bool isDefault = false)
+        public async Task<BalsamBranch?> CreateBranch(string projectId, string fromBranch, string branchName, string description)
+        {
+
+            var project = await GetProject(projectId, false);
+     
+            if (project is null || project.Git is null)
+            {
+                return null;
+            }
+            
+
+            var response = await _repositoryApi.CreateBranchAsync(project.Git.Id, new CreateBranchRequest(branchName, fromBranch));
+            branchName = response.Name;
+
+
+            return await CreateBranch(project, branchName, description, false);
+        }
+
+        private async Task<BalsamBranch?> CreateBranch(BalsamProject project, string branchName, string description, bool isDefault = false)
         {
             var branchId = SanitizeName(branchName);
             var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", project.Id, branchId);
 
             DirectoryUtil.AssureDirectoryExists(branchPath);
 
-            if (!isDefault)
-            {
-                //TODO create a Git branch
-            }
-
             if (project.S3 is null || string.IsNullOrEmpty(project.S3.BucketName))
             {
-                return false;
+                return null;
             }
 
             //TODO do we ned to save the response information?
@@ -376,7 +390,7 @@ namespace Balsam.Api
             var propPath = Path.Combine(branchPath, "properties.json");
             await File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(branch));
 
-            return true;
+            return branch;
         }
 
         public async Task<List<GitProviderApiClient.Model.RepoFile>?> GetGitBranchFiles(string projectId, string branchId)

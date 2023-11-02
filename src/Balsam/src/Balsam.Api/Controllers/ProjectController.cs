@@ -25,9 +25,21 @@ namespace Balsam.Api.Controllers
             capabilityOptions.Get(Capabilities.Authentication);
         }
 
-        public override Task<IActionResult> CreateBranch([FromRoute(Name = "projectId"), Required] string projectId, [FromBody] CreateBranchRequest? createBranchRequest)
+        public async override Task<IActionResult> CreateBranch([FromRoute(Name = "projectId"), Required] string projectId, [FromBody] CreateBranchRequest? createBranchRequest)
         {
-            throw new NotImplementedException();
+            if (createBranchRequest is null)
+            {
+                return BadRequest(new Problem() { Status = 400, Title = "Parameter error", Detail = "Missing parameters" });
+            }
+            try
+            {
+                var branch = await _hubClient.CreateBranch(projectId, createBranchRequest.FromBranch, createBranchRequest.Name, createBranchRequest.Description);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not create branch");
+            }
+            return BadRequest(new Problem() { Status = 400, Title = "Could not create branch", Detail = "Branch could not be created" });
         }
 
 

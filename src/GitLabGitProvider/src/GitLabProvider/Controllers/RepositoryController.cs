@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Intrinsics.Arm;
+using System.Text.RegularExpressions;
 using System.Web;
+using System.Xml.Linq;
 
 namespace GitLabProvider.Controllers
 {
@@ -27,10 +30,17 @@ namespace GitLabProvider.Controllers
 
         public async override Task<IActionResult> CreateBranch([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromBody] CreateBranchRequest? createBranchRequest)
         {
-            if (await _gitLabClient.CreateBranch(createBranchRequest.Name, repositoryId))
+            if (createBranchRequest is null)
             {
-                //TODO Fix response
-                return Ok(new BranchCreatedResponse() { Id = "TODO Fix", Name = "TODO Fix" });
+                return BadRequest(new Problem() { Type = "404", Title = "Parameter erros", Detail = "Missing parameters" });
+            }
+
+            var branchName = SantitazeBranchName(createBranchRequest.Name);
+            var fromBranch = createBranchRequest.FromBranch;
+
+            if (await _gitLabClient.CreateBranch(repositoryId, fromBranch, branchName))
+            {
+                return Ok(new BranchCreatedResponse() { Id = branchName, Name = branchName });
             }
             return BadRequest(new Problem() { Type = "404", Title = "Could not create branch" });
         }
@@ -38,11 +48,12 @@ namespace GitLabProvider.Controllers
 
         public async override Task<IActionResult> CreateRepository([FromBody] CreateRepositoryRequest? createRepositoryRequest)
         {
-            if (!(createRepositoryRequest is null)) { 
-                var repoInfo =  await _gitLabClient.CreateProjectRepo(createRepositoryRequest.Name, createRepositoryRequest.Description, createRepositoryRequest.DefaultBranchName);
+            if (!(createRepositoryRequest is null)) {
+                var branchName = SantitazeBranchName(createRepositoryRequest.DefaultBranchName);
+                var repoInfo =  await _gitLabClient.CreateProjectRepo(createRepositoryRequest.Name, createRepositoryRequest.Description, branchName);
                 if (repoInfo != null)
                 {
-                    return Ok(new RepositoryCreatedResponse() { Name = repoInfo.Name, PreferredName = createRepositoryRequest.Name, Path = repoInfo.Url, Id = repoInfo.Id });
+                    return Ok(new RepositoryCreatedResponse() { Name = repoInfo.Name, PreferredName = createRepositoryRequest.Name, Path = repoInfo.Url, Id = repoInfo.Id, DefaultBranchName = branchName });
                 }
             }
             return BadRequest(new Problem() { Type = "404", Title = "Could not create repository" });
@@ -86,6 +97,14 @@ namespace GitLabProvider.Controllers
             }); 
 
             return Ok(filesResponse.ToArray());
+        }
+
+        private static string SantitazeBranchName(string branchName)
+        {
+            var name = branchName.Trim(); //Remove whitespaces before and after valid charaters
+            name = Regex.Replace(branchName, @"\s+", "-"); // replaces whitespace with hypen 
+
+            return name;
         }
     }
 }
