@@ -30,9 +30,8 @@ namespace Balsam.Api.Controllers
             var username = this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
             var mail = this.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
             var project = await _hubClient.GetProject(createWorkspaceRequest.ProjectId);
-            var groups = this.User.Claims.FirstOrDefault(c => c.Type == "groups" && c.Value == project.Oidc.GroupId);
 
-            if (groups != null)
+            if (this.User.Claims.Any(c => c.Type == "groups" && c.Value == project.Oidc.GroupName))
             {
                 try
                 {
@@ -128,7 +127,7 @@ namespace Balsam.Api.Controllers
                 {
                     var project = await _hubClient.GetProject(projectId);
 
-                    if (this.User.Claims.FirstOrDefault(c => c.Type == "groups" && c.Value == project.Oidc.GroupId) is null)
+                    if (!this.User.Claims.Any(c => c.Type == "groups" && c.Value == project.Oidc.GroupName) )
                     {
                         return BadRequest(new Problem() { Status = 400, Type = "Not authorized", Title = "You are not a member of the project" });
                     }

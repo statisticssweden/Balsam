@@ -277,10 +277,12 @@ namespace Balsam.Api
             {
                 var patResponse = await _gitUserClient.CreatePATAsync(userName);
                 gitPAT = patResponse.Token;
+                _logger.LogInformation($"Git PAT created");
             }
             var user = new UserInfo(userName, userMail, gitPAT);
 
             string propPath = Path.Combine(workspacePath, "properties.json");
+            _logger.LogDebug("Pulling changes");
             _hubRepositoryClient.PullChanges();
             // serialize JSON to a string and then write string to a file
             await CreateWorkspaceManifests(project, branch, workspace, user, workspacePath, templateId);
@@ -288,7 +290,7 @@ namespace Balsam.Api
             workspace.Url = ManifestUtil.GetWorkspaceUrl(Path.Combine(workspacePath, template.UrlConfig));
             await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(workspace));
             _hubRepositoryClient.PersistChanges($"New workspace with id {project.Id}");
-
+            _logger.LogInformation("Workspace created");
             return workspace;
         }
 
