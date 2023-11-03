@@ -314,6 +314,9 @@ namespace Balsam.Api
         }
         private async Task CreateWorkspaceManifests(BalsamProject project, BalsamBranch branch, BalsamWorkspace workspace, UserInfo user, string workspacePath, string templateId)
         {
+            var token = await _s3Client.CreateAccessKeyAsync(project.S3.BucketName);
+            var s3Token = new S3Token(token.AccessKey, token.SecretKey);
+            user.S3 = s3Token;
             var context = new WorkspaceContext(project, branch, workspace, user);
             await CreateManifests(context, workspacePath, "workspaces" + Path.DirectorySeparatorChar +  templateId);
         }
