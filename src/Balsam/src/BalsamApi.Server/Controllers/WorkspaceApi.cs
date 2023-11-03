@@ -64,6 +64,18 @@ namespace BalsamApi.Server.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>List available workspace templates</remarks>
+        /// <response code="200">Success</response>
+        [HttpGet]
+        [Route("/api/v1/templates")]
+        [ValidateModelState]
+        [SwaggerOperation("ListTemplates")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<Template>), description: "Success")]
+        public abstract Task<IActionResult> ListTemplates();
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Get workspaces</remarks>
         /// <param name="projectId">id for the project</param>
         /// <param name="branchId">id for the branch</param>
@@ -73,21 +85,9 @@ namespace BalsamApi.Server.Controllers
         [HttpGet]
         [Route("/api/v1/workspaces")]
         [ValidateModelState]
-        [SwaggerOperation("GetWorkspace")]
+        [SwaggerOperation("ListWorkspaces")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Workspace>), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> GetWorkspace([FromQuery (Name = "projectId")]string? projectId, [FromQuery (Name = "branchId")]string? branchId, [FromQuery (Name = "all")]bool? all);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>List available workspace templates</remarks>
-        /// <response code="200">Success</response>
-        [HttpGet]
-        [Route("/api/v1/templates")]
-        [ValidateModelState]
-        [SwaggerOperation("ListTemplates")]
-        [SwaggerResponse(statusCode: 200, type: typeof(List<Template>), description: "Success")]
-        public abstract Task<IActionResult> ListTemplates();
+        public abstract Task<IActionResult> ListWorkspaces([FromQuery (Name = "projectId")]string? projectId, [FromQuery (Name = "branchId")]string? branchId, [FromQuery (Name = "all")]bool? all);
     }
 }

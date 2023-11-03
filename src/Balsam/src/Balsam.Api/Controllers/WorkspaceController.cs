@@ -1,4 +1,5 @@
-﻿using BalsamApi.Server.Models;
+﻿using Balsam.Api.Models;
+using BalsamApi.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -84,10 +85,6 @@ namespace Balsam.Api.Controllers
 
         }
 
-        public override Task<IActionResult> GetWorkspace([FromQuery(Name = "projectId")] string? projectId, [FromQuery(Name = "branchId")] string? branchId, [FromQuery(Name = "all")] bool? all)
-        {
-            throw new NotImplementedException();
-        }
 
         public override Task<IActionResult> ListTemplates()
         {
@@ -105,6 +102,62 @@ namespace Balsam.Api.Controllers
                 Status = 417,
                 Title = "No workspace template found"
             }));
+        }
+
+        public async override Task<IActionResult> ListWorkspaces([FromQuery(Name = "projectId")] string? projectId, [FromQuery(Name = "branchId")] string? branchId, [FromQuery(Name = "all")] bool? all)
+        {
+            if (branchId != null && projectId is null)
+            {
+                return BadRequest(new Problem() { Status = 400, Type = "Parameter error", Title = "If BranchId is specified a ProjectId must also be specified"});
+            }
+            List<BalsamWorkspace> workspaces;
+            if (projectId != null)
+            {
+                if (all??true)
+                {
+                    if (branchId is null)
+                    {
+                        workspaces = await _hubClient.GetWorkspacesByProject(projectId);
+                    }
+                    else
+                    {
+                        workspaces = await _hubClient.GetWorkspacesByProjectAndBranch(projectId, branchId);
+                    }
+                }
+                else
+                {
+                    var project = await _hubClient.GetProject(projectId);
+
+                    if (this.User.Claims.FirstOrDefault(c => c.Type == "groups" && c.Value == project.Oidc.GroupId) is null)
+                    {
+                        return BadRequest(new Problem() { Status = 400, Type = "Not authorized", Title = "You are not a member of the project" });
+                    }
+
+                    if (branchId is null)
+                    {
+                        workspaces = await _hubClient.GetWorkspacesByProjectAndUser(projectId, this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value);
+                    }
+                    else
+                    {
+                        workspaces = await _hubClient.GetWorkspacesByProjectBranchAndUser(projectId, branchId, this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value);
+                    }
+                }
+            }
+            else
+            {
+                if (all ?? true)
+                {
+                    workspaces = await _hubClient.GetWorkspaces();
+                }
+                else
+                {
+                    var projects = await _hubClient.GetProjects(false);
+                    var groups = this.User.Claims.Where(c => c.Type == "groups").Select(c => c.Value).ToList();
+                    var projectIds = projects.Where(p => groups.Contains(p.Oidc.GroupName)).Select(p => p.Id).ToList();
+                    workspaces = await _hubClient.GetWorkspacesByUser(this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value, projectIds);
+                }
+            }
+            return Ok(workspaces.Select(w => new Workspace() { Id = w.Id, Name = w.Name, ProjectId = w.ProjectId, BranchId = w.BranchId, TemplateId = w.TemplateId, Url = w.Url}).ToArray());
         }
     }
 }
