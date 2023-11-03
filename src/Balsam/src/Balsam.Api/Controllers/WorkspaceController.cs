@@ -28,21 +28,30 @@ namespace Balsam.Api.Controllers
             }
             var username = this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
             var mail = this.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            var project = await _hubClient.GetProject(createWorkspaceRequest.ProjectId);
+            var groups = this.User.Claims.FirstOrDefault(c => c.Type == "groups" && c.Value == project.Oidc.GroupId);
 
-            try
+            if (groups != null)
             {
-                var workspace = await _hubClient.CreateWorkspace(createWorkspaceRequest.ProjectId, createWorkspaceRequest.BranchId, createWorkspaceRequest.Name, createWorkspaceRequest.TemplateId, username, mail);
-
-                if (workspace == null)
+                try
                 {
-                    return BadRequest(new Problem() { Status = 400, Type = "Could not create workspace", Title = "Could not create workspace due to error" });
-                }
+                    var workspace = await _hubClient.CreateWorkspace(createWorkspaceRequest.ProjectId, createWorkspaceRequest.BranchId, createWorkspaceRequest.Name, createWorkspaceRequest.TemplateId, username, mail);
 
-                return Ok(new WorkspaceCreatedResponse() { Id = workspace.Id, Name = workspace.Name, ProjectId = createWorkspaceRequest.ProjectId, BranchId = createWorkspaceRequest.BranchId});
+                    if (workspace == null)
+                    {
+                        return BadRequest(new Problem() { Status = 400, Type = "Could not create workspace", Title = "Could not create workspace due to error" });
+                    }
+
+                    return Ok(new WorkspaceCreatedResponse() { Id = workspace.Id, Name = workspace.Name, ProjectId = createWorkspaceRequest.ProjectId, BranchId = createWorkspaceRequest.BranchId });
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not create workspace");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "Could not create workspace");
+                return BadRequest(new Problem() { Status = 403, Type = "User not in projectgroup", Title = "Internal error when created error" });
             }
             return BadRequest(new Problem() { Status = 400, Type = "Could not create workspace", Title = "Internal error when created error" });
            
