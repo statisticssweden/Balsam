@@ -115,6 +115,7 @@ Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *RepositoryApi* | [**CreateBranch**](docs/RepositoryApi.md#createbranch) | **POST** /repos/{repositoryId}/branches | 
 *RepositoryApi* | [**CreateRepository**](docs/RepositoryApi.md#createrepository) | **POST** /repos | 
+*RepositoryApi* | [**GetFile**](docs/RepositoryApi.md#getfile) | **GET** /repos/{repositoryId}/branches/{branchId}/files/{fileId} | 
 *RepositoryApi* | [**GetFilesInBranch**](docs/RepositoryApi.md#getfilesinbranch) | **GET** /repos/{repositoryId}/branches/{branchId}/files | 
 *UserApi* | [**CreatePAT**](docs/UserApi.md#createpat) | **POST** /users/{id}/PAT | 
 
@@ -125,8 +126,8 @@ Class | Method | HTTP request | Description
  - [Model.BranchCreatedResponse](docs/BranchCreatedResponse.md)
  - [Model.CreateBranchRequest](docs/CreateBranchRequest.md)
  - [Model.CreateRepositoryRequest](docs/CreateRepositoryRequest.md)
- - [Model.File](docs/File.md)
  - [Model.Problem](docs/Problem.md)
+ - [Model.RepoFile](docs/RepoFile.md)
  - [Model.RepositoryCreatedResponse](docs/RepositoryCreatedResponse.md)
  - [Model.UserPATCreatedResponse](docs/UserPATCreatedResponse.md)
 

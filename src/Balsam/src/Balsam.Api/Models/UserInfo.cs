@@ -6,6 +6,8 @@
         public string Mail { get; set; }
         public string GitPAT { get; set; }
 
+        public S3Token S3 { get; set; }
+
         public UserInfo(string userName, string mail, string gitPAT)
         {
             UserName = userName;

@@ -183,17 +183,21 @@ components:
     FileListResponse:
       type: array
       items:
-        $ref: '#/components/schemas/File' 
+        $ref: '#/components/schemas/RepoFile' 
 
-    File:
+    RepoFile:
       type: object
       description: File information
       required:
+        - "id"
         - "path"
         - "name"
         - "type"
         - "contentUrl"
       properties:
+        id:
+          type: string
+          description: identifier for the file
         path:
           type: string
           description: The full relative path 
@@ -248,6 +252,7 @@ components:
         - "preferredName"
         - "name"
         - "path"
+        - "defaultBranchName"
       properties:
         id:
           type: string
@@ -261,6 +266,10 @@ components:
         path:
           type: string
           description: The path to the repository that can be used for clone it.
+        defaultBranchName:
+          type: string
+          description: The name of the default git branch
+
 
     BranchCreatedResponse:
       type: object

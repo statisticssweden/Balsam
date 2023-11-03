@@ -78,14 +78,41 @@ namespace GitProviderApiClient.Api
         /// 
         /// </summary>
         /// <remarks>
+        /// Get file contents
+        /// </remarks>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="fileId">The identity of the file.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns>string</returns>
+        string GetFile(string repositoryId, string branchId, string fileId, int operationIndex = 0);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Get file contents
+        /// </remarks>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="fileId">The identity of the file.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns>ApiResponse of string</returns>
+        ApiResponse<string> GetFileWithHttpInfo(string repositoryId, string branchId, string fileId, int operationIndex = 0);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
         /// Gets file descriptions of all files in a git branch for specified repository
         /// </remarks>
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
-        /// <returns>List&lt;File&gt;</returns>
-        List<File> GetFilesInBranch(string repositoryId, string branchId, int operationIndex = 0);
+        /// <returns>List&lt;RepoFile&gt;</returns>
+        List<RepoFile> GetFilesInBranch(string repositoryId, string branchId, int operationIndex = 0);
 
         /// <summary>
         /// 
@@ -97,8 +124,8 @@ namespace GitProviderApiClient.Api
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
-        /// <returns>ApiResponse of List&lt;File&gt;</returns>
-        ApiResponse<List<File>> GetFilesInBranchWithHttpInfo(string repositoryId, string branchId, int operationIndex = 0);
+        /// <returns>ApiResponse of List&lt;RepoFile&gt;</returns>
+        ApiResponse<List<RepoFile>> GetFilesInBranchWithHttpInfo(string repositoryId, string branchId, int operationIndex = 0);
         #endregion Synchronous Operations
     }
 
@@ -164,6 +191,35 @@ namespace GitProviderApiClient.Api
         /// 
         /// </summary>
         /// <remarks>
+        /// Get file contents
+        /// </remarks>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="fileId">The identity of the file.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of string</returns>
+        System.Threading.Tasks.Task<string> GetFileAsync(string repositoryId, string branchId, string fileId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Get file contents
+        /// </remarks>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="fileId">The identity of the file.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of ApiResponse (string)</returns>
+        System.Threading.Tasks.Task<ApiResponse<string>> GetFileWithHttpInfoAsync(string repositoryId, string branchId, string fileId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
         /// Gets file descriptions of all files in a git branch for specified repository
         /// </remarks>
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
@@ -171,8 +227,8 @@ namespace GitProviderApiClient.Api
         /// <param name="branchId">The id of the branch.</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
-        /// <returns>Task of List&lt;File&gt;</returns>
-        System.Threading.Tasks.Task<List<File>> GetFilesInBranchAsync(string repositoryId, string branchId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        /// <returns>Task of List&lt;RepoFile&gt;</returns>
+        System.Threading.Tasks.Task<List<RepoFile>> GetFilesInBranchAsync(string repositoryId, string branchId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <summary>
         /// 
@@ -185,8 +241,8 @@ namespace GitProviderApiClient.Api
         /// <param name="branchId">The id of the branch.</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
-        /// <returns>Task of ApiResponse (List&lt;File&gt;)</returns>
-        System.Threading.Tasks.Task<ApiResponse<List<File>>> GetFilesInBranchWithHttpInfoAsync(string repositoryId, string branchId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        /// <returns>Task of ApiResponse (List&lt;RepoFile&gt;)</returns>
+        System.Threading.Tasks.Task<ApiResponse<List<RepoFile>>> GetFilesInBranchWithHttpInfoAsync(string repositoryId, string branchId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
         #endregion Asynchronous Operations
     }
 
@@ -598,16 +654,200 @@ namespace GitProviderApiClient.Api
         }
 
         /// <summary>
+        ///  Get file contents
+        /// </summary>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="fileId">The identity of the file.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns>string</returns>
+        public string GetFile(string repositoryId, string branchId, string fileId, int operationIndex = 0)
+        {
+            GitProviderApiClient.Client.ApiResponse<string> localVarResponse = GetFileWithHttpInfo(repositoryId, branchId, fileId);
+            return localVarResponse.Data;
+        }
+
+        /// <summary>
+        ///  Get file contents
+        /// </summary>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="fileId">The identity of the file.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns>ApiResponse of string</returns>
+        public GitProviderApiClient.Client.ApiResponse<string> GetFileWithHttpInfo(string repositoryId, string branchId, string fileId, int operationIndex = 0)
+        {
+            // verify the required parameter 'repositoryId' is set
+            if (repositoryId == null)
+            {
+                throw new GitProviderApiClient.Client.ApiException(400, "Missing required parameter 'repositoryId' when calling RepositoryApi->GetFile");
+            }
+
+            // verify the required parameter 'branchId' is set
+            if (branchId == null)
+            {
+                throw new GitProviderApiClient.Client.ApiException(400, "Missing required parameter 'branchId' when calling RepositoryApi->GetFile");
+            }
+
+            // verify the required parameter 'fileId' is set
+            if (fileId == null)
+            {
+                throw new GitProviderApiClient.Client.ApiException(400, "Missing required parameter 'fileId' when calling RepositoryApi->GetFile");
+            }
+
+            GitProviderApiClient.Client.RequestOptions localVarRequestOptions = new GitProviderApiClient.Client.RequestOptions();
+
+            string[] _contentTypes = new string[] {
+            };
+
+            // to determine the Accept header
+            string[] _accepts = new string[] {
+                "application/json",
+                "*/*",
+                "application/problem+json"
+            };
+
+            var localVarContentType = GitProviderApiClient.Client.ClientUtils.SelectHeaderContentType(_contentTypes);
+            if (localVarContentType != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Content-Type", localVarContentType);
+            }
+
+            var localVarAccept = GitProviderApiClient.Client.ClientUtils.SelectHeaderAccept(_accepts);
+            if (localVarAccept != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
+            }
+
+            localVarRequestOptions.PathParameters.Add("repositoryId", GitProviderApiClient.Client.ClientUtils.ParameterToString(repositoryId)); // path parameter
+            localVarRequestOptions.PathParameters.Add("branchId", GitProviderApiClient.Client.ClientUtils.ParameterToString(branchId)); // path parameter
+            localVarRequestOptions.PathParameters.Add("fileId", GitProviderApiClient.Client.ClientUtils.ParameterToString(fileId)); // path parameter
+
+            localVarRequestOptions.Operation = "RepositoryApi.GetFile";
+            localVarRequestOptions.OperationIndex = operationIndex;
+
+
+            // make the HTTP request
+            var localVarResponse = this.Client.Get<string>("/repos/{repositoryId}/branches/{branchId}/files/{fileId}", localVarRequestOptions, this.Configuration);
+            if (this.ExceptionFactory != null)
+            {
+                Exception _exception = this.ExceptionFactory("GetFile", localVarResponse);
+                if (_exception != null)
+                {
+                    throw _exception;
+                }
+            }
+
+            return localVarResponse;
+        }
+
+        /// <summary>
+        ///  Get file contents
+        /// </summary>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="fileId">The identity of the file.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of string</returns>
+        public async System.Threading.Tasks.Task<string> GetFileAsync(string repositoryId, string branchId, string fileId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            GitProviderApiClient.Client.ApiResponse<string> localVarResponse = await GetFileWithHttpInfoAsync(repositoryId, branchId, fileId, operationIndex, cancellationToken).ConfigureAwait(false);
+            return localVarResponse.Data;
+        }
+
+        /// <summary>
+        ///  Get file contents
+        /// </summary>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="fileId">The identity of the file.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of ApiResponse (string)</returns>
+        public async System.Threading.Tasks.Task<GitProviderApiClient.Client.ApiResponse<string>> GetFileWithHttpInfoAsync(string repositoryId, string branchId, string fileId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            // verify the required parameter 'repositoryId' is set
+            if (repositoryId == null)
+            {
+                throw new GitProviderApiClient.Client.ApiException(400, "Missing required parameter 'repositoryId' when calling RepositoryApi->GetFile");
+            }
+
+            // verify the required parameter 'branchId' is set
+            if (branchId == null)
+            {
+                throw new GitProviderApiClient.Client.ApiException(400, "Missing required parameter 'branchId' when calling RepositoryApi->GetFile");
+            }
+
+            // verify the required parameter 'fileId' is set
+            if (fileId == null)
+            {
+                throw new GitProviderApiClient.Client.ApiException(400, "Missing required parameter 'fileId' when calling RepositoryApi->GetFile");
+            }
+
+
+            GitProviderApiClient.Client.RequestOptions localVarRequestOptions = new GitProviderApiClient.Client.RequestOptions();
+
+            string[] _contentTypes = new string[] {
+            };
+
+            // to determine the Accept header
+            string[] _accepts = new string[] {
+                "application/json",
+                "*/*",
+                "application/problem+json"
+            };
+
+            var localVarContentType = GitProviderApiClient.Client.ClientUtils.SelectHeaderContentType(_contentTypes);
+            if (localVarContentType != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Content-Type", localVarContentType);
+            }
+
+            var localVarAccept = GitProviderApiClient.Client.ClientUtils.SelectHeaderAccept(_accepts);
+            if (localVarAccept != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
+            }
+
+            localVarRequestOptions.PathParameters.Add("repositoryId", GitProviderApiClient.Client.ClientUtils.ParameterToString(repositoryId)); // path parameter
+            localVarRequestOptions.PathParameters.Add("branchId", GitProviderApiClient.Client.ClientUtils.ParameterToString(branchId)); // path parameter
+            localVarRequestOptions.PathParameters.Add("fileId", GitProviderApiClient.Client.ClientUtils.ParameterToString(fileId)); // path parameter
+
+            localVarRequestOptions.Operation = "RepositoryApi.GetFile";
+            localVarRequestOptions.OperationIndex = operationIndex;
+
+
+            // make the HTTP request
+            var localVarResponse = await this.AsynchronousClient.GetAsync<string>("/repos/{repositoryId}/branches/{branchId}/files/{fileId}", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
+
+            if (this.ExceptionFactory != null)
+            {
+                Exception _exception = this.ExceptionFactory("GetFile", localVarResponse);
+                if (_exception != null)
+                {
+                    throw _exception;
+                }
+            }
+
+            return localVarResponse;
+        }
+
+        /// <summary>
         ///  Gets file descriptions of all files in a git branch for specified repository
         /// </summary>
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
-        /// <returns>List&lt;File&gt;</returns>
-        public List<File> GetFilesInBranch(string repositoryId, string branchId, int operationIndex = 0)
+        /// <returns>List&lt;RepoFile&gt;</returns>
+        public List<RepoFile> GetFilesInBranch(string repositoryId, string branchId, int operationIndex = 0)
         {
-            GitProviderApiClient.Client.ApiResponse<List<File>> localVarResponse = GetFilesInBranchWithHttpInfo(repositoryId, branchId);
+            GitProviderApiClient.Client.ApiResponse<List<RepoFile>> localVarResponse = GetFilesInBranchWithHttpInfo(repositoryId, branchId);
             return localVarResponse.Data;
         }
 
@@ -618,8 +858,8 @@ namespace GitProviderApiClient.Api
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
-        /// <returns>ApiResponse of List&lt;File&gt;</returns>
-        public GitProviderApiClient.Client.ApiResponse<List<File>> GetFilesInBranchWithHttpInfo(string repositoryId, string branchId, int operationIndex = 0)
+        /// <returns>ApiResponse of List&lt;RepoFile&gt;</returns>
+        public GitProviderApiClient.Client.ApiResponse<List<RepoFile>> GetFilesInBranchWithHttpInfo(string repositoryId, string branchId, int operationIndex = 0)
         {
             // verify the required parameter 'repositoryId' is set
             if (repositoryId == null)
@@ -664,7 +904,7 @@ namespace GitProviderApiClient.Api
 
 
             // make the HTTP request
-            var localVarResponse = this.Client.Get<List<File>>("/repos/{repositoryId}/branches/{branchId}/files", localVarRequestOptions, this.Configuration);
+            var localVarResponse = this.Client.Get<List<RepoFile>>("/repos/{repositoryId}/branches/{branchId}/files", localVarRequestOptions, this.Configuration);
             if (this.ExceptionFactory != null)
             {
                 Exception _exception = this.ExceptionFactory("GetFilesInBranch", localVarResponse);
@@ -685,10 +925,10 @@ namespace GitProviderApiClient.Api
         /// <param name="branchId">The id of the branch.</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
-        /// <returns>Task of List&lt;File&gt;</returns>
-        public async System.Threading.Tasks.Task<List<File>> GetFilesInBranchAsync(string repositoryId, string branchId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        /// <returns>Task of List&lt;RepoFile&gt;</returns>
+        public async System.Threading.Tasks.Task<List<RepoFile>> GetFilesInBranchAsync(string repositoryId, string branchId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            GitProviderApiClient.Client.ApiResponse<List<File>> localVarResponse = await GetFilesInBranchWithHttpInfoAsync(repositoryId, branchId, operationIndex, cancellationToken).ConfigureAwait(false);
+            GitProviderApiClient.Client.ApiResponse<List<RepoFile>> localVarResponse = await GetFilesInBranchWithHttpInfoAsync(repositoryId, branchId, operationIndex, cancellationToken).ConfigureAwait(false);
             return localVarResponse.Data;
         }
 
@@ -700,8 +940,8 @@ namespace GitProviderApiClient.Api
         /// <param name="branchId">The id of the branch.</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
-        /// <returns>Task of ApiResponse (List&lt;File&gt;)</returns>
-        public async System.Threading.Tasks.Task<GitProviderApiClient.Client.ApiResponse<List<File>>> GetFilesInBranchWithHttpInfoAsync(string repositoryId, string branchId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        /// <returns>Task of ApiResponse (List&lt;RepoFile&gt;)</returns>
+        public async System.Threading.Tasks.Task<GitProviderApiClient.Client.ApiResponse<List<RepoFile>>> GetFilesInBranchWithHttpInfoAsync(string repositoryId, string branchId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             // verify the required parameter 'repositoryId' is set
             if (repositoryId == null)
@@ -747,7 +987,7 @@ namespace GitProviderApiClient.Api
 
 
             // make the HTTP request
-            var localVarResponse = await this.AsynchronousClient.GetAsync<List<File>>("/repos/{repositoryId}/branches/{branchId}/files", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
+            var localVarResponse = await this.AsynchronousClient.GetAsync<List<RepoFile>>("/repos/{repositoryId}/branches/{branchId}/files", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
 
             if (this.ExceptionFactory != null)
             {

@@ -21,50 +21,26 @@ using BalsamApi.Server.Converters;
 namespace BalsamApi.Server.Models
 { 
     /// <summary>
-    /// Branch created response
+    /// Payload for deleting an existing workspace
     /// </summary>
     [DataContract]
-    public class WorkspaceCreatedResponse : IEquatable<WorkspaceCreatedResponse>
+    public class DeleteWorkspaceRequest : IEquatable<DeleteWorkspaceRequest>
     {
         /// <summary>
-        /// The identifier
+        /// The id of the project
         /// </summary>
-        /// <value>The identifier</value>
-        [Required]
-        [DataMember(Name="id", EmitDefaultValue=false)]
-        public string Id { get; set; }
-
-        /// <summary>
-        /// The identifier for the project
-        /// </summary>
-        /// <value>The identifier for the project</value>
+        /// <value>The id of the project</value>
         [Required]
         [DataMember(Name="projectId", EmitDefaultValue=false)]
         public string ProjectId { get; set; }
 
         /// <summary>
-        /// The identifier for the branch
+        /// The id of the branch
         /// </summary>
-        /// <value>The identifier for the branch</value>
+        /// <value>The id of the branch</value>
         [Required]
         [DataMember(Name="branchId", EmitDefaultValue=false)]
         public string BranchId { get; set; }
-
-        /// <summary>
-        /// The branch name
-        /// </summary>
-        /// <value>The branch name</value>
-        [Required]
-        [DataMember(Name="name", EmitDefaultValue=false)]
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Url to the workspace
-        /// </summary>
-        /// <value>Url to the workspace</value>
-        [Required]
-        [DataMember(Name="url", EmitDefaultValue=false)]
-        public string Url { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -73,12 +49,9 @@ namespace BalsamApi.Server.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class WorkspaceCreatedResponse {\n");
-            sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("class DeleteWorkspaceRequest {\n");
             sb.Append("  ProjectId: ").Append(ProjectId).Append("\n");
             sb.Append("  BranchId: ").Append(BranchId).Append("\n");
-            sb.Append("  Name: ").Append(Name).Append("\n");
-            sb.Append("  Url: ").Append(Url).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -101,25 +74,20 @@ namespace BalsamApi.Server.Models
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((WorkspaceCreatedResponse)obj);
+            return obj.GetType() == GetType() && Equals((DeleteWorkspaceRequest)obj);
         }
 
         /// <summary>
-        /// Returns true if WorkspaceCreatedResponse instances are equal
+        /// Returns true if DeleteWorkspaceRequest instances are equal
         /// </summary>
-        /// <param name="other">Instance of WorkspaceCreatedResponse to be compared</param>
+        /// <param name="other">Instance of DeleteWorkspaceRequest to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(WorkspaceCreatedResponse other)
+        public bool Equals(DeleteWorkspaceRequest other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return 
-                (
-                    Id == other.Id ||
-                    Id != null &&
-                    Id.Equals(other.Id)
-                ) && 
                 (
                     ProjectId == other.ProjectId ||
                     ProjectId != null &&
@@ -129,16 +97,6 @@ namespace BalsamApi.Server.Models
                     BranchId == other.BranchId ||
                     BranchId != null &&
                     BranchId.Equals(other.BranchId)
-                ) && 
-                (
-                    Name == other.Name ||
-                    Name != null &&
-                    Name.Equals(other.Name)
-                ) && 
-                (
-                    Url == other.Url ||
-                    Url != null &&
-                    Url.Equals(other.Url)
                 );
         }
 
@@ -152,16 +110,10 @@ namespace BalsamApi.Server.Models
             {
                 var hashCode = 41;
                 // Suitable nullity checks etc, of course :)
-                    if (Id != null)
-                    hashCode = hashCode * 59 + Id.GetHashCode();
                     if (ProjectId != null)
                     hashCode = hashCode * 59 + ProjectId.GetHashCode();
                     if (BranchId != null)
                     hashCode = hashCode * 59 + BranchId.GetHashCode();
-                    if (Name != null)
-                    hashCode = hashCode * 59 + Name.GetHashCode();
-                    if (Url != null)
-                    hashCode = hashCode * 59 + Url.GetHashCode();
                 return hashCode;
             }
         }
@@ -169,12 +121,12 @@ namespace BalsamApi.Server.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(WorkspaceCreatedResponse left, WorkspaceCreatedResponse right)
+        public static bool operator ==(DeleteWorkspaceRequest left, DeleteWorkspaceRequest right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(WorkspaceCreatedResponse left, WorkspaceCreatedResponse right)
+        public static bool operator !=(DeleteWorkspaceRequest left, DeleteWorkspaceRequest right)
         {
             return !Equals(left, right);
         }

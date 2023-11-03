@@ -1,5 +1,6 @@
 ﻿using GitLabProvider.Configuration;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -91,7 +92,7 @@ namespace GitLabProvider.Client
             return null;           
         }
 
-        public async Task<bool> CreateBranch(string branchname, string repositoryId)
+        public async Task<bool> CreateBranch(string repositoryId, string fromBranch, string branchName)
         {
             var projectId = repositoryId;
 
@@ -101,8 +102,8 @@ namespace GitLabProvider.Client
                 {
                     Content = new FormUrlEncodedContent(new KeyValuePair<string?, string?>[]
                     {
-                        new("branch", branchname.ToLower()),
-                        new("ref", "main")
+                        new("branch", branchName),
+                        new("ref", fromBranch)
                     })
                 };
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);
@@ -151,7 +152,7 @@ namespace GitLabProvider.Client
                     Content = new FormUrlEncodedContent(new KeyValuePair<string?, string?>[]
                     {
                         new("name", patName),
-                        new("expires_at", DateTime.Now.AddMonths(12).ToString("yyyy-MM-dd")),
+                        new("expires_at", DateTime.Now.AddMonths(11).ToString("yyyy-MM-dd")),
                         new("scopes", "api")
                     })
                 };
@@ -167,7 +168,7 @@ namespace GitLabProvider.Client
             } 
             catch (Exception ex)
             {
-                _logger.LogError($"Could not create token for user: {userName}({userId})", ex);
+                _logger.LogError(ex,"Could not create token for user: {userName}({userId})", userName, userId);
             }
             return null;
         }
@@ -256,6 +257,31 @@ namespace GitLabProvider.Client
             catch (Exception ex) {
                 _logger.LogError("Could not initiate repo with files, due to error" + ex.ToString(), ex);
             }
+        }
+
+        public async Task<FileContentResult?> GetFile(string repositoryId, string branchName, string fileId)
+        {
+            var projectId = repositoryId;
+
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/api/v4/projects/{projectId}/repository/blobs/{fileId}/raw");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);
+
+                var response = await HttpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsByteArrayAsync();
+                    return new FileContentResult(data, response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not read files from repository");
+            }
+
+            return null;
         }
     }
 }
