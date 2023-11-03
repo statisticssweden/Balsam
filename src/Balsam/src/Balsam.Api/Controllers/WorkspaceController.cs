@@ -43,7 +43,7 @@ namespace Balsam.Api.Controllers
                         return BadRequest(new Problem() { Status = 400, Type = "Could not create workspace", Title = "Could not create workspace due to error" });
                     }
 
-                    return Ok(new WorkspaceCreatedResponse() { Id = workspace.Id, Name = workspace.Name, ProjectId = createWorkspaceRequest.ProjectId, BranchId = createWorkspaceRequest.BranchId });
+                    return Ok(new WorkspaceCreatedResponse() { Id = workspace.Id, Name = workspace.Name, ProjectId = createWorkspaceRequest.ProjectId, BranchId = createWorkspaceRequest.BranchId, Url = workspace.Url });
                 }
                 catch (Exception ex)
                 {
