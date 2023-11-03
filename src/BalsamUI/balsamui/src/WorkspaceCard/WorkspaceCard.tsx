@@ -24,12 +24,9 @@ export default function WorkspaceCard(props : WorkspaceCardProperties) {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     let secondaryText = props.templateName;
-    let cardActionAreaTo = "";
     let image = workspaceImage;
     let workspaceTitle = props.workspace.name;
 
-    cardActionAreaTo = "";
-    
     function onDeleteConfirm()
     {
         props.deleteWorkspaceCallback(props.workspace.id);
@@ -69,7 +66,7 @@ export default function WorkspaceCard(props : WorkspaceCardProperties) {
         <Fragment>
             {deleteDialogContent}
             <Card sx={{ height:300, maxWidth: 300, minWidth: 300 }}>
-                <CardActionArea component={Link} to={cardActionAreaTo}>
+                <CardActionArea component={Link} to={props.workspace.url}>
                     <CardMedia
                         sx={{ height: 140 }}
                         image={image}
@@ -86,7 +83,7 @@ export default function WorkspaceCard(props : WorkspaceCardProperties) {
                 </CardActionArea>
                 <CardActions>
                     <div className='buttons'>
-                        <Button component={Link as any} to={cardActionAreaTo} target="_blank" underline="hover">Öppna<OpenInNew fontSize="inherit" /></Button>
+                        <Button component={Link as any} to={props.workspace.url} target="_blank" underline="hover">Öppna<OpenInNew fontSize="inherit" /></Button>
                         <Button onClick={onDeleteClick} >Ta bort</Button>
                     </div>
                 </CardActions>

@@ -27,7 +27,7 @@ export const getResourceType = (file: RepoFile): ResourceType =>
     {
         return ResourceType.Folder;
     }
-    if(file.name.toLocaleUpperCase().endsWith(".url"))
+    else if(file.name.toLowerCase().endsWith(".url"))
     {
         return ResourceType.Url;
     }

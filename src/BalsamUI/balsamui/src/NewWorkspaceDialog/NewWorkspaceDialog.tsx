@@ -56,9 +56,10 @@ export default function NewWorkspaceDialog(props: NewWorkspaceDialogProperties )
         setOkEnabled(projectNameValid)
     }
 
-    const showNewItemCreatedAlert = (message: string, workspaceUrl: string) => 
+    const showNewItemCreatedAlert = (message: string) => 
     {
-        dispatch(postSuccess(message, {caption: "Öppna", href: workspaceUrl} )); //TODO: Language
+        dispatch(postSuccess(message)); //TODO: Language
+        //dispatch(postSuccess(message, {caption: "Öppna", href: workspaceUrl} )); //TODO: Language
     }
 
     const resetDialog = () => {
@@ -125,14 +126,9 @@ export default function NewWorkspaceDialog(props: NewWorkspaceDialogProperties )
             props.onClosing();
             resetDialog();
 
-            //TODO: Set url to response url when it is generated on response object
-            let workspaceUrl = "";
-
-            showNewItemCreatedAlert(`Bearbetningsmiljön "${response.data.name}" är skapad`, workspaceUrl); //TODO: Language
+            showNewItemCreatedAlert(`Bearbetningsmiljön "${response.data.name}" är skapad och håller på att starta upp.`); //TODO: Language
         }), () => {
-                
             dispatch(postError("Det gick inte att skapa bearbetningsmiljön " + workspaceName)); //TODO: Language
-
         });
     };
 

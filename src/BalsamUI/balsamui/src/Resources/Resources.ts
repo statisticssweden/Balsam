@@ -25,8 +25,8 @@ function getFirstLevelResoruceFiles(files: RepoFile[])
 export function getResourceFiles(files: RepoFile[])
 {
     let resourceFiles = getResourceFolders(files);
-    resourceFiles.concat(getFirstLevelResoruceFiles(files));
-    return resourceFiles;
+    let allFiles = resourceFiles.concat(getFirstLevelResoruceFiles(files));
+    return allFiles;
 }
 
 export async function convertToResources(files: RepoFile[], projectId: string, branchId: string, getContentCallback: (fileId: string) => Promise<string>) : Promise<Array<Resource>>

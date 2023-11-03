@@ -16,10 +16,12 @@ import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Tab, Tabs } from '@mui/material';
 import { AxiosResponse } from 'axios';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import OpenInNew from '@mui/icons-material/OpenInNew';
 
 import CustomTabPanel from '../CustomTabPanel/CustomTabPanel';
 import FileTree, { convertToFileTreeNodes, getAllIds } from '../FileTree/FileTree';
 import Resources from '../Resources/Resources';
+import { Link } from 'react-router-dom';
 
 export default function ProjectPage() {
     const [project, setProject] = useState<Project>();
@@ -70,12 +72,12 @@ export default function ProjectPage() {
             setFiles(files);
 
             let resourceFiles = Resources.getResourceFiles(files);
-            let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md" || file.path.toLowerCase() === "/readme.md");
+            let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md");
 
             if (readmeFile && readmeFile.contentUrl)
             {
                 loadReadmeContent(projectId, branchId, readmeFile.contentUrl!);
-                resourceFiles.push(readmeFile);
+                //resourceFiles.push(readmeFile);
             }
 
             let resourcesArray = await Resources.convertToResources(resourceFiles, projectId, branchId, async (fileId): Promise<string> => {
@@ -251,7 +253,7 @@ export default function ProjectPage() {
                     <div className="git-box">
                         <div className="git-box-content">
                             {branchSelect}
-                            {/* <Button component={Link as any} target="_blank" underline="hover" to={project.url}>Git<OpenInNew fontSize="inherit" /></Button> */}
+                            <Button component={Link as any} target="_blank" underline="hover" to={project.gitUrl}>Git<OpenInNew fontSize="inherit" /></Button>
                         </div>
                     </div>
                 </div>
