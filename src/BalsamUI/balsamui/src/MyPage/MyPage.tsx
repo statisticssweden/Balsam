@@ -66,9 +66,9 @@ export default function MyPage() {
     }, [])
 
    
-    const deleteWorkspace = (workspaceId: string) => 
+    const deleteWorkspace = (projectId: string, branchId: string, workspaceId: string) => 
     {
-        appContext.balsamApi.workspaceApi.deleteWorkspace(workspaceId)
+        appContext.balsamApi.workspaceApi.deleteWorkspace(projectId, branchId, workspaceId)
             .catch(() => {
                 dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
             })
