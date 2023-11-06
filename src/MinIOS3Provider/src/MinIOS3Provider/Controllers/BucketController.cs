@@ -24,7 +24,7 @@ namespace MinIOS3Provider.Controllers
             _client = client;
         }
 
-        public override IActionResult CreateAccessKey([FromRoute(Name = "id"), Required] string id)
+        public override IActionResult CreateAccessKey([FromRoute(Name = "bucketId"), Required] string id)
         {
             //TODO maybe we should have the userId in the accesskey name which will require us to take it as a input parameter.
             var keyPair = _client.CreateAccessKey(id);

@@ -277,16 +277,20 @@ namespace Balsam.Api
             {
                 var patResponse = await _gitUserClient.CreatePATAsync(userName);
                 gitPAT = patResponse.Token;
+                _logger.LogInformation($"Git PAT created");
             }
             var user = new UserInfo(userName, userMail, gitPAT);
 
             string propPath = Path.Combine(workspacePath, "properties.json");
+            _logger.LogDebug("Pulling changes");
             _hubRepositoryClient.PullChanges();
             // serialize JSON to a string and then write string to a file
-            await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(workspace));
             await CreateWorkspaceManifests(project, branch, workspace, user, workspacePath, templateId);
+            var template = await GetWorkspaceTemplate(templateId);
+            workspace.Url = ManifestUtil.GetWorkspaceUrl(Path.Combine(workspacePath, template.UrlConfig));
+            await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(workspace));
             _hubRepositoryClient.PersistChanges($"New workspace with id {project.Id}");
-
+            _logger.LogInformation("Workspace created");
             return workspace;
         }
 
@@ -348,6 +352,15 @@ namespace Balsam.Api
 
         }
 
+        private async Task<WorkspaceTemplate?> GetWorkspaceTemplate(string templateId)
+        {
+            var templatePath = Path.Combine(_hubRepositoryClient.Path, "templates", "workspaces",  templateId, "properties.json");
+
+            if (!File.Exists(templatePath)) return null;
+
+            return  JsonConvert.DeserializeObject<WorkspaceTemplate>(await File.ReadAllTextAsync(templatePath));
+        }
+
         public async Task<BalsamBranch?> CreateBranch(string projectId, string fromBranch, string branchName, string description)
         {
 
@@ -359,7 +372,7 @@ namespace Balsam.Api
             }
             
 
-            var response = await _repositoryApi.CreateBranchAsync(project.Git.Id, new CreateBranchRequest(branchName, fromBranch));
+            var response = await _repositoryApi.CreateBranchAsync(project.Git.Id, new GitProviderApiClient.Model.CreateBranchRequest(branchName, fromBranch));
             branchName = response.Name;
 
 
