@@ -9,12 +9,14 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { svSE } from '@mui/material/locale';
-import store from './App/store.ts';
+import store from './Store/store.ts';
 
 const theme = createTheme(
   {
     palette: {
-      primary: { main: '#1976d2' },
+      background: {
+        default: "#F0F0F0"
+      },
     },
   },
   svSE,

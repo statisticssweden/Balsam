@@ -17,40 +17,46 @@
 /**
  * File information
  * @export
- * @interface ModelFile
+ * @interface RepoFile
  */
-export interface ModelFile {
+export interface RepoFile {
+    /**
+     * The identifier for the file
+     * @type {string}
+     * @memberof RepoFile
+     */
+    'id': string;
     /**
      * The full relative path
      * @type {string}
-     * @memberof ModelFile
+     * @memberof RepoFile
      */
-    'path'?: string;
+    'path': string;
     /**
      * The name
      * @type {string}
-     * @memberof ModelFile
+     * @memberof RepoFile
      */
     'name': string;
     /**
      * Description of the template
      * @type {string}
-     * @memberof ModelFile
+     * @memberof RepoFile
      */
-    'type'?: ModelFileTypeEnum;
+    'type': RepoFileTypeEnum;
     /**
      * Url to the raw content of the file
      * @type {string}
-     * @memberof ModelFile
+     * @memberof RepoFile
      */
     'contentUrl'?: string;
 }
 
-export const ModelFileTypeEnum = {
+export const RepoFileTypeEnum = {
     File: 'File',
     Folder: 'Folder'
 } as const;
 
-export type ModelFileTypeEnum = typeof ModelFileTypeEnum[keyof typeof ModelFileTypeEnum];
+export type RepoFileTypeEnum = typeof RepoFileTypeEnum[keyof typeof RepoFileTypeEnum];
 
 

@@ -12,27 +12,24 @@ import { postSuccess, postError} from '../Alerts/alertsSlice';
 import { CreateProjectRequest } from '../services/BalsamAPIServices'
 import AppContext, { AppContextState } from '../configuration/AppContext';
 
-
 export interface NewProjectDialogProperties
 {
-    onClosing: () => void
+    onClosing: () => void,
 }
 
-const defaultBranchName = "main";
-
 export default function NewProjectDialog(props: NewProjectDialogProperties ) {
+    const appContext = useContext(AppContext) as AppContextState;
     const [open, setOpen] = useState(false);
     const [projectName, setProjectName] = useState("");
     const [projectDescription, setProjectDescription] = useState("");
-    const [branchName, setBranchName] = useState(defaultBranchName);
+    const [branchName, setBranchName] = useState(appContext.config.defaultGitBranchName);
     const [projectNameError, setProjectNameError] = useState(false);
     const [projectNameHelperText, setProjectNameHelperText] = useState("")
     const [branchNameError, setBranchNameError] = useState(false);
     const [branchNameHelperText, setBranchNameHelperText] = useState("")
     const [okEnabled, setOkEnabled] = useState(false);
+    
     const dispatch = useDispatch();
-
-    const appContext = useContext(AppContext) as AppContextState;
 
     useEffect(() => {
         updateOkEnabled(projectName, branchName);
@@ -61,7 +58,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         setProjectNameError(false);
         setProjectNameHelperText("");
         setProjectDescription("");
-        setBranchName(defaultBranchName);
+        setBranchName(appContext.config.defaultGitBranchName);
         setBranchNameError(false);
         setBranchNameHelperText("");
     };
@@ -149,7 +146,6 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
 
         return errors;
     };
-
 
     const handleCreate = () => {
 

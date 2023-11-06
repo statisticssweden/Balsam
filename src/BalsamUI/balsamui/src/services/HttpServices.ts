@@ -27,25 +27,6 @@ const getTextFromUrl = async (url: string): Promise<string> => {
     let response = await fetch(url);
     let text = await response.text();
     return text;
-
-    // let textContent: string | undefined = undefined
-    
-    // fetch(url)
-    // .then((response) => {
-    //     let textPromise = response.text();
-        
-    //     textPromise.then((text) => {
-    //         textContent = text;
-    //     })
-    //     .catch( () => {
-    //         //Silent
-    //     });
-    // })
-    // .catch(() => {
-    //     //Silent
-    // });
-
-    // return textContent;
 }
 
 const HttpService = {

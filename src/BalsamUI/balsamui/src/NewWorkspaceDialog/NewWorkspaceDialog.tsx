@@ -22,7 +22,7 @@ export interface NewWorkspaceDialogProperties
     open: boolean,
 }
 
-export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
+export default function NewWorkspaceDialog(props: NewWorkspaceDialogProperties ) {
     const [workspaceName, setWorkspaceName] = useState<string>("");
     const [workspaceNameError, setWorkspaceNameError] = useState(false);
     const [workspaceNameHelperText, setWorkspaceNameHelperText] = useState("")
@@ -52,13 +52,13 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
 
     const updateOkEnabled = (workspaceName: string) => 
     {
-        let projectNameValid = validateWorkspaceName(workspaceName).length == 0;
+        let projectNameValid = validateWorkspaceName(workspaceName).length === 0;
         setOkEnabled(projectNameValid)
     }
 
     const showNewItemCreatedAlert = (message: string, workspaceUrl: string) => 
     {
-        dispatch(postSuccess(message, {caption: "Öppna", href: workspaceUrl} )); //TODO: Language
+        dispatch(postSuccess(message, {caption: "Öppna", href: workspaceUrl, target: "_blank"} )); //TODO: Language
     }
 
     const resetDialog = () => {
@@ -125,14 +125,11 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
             props.onClosing();
             resetDialog();
 
-            //TODO: Set url to response url when it is generated on response object
-            let workspaceUrl = "";
+            let workspaceUrl = response.data.url;
 
-            showNewItemCreatedAlert(`Bearbetningsmiljön "${response.data.name}" är skapad`, workspaceUrl); //TODO: Language
+            showNewItemCreatedAlert(`Bearbetningsmiljön "${response.data.name}" är skapad. Det kan ta en liten stund innan den är redo att öppnas.`, workspaceUrl); //TODO: Language
         }), () => {
-                
             dispatch(postError("Det gick inte att skapa bearbetningsmiljön " + workspaceName)); //TODO: Language
-
         });
     };
 

@@ -18,7 +18,6 @@ export default function NewCard<KeyType>(props: PropsWithChildren<NewCardPropert
         }
     }
 
-
     function renderContent()
     {
         if(props.children )
@@ -27,13 +26,13 @@ export default function NewCard<KeyType>(props: PropsWithChildren<NewCardPropert
         }
         else {
             return <>
-                        <Typography gutterBottom variant="h6" component="div">
-                            <Skeleton sx={{ width: "30%" }} animation="wave"></Skeleton>
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            <Skeleton sx={{ width: "50%" }} animation="wave"></Skeleton>
-                        </Typography>
-                    </>
+                    <Typography gutterBottom variant="h6" component="div">
+                        <Skeleton sx={{ width: "30%" }} animation="wave"></Skeleton>
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        <Skeleton sx={{ width: "50%" }} animation="wave"></Skeleton>
+                    </Typography>
+                </>
         }
     }
 

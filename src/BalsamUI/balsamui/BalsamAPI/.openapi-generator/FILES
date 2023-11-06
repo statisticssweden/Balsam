@@ -12,12 +12,12 @@ BalsamAPI/Model/create-workspace-request.ts
 BalsamAPI/Model/index.ts
 BalsamAPI/Model/knowledge-library-created-response.ts
 BalsamAPI/Model/knowledge-library.ts
-BalsamAPI/Model/model-file.ts
 BalsamAPI/Model/problem.ts
 BalsamAPI/Model/project-created-response.ts
 BalsamAPI/Model/project-list-response.ts
 BalsamAPI/Model/project-response.ts
 BalsamAPI/Model/project.ts
+BalsamAPI/Model/repo-file.ts
 BalsamAPI/Model/template.ts
 BalsamAPI/Model/workspace-created-response.ts
 BalsamAPI/Model/workspace.ts
