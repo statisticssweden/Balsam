@@ -568,7 +568,7 @@ namespace Balsam.Api
                 {
                     foreach (var branchPath in Directory.GetDirectories(projectPath))
                     {
-                        var userPath = Path.Combine(hubPath, userId);
+                        var userPath = Path.Combine(branchPath, userId);
 
                         if (System.IO.Directory.Exists(userPath))
                         {
