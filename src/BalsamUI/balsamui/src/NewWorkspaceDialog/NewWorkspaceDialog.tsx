@@ -56,10 +56,9 @@ export default function NewWorkspaceDialog(props: NewWorkspaceDialogProperties )
         setOkEnabled(projectNameValid)
     }
 
-    const showNewItemCreatedAlert = (message: string) => 
+    const showNewItemCreatedAlert = (message: string, workspaceUrl: string) => 
     {
-        dispatch(postSuccess(message)); //TODO: Language
-        //dispatch(postSuccess(message, {caption: "Öppna", href: workspaceUrl} )); //TODO: Language
+        dispatch(postSuccess(message, {caption: "Öppna", href: workspaceUrl, target: "_blank"} )); //TODO: Language
     }
 
     const resetDialog = () => {
@@ -126,7 +125,9 @@ export default function NewWorkspaceDialog(props: NewWorkspaceDialogProperties )
             props.onClosing();
             resetDialog();
 
-            showNewItemCreatedAlert(`Bearbetningsmiljön "${response.data.name}" är skapad och håller på att starta upp.`); //TODO: Language
+            let workspaceUrl = response.data.url;
+
+            showNewItemCreatedAlert(`Bearbetningsmiljön "${response.data.name}" är skapad. Det kan ta en liten stund innan den är redo att öppnas.`, workspaceUrl); //TODO: Language
         }), () => {
             dispatch(postError("Det gick inte att skapa bearbetningsmiljön " + workspaceName)); //TODO: Language
         });

@@ -47,13 +47,13 @@ export async function convertToResources(files: RepoFile[], projectId: string, b
                 description = "Markdownfil som går att läsa i gränssnittet"; //TODO: Language
                 break;
             case ResourceType.Url:
-                if(file.contentUrl)
+                if(file.id)
                 {
-                    let content = await getContentCallback(file.contentUrl);
+                    let content = await getContentCallback(file.id);
                     let matches = content.match(/URL\s*=\s*(\S*)/)
-                    linkUrl =  matches !== null && matches.length > 0 ? matches[0] : "";
+                    linkUrl =  matches !== null && matches.length > 1 ? matches[1] : "";
 
-                    description = linkUrl;
+                    description = `Länk till '${linkUrl}'`;
                 }
 
                 break;
@@ -73,7 +73,7 @@ export async function convertToResources(files: RepoFile[], projectId: string, b
             description: description,
             type: type,
             linkUrl: linkUrl,
-            fileId: file.contentUrl,
+            fileId: file.id,
             filePath: file.path
             }
     }));

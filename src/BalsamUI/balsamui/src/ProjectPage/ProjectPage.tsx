@@ -74,9 +74,9 @@ export default function ProjectPage() {
             let resourceFiles = Resources.getResourceFiles(files);
             let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md");
 
-            if (readmeFile && readmeFile.contentUrl)
+            if (readmeFile && readmeFile.id)
             {
-                loadReadmeContent(projectId, branchId, readmeFile.contentUrl!);
+                loadReadmeContent(projectId, branchId, readmeFile.id);
                 //resourceFiles.push(readmeFile);
             }
 
@@ -106,7 +106,7 @@ export default function ProjectPage() {
             return;
         }
 
-        appContext.balsamApi.workspaceApi.getWorkspace(projectId, branchId, true)
+        appContext.balsamApi.workspaceApi.listWorkspaces(projectId, branchId, true)
             .catch(() => {
                 dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
             })
@@ -151,9 +151,9 @@ export default function ProjectPage() {
         loadWorkspaces(id!, selectedBranch!);
     };
 
-    const deleteWorkspace = (workspaceId: string) => 
+    const deleteWorkspace = (projectId: string, branchId: string, workspaceId: string) => 
     {
-        let promise = appContext.balsamApi.workspaceApi.deleteWorkspace(workspaceId);
+        let promise = appContext.balsamApi.workspaceApi.deleteWorkspace(projectId, branchId, workspaceId);
         promise.catch(() => {
             dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
         })

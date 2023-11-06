@@ -21,6 +21,12 @@
  */
 export interface RepoFile {
     /**
+     * The identifier for the file
+     * @type {string}
+     * @memberof RepoFile
+     */
+    'id': string;
+    /**
      * The full relative path
      * @type {string}
      * @memberof RepoFile

@@ -36,7 +36,7 @@ export default function MyPage() {
 
     const loadWorkspaces = async () => {
 
-        appContext.balsamApi.workspaceApi.getWorkspace(undefined, undefined, false)
+        appContext.balsamApi.workspaceApi.listWorkspaces(undefined, undefined, false)
             .catch(() => {
                 dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
             })

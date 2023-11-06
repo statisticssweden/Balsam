@@ -5,7 +5,8 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 export interface AlertLink
 {
   caption: string,
-  href: string  
+  href: string,
+  target?: string  
 }
 
 export const Severity = {

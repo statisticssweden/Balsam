@@ -15,7 +15,7 @@ export interface WorkspaceSectionProperties
     branch: string,
     workspaces?: Array<Workspace>,
     templates?: Array<Template>,
-    deleteWorkspaceCallback: (workspaceId: string) => void,
+    deleteWorkspaceCallback: (projectId: string, branchId: string, workspaceId: string) => void,
     showNewCard?: boolean,
     onNewClick?: (itemKey: any) => void
 }

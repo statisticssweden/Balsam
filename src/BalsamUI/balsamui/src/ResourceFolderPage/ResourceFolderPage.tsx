@@ -29,9 +29,9 @@ export default function ResoruceFolderPage() {
 
     function loadReadmeFileContent(projectId: string, branchId: string, readmeFile: RepoFile)
     {
-        if (readmeFile.contentUrl)
+        if (readmeFile.id) //TODO: id is going to change name to blobId
         {
-            appContext.balsamApi.projectApi.getFile(projectId, branchId, readmeFile.contentUrl)
+            appContext.balsamApi.projectApi.getFile(projectId, branchId, readmeFile.id)
             .then((response) => 
             {   
                 setMarkdown(response.data);

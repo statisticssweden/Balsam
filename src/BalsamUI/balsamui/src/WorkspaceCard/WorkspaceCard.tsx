@@ -16,7 +16,7 @@ import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
 export interface WorkspaceCardProperties {
     workspace: Workspace,
     templateName: string,
-    deleteWorkspaceCallback: (workspaceId: string) => void,
+    deleteWorkspaceCallback: (projectId: string, branchId: string, workspaceId: string) => void,
 }
 
 export default function WorkspaceCard(props : WorkspaceCardProperties) {
@@ -29,7 +29,7 @@ export default function WorkspaceCard(props : WorkspaceCardProperties) {
 
     function onDeleteConfirm()
     {
-        props.deleteWorkspaceCallback(props.workspace.id);
+        props.deleteWorkspaceCallback(props.workspace.projectId, props.workspace.branchId, props.workspace.id);
         setShowDeleteConfirmation(false);
         
     }
