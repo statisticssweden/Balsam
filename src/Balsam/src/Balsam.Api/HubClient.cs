@@ -298,19 +298,15 @@ namespace Balsam.Api
             return workspace;
         }
 
-        public async Task<string> DeleteWorkspace(string projectId, string branchId, string workspaceId, string userName)
+        public async Task<string?> DeleteWorkspace(string projectId, string branchId, string workspaceId, string userName)
         {
             _hubRepositoryClient.PullChanges();
-            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
+            var workspacePath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId, userName, workspaceId);
 
-            if (!Directory.Exists(branchPath))
+            if (!Directory.Exists(workspacePath))
             {
                 return null;
             }
-
-            var workspacePath = Path.Combine(branchPath, userName, workspaceId);
-
-            DirectoryUtil.AssureDirectoryExists(workspacePath);
 
             if (Directory.Exists(workspacePath))
             {
