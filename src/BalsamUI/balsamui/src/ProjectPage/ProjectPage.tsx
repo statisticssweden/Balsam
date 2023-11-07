@@ -4,7 +4,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import MarkdownViewer from '../MarkdownViewer/MarkdownViewer';
 import { useDispatch } from 'react-redux';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, Fragment } from 'react';
 import { useParams } from 'react-router-dom'
 import { postError, postSuccess } from '../Alerts/alertsSlice';
 import './ProjectPage.css'
@@ -13,15 +13,17 @@ import ResourcesSection from '../ResourceSection/ResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Tab, Tabs } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, IconButton, Tab, Tabs } from '@mui/material';
 import { AxiosResponse } from 'axios';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInNew from '@mui/icons-material/OpenInNew';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import CustomTabPanel from '../CustomTabPanel/CustomTabPanel';
 import FileTree, { convertToFileTreeNodes, getAllIds } from '../FileTree/FileTree';
 import Resources from '../Resources/Resources';
 import { Link } from 'react-router-dom';
+import NewBranchDialog from '../NewBranchDialog/NewBranchDialog';
 
 export default function ProjectPage() {
     const [project, setProject] = useState<Project>();
@@ -34,6 +36,7 @@ export default function ProjectPage() {
     const [workspaces, setWorkspaces] = useState<Array<Workspace>>();
     const [templates, setTemplates] = useState<Array<Template>>();
     const [newWorkspaceDialogOpen, setNewWorkspaceDialogOpen] = useState(false);
+    const [newBranchDialogOpen, setNewBranchDialogOpen] = useState(false);
     const appContext = useContext(AppContext) as AppContextState;
     const [selectedTab, setSelectedTab] = useState(0);
     const [files, setFiles] = useState<Array<RepoFile>>();
@@ -151,6 +154,12 @@ export default function ProjectPage() {
         loadWorkspaces(id!, selectedBranch!);
     };
 
+    const onNewBranchDialogClosing = () => {
+
+        setNewBranchDialogOpen(false);
+        //TODO: Open branch
+    };
+
     const deleteWorkspace = (projectId: string, branchId: string, workspaceId: string) => 
     {
         let promise = appContext.balsamApi.workspaceApi.deleteWorkspace(projectId, branchId, workspaceId);
@@ -178,6 +187,11 @@ export default function ProjectPage() {
         //TODO: Reload project content
     };
 
+    function handleNewBranchClick()
+    {
+        setNewBranchDialogOpen(true);
+    }
+
     function renderBranchSelect() {
         var selectBranchesElement;
 
@@ -201,9 +215,25 @@ export default function ProjectPage() {
         return selectBranchesElement;
     }
 
-    const handleClickOpen = () => {
+    const handleNewWorkspaceClick = () => {
         setNewWorkspaceDialogOpen(true);
     };
+
+    function renderNewBranchDialog()
+    {
+        if (project)
+        {
+            return (
+            <Fragment>
+                <NewBranchDialog project={project!} open={newBranchDialogOpen} onClosing={onNewBranchDialogClosing}></NewBranchDialog>
+                <IconButton aria-label="Lägg till branch" sx={{padding:"4px"}} color="primary" onClick={handleNewBranchClick}>
+                    <AddCircleIcon />
+                </IconButton>
+            </Fragment>);
+        }
+    
+        return "";
+    }
 
     function renderNewWorkspaceDialog()
     {
@@ -237,6 +267,7 @@ export default function ProjectPage() {
         let readmeElement = renderReadme();
         let branchSelect = renderBranchSelect();
         let newWorkspaceDialog = renderNewWorkspaceDialog();
+        let newBranchDialog = renderNewBranchDialog();
         let filesElement = renderFilesTree();
 
         function tabProps(index: number) {
@@ -253,6 +284,7 @@ export default function ProjectPage() {
                     <div className="git-box">
                         <div className="git-box-content">
                             {branchSelect}
+                            {newBranchDialog}
                             <Button component={Link as any} target="_blank" underline="hover" to={project.gitUrl}>Git<OpenInNew fontSize="inherit" /></Button>
                         </div>
                     </div>
@@ -289,7 +321,7 @@ export default function ProjectPage() {
                     <Divider></Divider>
                     <AccordionDetails>
                         <div className='buttonrow'>
-                            <Button variant="contained" onClick={handleClickOpen}>
+                            <Button variant="contained" onClick={handleNewWorkspaceClick}>
                                 +
                             </Button>
                         </div>
