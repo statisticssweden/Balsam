@@ -116,6 +116,7 @@ namespace Balsam.Api.Controllers
                 evt.Description = balsamProject.Description;
                 evt.GitUrl = balsamProject.Git is null ? "" : balsamProject.Git.Path;
                 evt.Branches = balsamProject.Branches.Select(b => new Branch() { Id = b.Id, Description = b.Description, Name = b.Name, IsDefault = b.IsDefault }).ToList();
+                evt.AuthGroup = balsamProject.Oidc.GroupName;
 
                 return Ok(evt);
             }
@@ -155,7 +156,8 @@ namespace Balsam.Api.Controllers
                 Id = project.Id,
                 Name = project.Name,
                 Description = project.Description,
-                Branches = MapBranches(project.Branches)
+                Branches = MapBranches(project.Branches),
+                AuthGroup = project.Oidc.GroupName
             }).OrderBy(p => p.Name).ToList();
         }
 
