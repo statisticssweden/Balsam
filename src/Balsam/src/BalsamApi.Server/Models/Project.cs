@@ -57,6 +57,13 @@ namespace BalsamApi.Server.Models
         public string GitUrl { get; set; }
 
         /// <summary>
+        /// Authorized group name
+        /// </summary>
+        /// <value>Authorized group name</value>
+        [DataMember(Name="authGroup", EmitDefaultValue=false)]
+        public string AuthGroup { get; set; }
+
+        /// <summary>
         /// Gets or Sets Branches
         /// </summary>
         [Required]
@@ -75,6 +82,7 @@ namespace BalsamApi.Server.Models
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  GitUrl: ").Append(GitUrl).Append("\n");
+            sb.Append("  AuthGroup: ").Append(AuthGroup).Append("\n");
             sb.Append("  Branches: ").Append(Branches).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -133,6 +141,11 @@ namespace BalsamApi.Server.Models
                     GitUrl.Equals(other.GitUrl)
                 ) && 
                 (
+                    AuthGroup == other.AuthGroup ||
+                    AuthGroup != null &&
+                    AuthGroup.Equals(other.AuthGroup)
+                ) && 
+                (
                     Branches == other.Branches ||
                     Branches != null &&
                     other.Branches != null &&
@@ -158,6 +171,8 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + Description.GetHashCode();
                     if (GitUrl != null)
                     hashCode = hashCode * 59 + GitUrl.GetHashCode();
+                    if (AuthGroup != null)
+                    hashCode = hashCode * 59 + AuthGroup.GetHashCode();
                     if (Branches != null)
                     hashCode = hashCode * 59 + Branches.GetHashCode();
                 return hashCode;

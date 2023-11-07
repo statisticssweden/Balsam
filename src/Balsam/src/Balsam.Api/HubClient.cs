@@ -258,12 +258,12 @@ namespace Balsam.Api
         {
             var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
 
-            if (!System.IO.Directory.Exists(branchPath))
+            if (!Directory.Exists(branchPath))
             {
                 return null;
             }
 
-            var workspace = new BalsamWorkspace(CreateWorkspaceId(name), name, templateId, projectId, branchId);
+            var workspace = new BalsamWorkspace(CreateWorkspaceId(name), name, templateId, projectId, branchId, userName);
 
             var workspacePath = Path.Combine(branchPath, userName, workspace.Id);
 
@@ -272,51 +272,52 @@ namespace Balsam.Api
 
             var project = await GetProject(projectId);
             var branch = project.Branches.FirstOrDefault(b => b.Id == branchId);
-            string gitPAT = "";
+            var gitPAT = string.Empty;
+
             if (_git.Enabled)
             {
                 var patResponse = await _gitUserClient.CreatePATAsync(userName);
                 gitPAT = patResponse.Token;
                 _logger.LogInformation($"Git PAT created");
             }
-            var user = new UserInfo(userName, userMail, gitPAT);
 
-            string propPath = Path.Combine(workspacePath, "properties.json");
+            var user = new UserInfo(userName, userMail, gitPAT);
+            var propPath = Path.Combine(workspacePath, "properties.json");
+
             _logger.LogDebug("Pulling changes");
             _hubRepositoryClient.PullChanges();
             // serialize JSON to a string and then write string to a file
             await CreateWorkspaceManifests(project, branch, workspace, user, workspacePath, templateId);
+            
             var template = await GetWorkspaceTemplate(templateId);
             workspace.Url = ManifestUtil.GetWorkspaceUrl(Path.Combine(workspacePath, template.UrlConfig));
-            await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(workspace));
+            await File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(workspace));
+            
             _hubRepositoryClient.PersistChanges($"New workspace with id {project.Id}");
             _logger.LogInformation("Workspace created");
             return workspace;
         }
 
-        public async Task<string> DeleteWorkspace(string projectId, string branchId, string workspaceId, string userName)
+        public async Task<string?> DeleteWorkspace(string projectId, string branchId, string workspaceId, string userName)
         {
             _hubRepositoryClient.PullChanges();
-            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
+            var workspacePath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId, userName, workspaceId);
 
-            if (!System.IO.Directory.Exists(branchPath))
+            if (!Directory.Exists(workspacePath))
             {
                 return null;
             }
 
-            var workspacePath = Path.Combine(branchPath, userName, workspaceId);
-
-            DirectoryUtil.AssureDirectoryExists(workspacePath);
-
-            if (System.IO.Directory.Exists(workspacePath))
+            if (Directory.Exists(workspacePath))
             {
                 EmptyDirectory(workspacePath);
-                System.IO.Directory.Delete(workspacePath, true);
+                Directory.Delete(workspacePath, true);
             }
 
             _hubRepositoryClient.PersistChanges($"Deleted workspace with id {workspaceId}");
             return "workspace deleted";
         }
+
         private async Task CreateWorkspaceManifests(BalsamProject project, BalsamBranch branch, BalsamWorkspace workspace, UserInfo user, string workspacePath, string templateId)
         {
             var token = await _s3Client.CreateAccessKeyAsync(project.S3.BucketName);
@@ -339,7 +340,7 @@ namespace Balsam.Api
 
             foreach (var file in Directory.GetFiles(templatePath, "*.yaml"))
             {
-                var source = await System.IO.File.ReadAllTextAsync(file);
+                var source = await File.ReadAllTextAsync(file);
 
                 var template = Handlebars.Compile(source);
 
@@ -347,7 +348,7 @@ namespace Balsam.Api
 
                 var destinationFilePath = Path.Combine(destinationPath, Path.GetFileName(file));
 
-                await System.IO.File.WriteAllTextAsync(destinationFilePath, result);
+                await File.WriteAllTextAsync(destinationFilePath, result);
             }
 
         }
@@ -568,9 +569,9 @@ namespace Balsam.Api
                 {
                     foreach (var branchPath in Directory.GetDirectories(projectPath))
                     {
-                        var userPath = Path.Combine(hubPath, userId);
+                        var userPath = Path.Combine(branchPath, userId);
 
-                        if (System.IO.Directory.Exists(userPath))
+                        if (Directory.Exists(userPath))
                         {
                             foreach (var workspacePath in Directory.GetDirectories(userPath))
                             {
@@ -595,7 +596,7 @@ namespace Balsam.Api
 
             var projectPath = Path.Combine(hubPath, projectId);
 
-            if (System.IO.Directory.Exists(projectPath))
+            if (Directory.Exists(projectPath))
             {
                 foreach (var branchPath in Directory.GetDirectories(projectPath))
                 {
@@ -623,7 +624,7 @@ namespace Balsam.Api
 
             var branchPath = Path.Combine(hubPath, projectId, branchId);
 
-            if (System.IO.Directory.Exists(branchPath))
+            if (Directory.Exists(branchPath))
             {
                 foreach (var userPath in Directory.GetDirectories(branchPath))
                 {
@@ -648,7 +649,7 @@ namespace Balsam.Api
 
             var projectPath = Path.Combine(hubPath, projectId);
 
-            if (System.IO.Directory.Exists(projectPath))
+            if (Directory.Exists(projectPath))
             {
                 foreach (var branchPath in Directory.GetDirectories(projectPath))
                 {
@@ -677,7 +678,7 @@ namespace Balsam.Api
 
             var userPath = Path.Combine(hubPath, projectId, branchId, userId);
 
-            if (System.IO.Directory.Exists(userPath))
+            if (Directory.Exists(userPath))
             {
                 foreach (var workspacePath in Directory.GetDirectories(userPath))
                 {

@@ -434,6 +434,9 @@ components:
         name:
           type: string
           description: The name
+        authGroup:
+          type: string
+          description: Authorized group name
 
     BranchCreatedResponse:
       type: object
@@ -602,6 +605,9 @@ components:
         gitUrl:
           type: string
           description: Url to the repository
+        authGroup:
+          type: string
+          description: Authorized group name
         branches:         
           type: array
           items: 
@@ -637,6 +643,7 @@ components:
         - "projectId"
         - "branchId"
         - "url"
+        - "owner"
       properties:
         id:
           type: string
@@ -656,6 +663,9 @@ components:
         url:
           type: string
           description: The url to the workspace
+        owner:
+          type: string
+          description: Owner of workspace
 
     Problem:
       type: object

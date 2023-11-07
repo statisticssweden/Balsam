@@ -43,6 +43,13 @@ namespace BalsamApi.Server.Models
         public string Name { get; set; }
 
         /// <summary>
+        /// Authorized group name
+        /// </summary>
+        /// <value>Authorized group name</value>
+        [DataMember(Name="authGroup", EmitDefaultValue=false)]
+        public string AuthGroup { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -52,6 +59,7 @@ namespace BalsamApi.Server.Models
             sb.Append("class ProjectCreatedResponse {\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
+            sb.Append("  AuthGroup: ").Append(AuthGroup).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -97,6 +105,11 @@ namespace BalsamApi.Server.Models
                     Name == other.Name ||
                     Name != null &&
                     Name.Equals(other.Name)
+                ) && 
+                (
+                    AuthGroup == other.AuthGroup ||
+                    AuthGroup != null &&
+                    AuthGroup.Equals(other.AuthGroup)
                 );
         }
 
@@ -114,6 +127,8 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + Id.GetHashCode();
                     if (Name != null)
                     hashCode = hashCode * 59 + Name.GetHashCode();
+                    if (AuthGroup != null)
+                    hashCode = hashCode * 59 + AuthGroup.GetHashCode();
                 return hashCode;
             }
         }
