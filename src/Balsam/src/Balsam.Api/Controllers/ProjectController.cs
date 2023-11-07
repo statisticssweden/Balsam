@@ -158,7 +158,7 @@ namespace Balsam.Api.Controllers
                 Description = project.Description,
                 Branches = MapBranches(project.Branches),
                 AuthGroup = project.Oidc.GroupName
-            }).ToList();
+            }).OrderBy(p => p.Name).ToList();
         }
 
         private List<Branch> MapBranches(List<BalsamBranch> branches)
