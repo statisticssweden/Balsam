@@ -366,14 +366,15 @@ namespace Balsam.Api
         {
 
             var project = await GetProject(projectId, false);
+            var branch = await GetBranch(projectId, fromBranch);
      
-            if (project is null || project.Git is null)
+            if (project is null || project.Git is null || branch is null || branch.GitBranch is null)
             {
                 return null;
             }
             
 
-            var response = await _repositoryApi.CreateBranchAsync(project.Git.Id, new GitProviderApiClient.Model.CreateBranchRequest(branchName, fromBranch));
+            var response = await _repositoryApi.CreateBranchAsync(project.Git.Id, new GitProviderApiClient.Model.CreateBranchRequest(branchName, branch.GitBranch));
             branchName = response.Name;
 
 
