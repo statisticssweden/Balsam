@@ -188,6 +188,8 @@ namespace Balsam.Api
                 return null;
             }
 
+            _hubRepositoryClient.PullChanges();
+
             _logger.LogDebug($"create project information");
             var project = new BalsamProject(SanitizeName(preferredName), preferredName, description);
             string projectPath = Path.Combine(_hubRepositoryClient.Path, "hub", project.Id);
@@ -243,8 +245,7 @@ namespace Balsam.Api
             {
                 _logger.LogInformation($"Default Balsam branch {defaultBranchName} created");
             }
-
-            _hubRepositoryClient.PullChanges();
+            
             // serialize JSON to a string and then write string to a file
             await File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(project));
 
@@ -364,7 +365,6 @@ namespace Balsam.Api
 
         public async Task<BalsamBranch?> CreateBranch(string projectId, string fromBranch, string branchName, string description)
         {
-
             var project = await GetProject(projectId, false);
             var branch = await GetBranch(projectId, fromBranch);
      
@@ -372,13 +372,16 @@ namespace Balsam.Api
             {
                 return null;
             }
-            
 
             var response = await _repositoryApi.CreateBranchAsync(project.Git.Id, new GitProviderApiClient.Model.CreateBranchRequest(branchName, branch.GitBranch));
             branchName = response.Name;
 
+            _hubRepositoryClient.PullChanges();
 
-            return await CreateBranch(project, branchName, description, false);
+            var createdBranch = await CreateBranch(project, branchName, description, false);
+            _hubRepositoryClient.PersistChanges($"Branch {branchName} created for project {project.Name}");
+
+            return createdBranch;
         }
 
         private async Task<BalsamBranch?> CreateBranch(BalsamProject project, string branchName, string description, bool isDefault = false)
