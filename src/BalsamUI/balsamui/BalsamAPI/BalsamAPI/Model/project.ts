@@ -48,6 +48,12 @@ export interface Project {
      */
     'gitUrl'?: string;
     /**
+     * Authorized group name
+     * @type {string}
+     * @memberof Project
+     */
+    'authGroup'?: string;
+    /**
      * 
      * @type {Array<Branch>}
      * @memberof Project

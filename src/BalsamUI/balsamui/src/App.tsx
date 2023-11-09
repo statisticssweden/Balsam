@@ -16,7 +16,7 @@ import { getBalsamAPI } from './services/BalsamAPIServices';
 import { postError } from './Alerts/alertsSlice';
 import MyPage from './MyPage/MyPage';
 import ResoruceFolderPage from './ResourceFolderPage/ResourceFolderPage';
-
+import KeyCloakService from './security/KeyCloakService.ts';
 
 function App() {
     const [appContextState, setAppContextState] = useState<AppContextState>();
@@ -28,9 +28,13 @@ function App() {
         setLoading(true);
 
         getConfig().then((config) => {
-                let state: AppContextState = {
+            let userName = KeyCloakService.GetUserName();    
+            let userGroups = KeyCloakService.GetUserGroups();    
+            let state: AppContextState = {
                     config: config,
                     balsamApi: getBalsamAPI(config.apiurl),
+                    userName: userName,
+                    userGroups: userGroups,
                 };
                 setAppContextState(state)
                 setLoading(false);
@@ -39,7 +43,7 @@ function App() {
                 dispatch(postError("Det gick inte att ladda konfigurationsfil")); //TODO: Language
             })
 
-        }, []);
+    }, []);
 
     const renderApp =  () =>
     {

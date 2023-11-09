@@ -19,6 +19,7 @@ export interface NewWorkspaceDialogProperties
     selectedBranchId: string,
     templates: Array<Template>,
     onClosing: () => void,
+    onWorkspaceCreated?: (workspaceId: string) => void,
     open: boolean,
 }
 
@@ -121,11 +122,11 @@ export default function NewWorkspaceDialog(props: NewWorkspaceDialogProperties )
         }
 
         appContext.balsamApi.workspaceApi.createWorkspace(workspace).then((response => {
+            let workspaceUrl = response.data.url;
             
+            props.onWorkspaceCreated?.(response.data.id);
             props.onClosing();
             resetDialog();
-
-            let workspaceUrl = response.data.url;
 
             showNewItemCreatedAlert(`Bearbetningsmiljön "${response.data.name}" är skapad. Det kan ta en liten stund innan den är redo att öppnas.`, workspaceUrl); //TODO: Language
         }), () => {

@@ -5,7 +5,9 @@ import { BalsamAPI } from '../services/BalsamAPIServices';
 export interface AppContextState
 {
     config: AppConfiguration,
-    balsamApi: BalsamAPI
+    balsamApi: BalsamAPI,
+    userName: string,
+    userGroups: Array<string>
 }
 
 

@@ -149,6 +149,7 @@ export default function MyPage() {
                     showNewCard={true} 
                     workspaces={branchWorkspaces} 
                     templates={templates}
+                    userName={appContext.userName}
                     onNewClick={onNewWorkspaceClick} ></WorkspacesSection>
                 
             </div>

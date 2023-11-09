@@ -4,8 +4,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import FormControl from '@mui/material/FormControl';
 import MarkdownViewer from '../MarkdownViewer/MarkdownViewer';
 import { useDispatch } from 'react-redux';
-import { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom'
+import { useState, useEffect, useContext, Fragment } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom'
 import { postError, postSuccess } from '../Alerts/alertsSlice';
 import './ProjectPage.css'
 import { Resource } from '../Model/Model';
@@ -13,15 +13,17 @@ import ResourcesSection from '../ResourceSection/ResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Tab, Tabs } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, IconButton, Tab, Tabs } from '@mui/material';
 import { AxiosResponse } from 'axios';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInNew from '@mui/icons-material/OpenInNew';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import CustomTabPanel from '../CustomTabPanel/CustomTabPanel';
 import FileTree, { convertToFileTreeNodes, getAllIds } from '../FileTree/FileTree';
 import Resources from '../Resources/Resources';
 import { Link } from 'react-router-dom';
+import NewBranchDialog from '../NewBranchDialog/NewBranchDialog';
 
 export default function ProjectPage() {
     const [project, setProject] = useState<Project>();
@@ -29,14 +31,18 @@ export default function ProjectPage() {
     const { id } = useParams<string>();
     const [branches, setBranches] = useState<Array<Branch>>();
     const [selectedBranch, setSelectedBranch] = useState<string>();
+    const [canCreateBranch, setCanCreateBranch] = useState<boolean>(false);
+    const [canCreateWorkspace, setCanCreateWorkspace] = useState<boolean>(false);
     const [readmeMarkdown, setReadmeMarkdown] = useState<string>();
     const [resources, setResources] = useState<Array<Resource>>();
     const [workspaces, setWorkspaces] = useState<Array<Workspace>>();
     const [templates, setTemplates] = useState<Array<Template>>();
     const [newWorkspaceDialogOpen, setNewWorkspaceDialogOpen] = useState(false);
+    const [newBranchDialogOpen, setNewBranchDialogOpen] = useState(false);
     const appContext = useContext(AppContext) as AppContextState;
     const [selectedTab, setSelectedTab] = useState(0);
     const [files, setFiles] = useState<Array<RepoFile>>();
+    const [searchParams, setSearchParams] = useSearchParams();
     
     const dispatch = useDispatch();
 
@@ -64,10 +70,9 @@ export default function ProjectPage() {
         })
         .then(async (response) => {
             
-            //TODO: Response should be typed, change OpenApi spec
-            let axResponse = response as AxiosResponse<any[], any>;
+            let axResponse = response as AxiosResponse<RepoFile[], any>;
 
-            let files = axResponse.data as Array<RepoFile>;
+            let files = axResponse.data;
 
             setFiles(files);
 
@@ -77,7 +82,6 @@ export default function ProjectPage() {
             if (readmeFile && readmeFile.id)
             {
                 loadReadmeContent(projectId, branchId, readmeFile.id);
-                //resourceFiles.push(readmeFile);
             }
 
             let resourcesArray = await Resources.convertToResources(resourceFiles, projectId, branchId, async (fileId): Promise<string> => {
@@ -126,17 +130,63 @@ export default function ProjectPage() {
             dispatch(postError("Det gick inte att ladda projektet")); //TODO: Language
         })
         .then((response) => {
-            setProject(response?.data);
-            setBranches(response?.data.branches);
-            setSelectedBranch(response?.data.branches.find((b) => b.isDefault)?.id); 
-            setLoading(false);
+            if (response && response.data)
+            {
+                let project = response.data;
+                let isProjectGroupMember = appContext.userGroups.findIndex(g => g === project.authGroup) >= 0;
+                
+                setProject(project);
+                setBranches(project.branches);
+
+                let branchId = searchParams.get("branchId");
+                //let branchId = null;
+                
+                if (project.branches.findIndex((b) => b.id === branchId) < 0 )
+                {
+                    branchId = null;
+                }
+
+                if(branchId === null || branchId.length === 0)
+                {
+                    let defaultBranch = project.branches.find((b) => b.isDefault)?.id;
+                    if(defaultBranch)
+                    {
+                        branchId = defaultBranch
+                    }
+                    else 
+                    {
+                        branchId = project.branches[0].id
+                    }
+                }
+
+                setSelectedBranch(branchId);
+                setCanCreateBranch(isProjectGroupMember);
+                setCanCreateWorkspace(isProjectGroupMember);
+                setLoading(false);
+            }
 
         });
 
     }, [id]);
 
+    function updateBranchIdSearchParam(selectedBranch: string | undefined)
+    {
+        if(selectedBranch !== undefined)
+        {
+            let currentSearchParamBranchid = searchParams.get("branchId");
+            if (currentSearchParamBranchid !== selectedBranch)
+            {
+                searchParams.set("branchId", selectedBranch );
+                setSearchParams(searchParams);
+            }
+        }
+    }
+
     useEffect(() => {
-        if (id !== undefined && selectedBranch !== undefined)
+        
+        updateBranchIdSearchParam(selectedBranch);
+        
+        if (project !== undefined && selectedBranch !== undefined)
         {
             loadFiles(id!, selectedBranch!);
             loadTemplates();
@@ -149,6 +199,12 @@ export default function ProjectPage() {
 
         setNewWorkspaceDialogOpen(false);
         loadWorkspaces(id!, selectedBranch!);
+    };
+
+    const onNewBranchDialogClosing = () => {
+
+        setNewBranchDialogOpen(false);
+        
     };
 
     const deleteWorkspace = (projectId: string, branchId: string, workspaceId: string) => 
@@ -175,8 +231,12 @@ export default function ProjectPage() {
 
     const selectedBranchChanged = (event: SelectChangeEvent<string>) => {
         setSelectedBranch(event.target.value);
-        //TODO: Reload project content
     };
+
+    function handleNewBranchClick()
+    {
+        setNewBranchDialogOpen(true);
+    }
 
     function renderBranchSelect() {
         var selectBranchesElement;
@@ -201,13 +261,55 @@ export default function ProjectPage() {
         return selectBranchesElement;
     }
 
-    const handleClickOpen = () => {
+    function handleBranchCreated(branchId: string): void {
+        appContext.balsamApi.projectApi.getProject(id as string)
+        .catch(() => {
+            
+            dispatch(postError("Det gick inte att uppdatera brancher")); //TODO: Language
+        })
+        .then((response) => {
+            if (response && response.data)
+            {
+                let project = response.data;
+                
+                setBranches(project.branches);
+                if (project.branches.findIndex((b) => b.id === branchId) >= 0 )
+                {
+                    setSelectedBranch(branchId);
+                }
+                else
+                {
+                    dispatch(postError("Det gick inte välja nyskapad branch")); //TODO: Language
+                }
+            }
+        });
+    }
+
+    const handleNewWorkspaceClick = () => {
         setNewWorkspaceDialogOpen(true);
     };
 
+    function renderNewBranchDialog()
+    {
+        if (project && canCreateBranch)
+        {
+            
+
+            return (
+            <Fragment>
+                <NewBranchDialog project={project!} open={newBranchDialogOpen} onBranchCreated={handleBranchCreated} onClosing={onNewBranchDialogClosing}></NewBranchDialog>
+                <IconButton aria-label="Lägg till branch" sx={{padding:"4px"}} color="primary" onClick={handleNewBranchClick}>
+                    <AddCircleIcon />
+                </IconButton>
+            </Fragment>);
+        }
+    
+        return "";
+    }
+
     function renderNewWorkspaceDialog()
     {
-        if (project && templates && selectedBranch)
+        if (project && templates && selectedBranch && canCreateWorkspace)
         {
             return (<NewWorkspaceDialog project={project!} open={newWorkspaceDialogOpen} selectedBranchId={selectedBranch!} templates={templates!} onClosing={onNewWorkspaceDialogClosing}></NewWorkspaceDialog>)
         }
@@ -232,12 +334,26 @@ export default function ProjectPage() {
         return (<FileTree fileTree={fileTree} defaultExpanded={allIds}></FileTree>);
     }
 
+    function renderNewWorkspaceButton()
+    {
+        if (canCreateWorkspace)
+        {
+            return (<div className='buttonrow'>
+                    <Button variant="contained" onClick={handleNewWorkspaceClick}>
+                        +
+                    </Button>
+                </div>)
+        }
+    }
+    
     function renderProject(project: Project)
     {
         let readmeElement = renderReadme();
         let branchSelect = renderBranchSelect();
         let newWorkspaceDialog = renderNewWorkspaceDialog();
+        let newBranchDialog = renderNewBranchDialog();
         let filesElement = renderFilesTree();
+        let newWorkspaceButton = renderNewWorkspaceButton();
 
         function tabProps(index: number) {
             return {
@@ -253,6 +369,7 @@ export default function ProjectPage() {
                     <div className="git-box">
                         <div className="git-box-content">
                             {branchSelect}
+                            {newBranchDialog}
                             <Button component={Link as any} target="_blank" underline="hover" to={project.gitUrl}>Git<OpenInNew fontSize="inherit" /></Button>
                         </div>
                     </div>
@@ -288,12 +405,8 @@ export default function ProjectPage() {
                     </AccordionSummary>
                     <Divider></Divider>
                     <AccordionDetails>
-                        <div className='buttonrow'>
-                            <Button variant="contained" onClick={handleClickOpen}>
-                                +
-                            </Button>
-                        </div>
-                        <WorkspacesSection projectid={project.id} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
+                        {newWorkspaceButton}
+                        <WorkspacesSection projectid={project.id} userName={appContext.userName} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
                         { newWorkspaceDialog }
                     </AccordionDetails>
                 </Accordion>

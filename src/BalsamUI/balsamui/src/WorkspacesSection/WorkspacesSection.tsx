@@ -17,7 +17,8 @@ export interface WorkspaceSectionProperties
     templates?: Array<Template>,
     deleteWorkspaceCallback: (projectId: string, branchId: string, workspaceId: string) => void,
     showNewCard?: boolean,
-    onNewClick?: (itemKey: any) => void
+    onNewClick?: (itemKey: any) => void,
+    userName: string
 }
 
 export default function WorkspacesSection(props: WorkspaceSectionProperties)
@@ -33,13 +34,13 @@ export default function WorkspacesSection(props: WorkspaceSectionProperties)
             <div className='cards' aria-labelledby="tabelLabel">
                 {workspaces.map((workspace: Workspace) => {
                     let templateName = workspace.templateId;
-
+                    let isOwner = workspace.owner === null || workspace.owner === props.userName;
                     if(props.templates !== undefined)
                     {
                         templateName = props.templates.find(t => t.id === workspace.templateId)?.name || templateName;
                     }
 
-                    return (<WorkspaceCard templateName={templateName} workspace={workspace} deleteWorkspaceCallback={props.deleteWorkspaceCallback} key={workspace.id} />);
+                    return (<WorkspaceCard templateName={templateName} canOpen={isOwner} canDelete={isOwner} workspace={workspace} deleteWorkspaceCallback={props.deleteWorkspaceCallback} key={workspace.id} />);
                 }
                 )}
                 {newCardContent}
