@@ -1,0 +1,5 @@
+{
+    "Id": "elyra-base",
+    "Name" : "Balsam base with Elyra Jupyter",
+    "UrlConfig" : "jupyter-ingress.yaml"
+}

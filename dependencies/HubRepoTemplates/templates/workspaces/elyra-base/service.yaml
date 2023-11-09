@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{Branch.Id}}-{{Workspace.Id}}-svc
+  namespace: proj-{{Project.Id}}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{Branch.Id}}-{{Workspace.Id}}-elyra-balsam
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000

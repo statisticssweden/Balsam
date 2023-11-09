@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    projectcontour.io/websocket-routes: /{{User.UserName}}/{{Workspace.Id}}
+    balsam-workspace-url: http://<WORKSPACE-URL>/{{User.UserName}}/{{Workspace.Id}}
+  name: {{Branch.Id}}-{{Workspace.Id}}-elyra-balsam-ingress
+  namespace: proj-{{Project.Id}}
+spec:
+  ingressClassName: contour
+  rules:
+  - host: <WORKSPACE-URL>
+    http:
+      paths:
+      - backend:
+          service:
+            name: {{Branch.Id}}-{{Workspace.Id}}-svc
+            port:
+              number: 80
+        path: /{{User.UserName}}/{{Workspace.Id}}
+        pathType: Prefix
