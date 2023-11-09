@@ -31,15 +31,30 @@ namespace Balsam.Api.Controllers
             {
                 return BadRequest(new Problem() { Status = 400, Title = "Parameter error", Detail = "Missing parameters" });
             }
+
+            BranchCreatedResponse branchCreatedResponse;
             try
             {
                 var branch = await _hubClient.CreateBranch(projectId, createBranchRequest.FromBranch, createBranchRequest.Name, createBranchRequest.Description);
+                if (branch == null)
+                {
+                    return BadRequest(new Problem() { Status = 400, Title = "Could not create branch", Detail = "Branch could not be created" });
+                }
+
+                branchCreatedResponse = new BranchCreatedResponse
+                {
+                    Id = branch.Id,
+                    Name = branch.Name,
+                    ProjectId = projectId
+                };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Could not create branch");
+                return BadRequest(new Problem() { Status = 400, Title = "Could not create branch", Detail = "Branch could not be created" });
             }
-            return BadRequest(new Problem() { Status = 400, Title = "Could not create branch", Detail = "Branch could not be created" });
+
+            return Ok(branchCreatedResponse);
         }
 
 
@@ -80,18 +95,21 @@ namespace Balsam.Api.Controllers
             try
             {
                 var files = await _hubClient.GetGitBranchFiles(projectId, branchId);
-                if (files is null )
+                if (files is null)
                 {
                     return BadRequest(new Problem() { Status = 400, Type = "Fetch problem", Title = "Could not fetch files for repository branch" });
                 }
-                return Ok(files.Select(f => new BalsamApi.Server.Models.RepoFile() 
-                            { Name  = f.Name, 
-                              Path = f.Path, 
-                              Type = f.Type == GitProviderApiClient.Model.RepoFile.TypeEnum.File?BalsamApi.Server.Models.RepoFile.TypeEnum.FileEnum: BalsamApi.Server.Models.RepoFile.TypeEnum.FolderEnum, 
-                              ContentUrl = f.ContentUrl,
-                              Id = f.Id}).ToArray());
+                return Ok(files.Select(f => new BalsamApi.Server.Models.RepoFile()
+                {
+                    Name = f.Name,
+                    Path = f.Path,
+                    Type = f.Type == GitProviderApiClient.Model.RepoFile.TypeEnum.File ? BalsamApi.Server.Models.RepoFile.TypeEnum.FileEnum : BalsamApi.Server.Models.RepoFile.TypeEnum.FolderEnum,
+                    ContentUrl = f.ContentUrl,
+                    Id = f.Id
+                }).ToArray());
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Could not fetch files");
             }
