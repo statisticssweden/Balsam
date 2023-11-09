@@ -56,5 +56,11 @@ export interface Workspace {
      * @memberof Workspace
      */
     'url': string;
+    /**
+     * Owner of workspace
+     * @type {string}
+     * @memberof Workspace
+     */
+    'owner': string;
 }
 

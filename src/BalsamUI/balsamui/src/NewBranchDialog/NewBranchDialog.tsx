@@ -10,6 +10,7 @@ export interface NewBranchDialogProperties
 {
     project: Project,
     onClosing: () => void,
+    onBranchCreated?: (branchId: string) => void,
     open: boolean,
 }
 
@@ -24,6 +25,7 @@ export default function NewBranchDialog(props: NewBranchDialogProperties)
     const [branchDescriptionHelperText, setBranchDescriptionHelperText] = useState("")
 
 
+    
     const [fromBranchId, setFromBranchId] = useState<string>("");
 
     const [okEnabled, setOkEnabled] = useState(false);
@@ -31,6 +33,7 @@ export default function NewBranchDialog(props: NewBranchDialogProperties)
 
     const appContext = useContext(AppContext) as AppContextState;
 
+   
 
     useEffect(() => {
         updateOkEnabled(branchName, fromBranchId);
@@ -140,12 +143,12 @@ export default function NewBranchDialog(props: NewBranchDialogProperties)
         }
 
         appContext.balsamApi.projectApi.createBranch(props.project.id, branch).then((response => {
-            
+            props.onBranchCreated?.(response.data.id);
             props.onClosing();
             resetDialog();
 
-            showNewItemCreatedAlert(`Branchen "${response.data.name}" är skapad. Det kan ta en liten stund innan den är redo att öppnas.`); //TODO: Language
-        }), (e) => {
+            showNewItemCreatedAlert(`Branchen "${response.data.name}" är skapad.`); //TODO: Language
+        }), () => {
             dispatch(postError("Det gick inte att skapa branch " + branchName)); //TODO: Language
         });
     };

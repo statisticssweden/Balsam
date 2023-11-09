@@ -32,5 +32,11 @@ export interface ProjectCreatedResponse {
      * @memberof ProjectCreatedResponse
      */
     'name': string;
+    /**
+     * Authorized group name
+     * @type {string}
+     * @memberof ProjectCreatedResponse
+     */
+    'authGroup'?: string;
 }
 

@@ -5,7 +5,7 @@ import FormControl from '@mui/material/FormControl';
 import MarkdownViewer from '../MarkdownViewer/MarkdownViewer';
 import { useDispatch } from 'react-redux';
 import { useState, useEffect, useContext, Fragment } from 'react';
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { postError, postSuccess } from '../Alerts/alertsSlice';
 import './ProjectPage.css'
 import { Resource } from '../Model/Model';
@@ -31,6 +31,8 @@ export default function ProjectPage() {
     const { id } = useParams<string>();
     const [branches, setBranches] = useState<Array<Branch>>();
     const [selectedBranch, setSelectedBranch] = useState<string>();
+    const [canCreateBranch, setCanCreateBranch] = useState<boolean>(false);
+    const [canCreateWorkspace, setCanCreateWorkspace] = useState<boolean>(false);
     const [readmeMarkdown, setReadmeMarkdown] = useState<string>();
     const [resources, setResources] = useState<Array<Resource>>();
     const [workspaces, setWorkspaces] = useState<Array<Workspace>>();
@@ -40,6 +42,7 @@ export default function ProjectPage() {
     const appContext = useContext(AppContext) as AppContextState;
     const [selectedTab, setSelectedTab] = useState(0);
     const [files, setFiles] = useState<Array<RepoFile>>();
+    const [searchParams, setSearchParams] = useSearchParams();
     
     const dispatch = useDispatch();
 
@@ -67,10 +70,9 @@ export default function ProjectPage() {
         })
         .then(async (response) => {
             
-            //TODO: Response should be typed, change OpenApi spec
-            let axResponse = response as AxiosResponse<any[], any>;
+            let axResponse = response as AxiosResponse<RepoFile[], any>;
 
-            let files = axResponse.data as Array<RepoFile>;
+            let files = axResponse.data;
 
             setFiles(files);
 
@@ -80,7 +82,6 @@ export default function ProjectPage() {
             if (readmeFile && readmeFile.id)
             {
                 loadReadmeContent(projectId, branchId, readmeFile.id);
-                //resourceFiles.push(readmeFile);
             }
 
             let resourcesArray = await Resources.convertToResources(resourceFiles, projectId, branchId, async (fileId): Promise<string> => {
@@ -129,17 +130,63 @@ export default function ProjectPage() {
             dispatch(postError("Det gick inte att ladda projektet")); //TODO: Language
         })
         .then((response) => {
-            setProject(response?.data);
-            setBranches(response?.data.branches);
-            setSelectedBranch(response?.data.branches.find((b) => b.isDefault)?.id); 
-            setLoading(false);
+            if (response && response.data)
+            {
+                let project = response.data;
+                let isProjectGroupMember = appContext.userGroups.findIndex(g => g === project.authGroup) >= 0;
+                
+                setProject(project);
+                setBranches(project.branches);
+
+                let branchId = searchParams.get("branchId");
+                //let branchId = null;
+                
+                if (project.branches.findIndex((b) => b.id === branchId) < 0 )
+                {
+                    branchId = null;
+                }
+
+                if(branchId === null || branchId.length === 0)
+                {
+                    let defaultBranch = project.branches.find((b) => b.isDefault)?.id;
+                    if(defaultBranch)
+                    {
+                        branchId = defaultBranch
+                    }
+                    else 
+                    {
+                        branchId = project.branches[0].id
+                    }
+                }
+
+                setSelectedBranch(branchId);
+                setCanCreateBranch(isProjectGroupMember);
+                setCanCreateWorkspace(isProjectGroupMember);
+                setLoading(false);
+            }
 
         });
 
     }, [id]);
 
+    function updateBranchIdSearchParam(selectedBranch: string | undefined)
+    {
+        if(selectedBranch !== undefined)
+        {
+            let currentSearchParamBranchid = searchParams.get("branchId");
+            if (currentSearchParamBranchid !== selectedBranch)
+            {
+                searchParams.set("branchId", selectedBranch );
+                setSearchParams(searchParams);
+            }
+        }
+    }
+
     useEffect(() => {
-        if (id !== undefined && selectedBranch !== undefined)
+        
+        updateBranchIdSearchParam(selectedBranch);
+        
+        if (project !== undefined && selectedBranch !== undefined)
         {
             loadFiles(id!, selectedBranch!);
             loadTemplates();
@@ -157,7 +204,7 @@ export default function ProjectPage() {
     const onNewBranchDialogClosing = () => {
 
         setNewBranchDialogOpen(false);
-        //TODO: Open branch
+        
     };
 
     const deleteWorkspace = (projectId: string, branchId: string, workspaceId: string) => 
@@ -184,7 +231,6 @@ export default function ProjectPage() {
 
     const selectedBranchChanged = (event: SelectChangeEvent<string>) => {
         setSelectedBranch(event.target.value);
-        //TODO: Reload project content
     };
 
     function handleNewBranchClick()
@@ -215,17 +261,43 @@ export default function ProjectPage() {
         return selectBranchesElement;
     }
 
+    function handleBranchCreated(branchId: string): void {
+        appContext.balsamApi.projectApi.getProject(id as string)
+        .catch(() => {
+            
+            dispatch(postError("Det gick inte att uppdatera brancher")); //TODO: Language
+        })
+        .then((response) => {
+            if (response && response.data)
+            {
+                let project = response.data;
+                
+                setBranches(project.branches);
+                if (project.branches.findIndex((b) => b.id === branchId) >= 0 )
+                {
+                    setSelectedBranch(branchId);
+                }
+                else
+                {
+                    dispatch(postError("Det gick inte välja nyskapad branch")); //TODO: Language
+                }
+            }
+        });
+    }
+
     const handleNewWorkspaceClick = () => {
         setNewWorkspaceDialogOpen(true);
     };
 
     function renderNewBranchDialog()
     {
-        if (project)
+        if (project && canCreateBranch)
         {
+            
+
             return (
             <Fragment>
-                <NewBranchDialog project={project!} open={newBranchDialogOpen} onClosing={onNewBranchDialogClosing}></NewBranchDialog>
+                <NewBranchDialog project={project!} open={newBranchDialogOpen} onBranchCreated={handleBranchCreated} onClosing={onNewBranchDialogClosing}></NewBranchDialog>
                 <IconButton aria-label="Lägg till branch" sx={{padding:"4px"}} color="primary" onClick={handleNewBranchClick}>
                     <AddCircleIcon />
                 </IconButton>
@@ -237,7 +309,7 @@ export default function ProjectPage() {
 
     function renderNewWorkspaceDialog()
     {
-        if (project && templates && selectedBranch)
+        if (project && templates && selectedBranch && canCreateWorkspace)
         {
             return (<NewWorkspaceDialog project={project!} open={newWorkspaceDialogOpen} selectedBranchId={selectedBranch!} templates={templates!} onClosing={onNewWorkspaceDialogClosing}></NewWorkspaceDialog>)
         }
@@ -262,6 +334,18 @@ export default function ProjectPage() {
         return (<FileTree fileTree={fileTree} defaultExpanded={allIds}></FileTree>);
     }
 
+    function renderNewWorkspaceButton()
+    {
+        if (canCreateWorkspace)
+        {
+            return (<div className='buttonrow'>
+                    <Button variant="contained" onClick={handleNewWorkspaceClick}>
+                        +
+                    </Button>
+                </div>)
+        }
+    }
+    
     function renderProject(project: Project)
     {
         let readmeElement = renderReadme();
@@ -269,6 +353,7 @@ export default function ProjectPage() {
         let newWorkspaceDialog = renderNewWorkspaceDialog();
         let newBranchDialog = renderNewBranchDialog();
         let filesElement = renderFilesTree();
+        let newWorkspaceButton = renderNewWorkspaceButton();
 
         function tabProps(index: number) {
             return {
@@ -320,12 +405,8 @@ export default function ProjectPage() {
                     </AccordionSummary>
                     <Divider></Divider>
                     <AccordionDetails>
-                        <div className='buttonrow'>
-                            <Button variant="contained" onClick={handleNewWorkspaceClick}>
-                                +
-                            </Button>
-                        </div>
-                        <WorkspacesSection projectid={project.id} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
+                        {newWorkspaceButton}
+                        <WorkspacesSection projectid={project.id} userName={appContext.userName} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
                         { newWorkspaceDialog }
                     </AccordionDetails>
                 </Accordion>

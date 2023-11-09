@@ -16,6 +16,8 @@ import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
 export interface WorkspaceCardProperties {
     workspace: Workspace,
     templateName: string,
+    canOpen: boolean,
+    canDelete: boolean,
     deleteWorkspaceCallback: (projectId: string, branchId: string, workspaceId: string) => void,
 }
 
@@ -61,12 +63,14 @@ export default function WorkspaceCard(props : WorkspaceCardProperties) {
     }
 
     const deleteDialogContent = renderDeleteDialog();
-
+    const cardNavigationUrl = props.canOpen ? props.workspace.url : "";
+    
+    
     return (
         <Fragment>
             {deleteDialogContent}
             <Card sx={{ height:300, maxWidth: 300, minWidth: 300 }}>
-                <CardActionArea component={Link} to={props.workspace.url}>
+                <CardActionArea component={Link} to={cardNavigationUrl} disabled={!props.canOpen}>
                     <CardMedia
                         sx={{ height: 140 }}
                         image={image}
@@ -83,8 +87,8 @@ export default function WorkspaceCard(props : WorkspaceCardProperties) {
                 </CardActionArea>
                 <CardActions>
                     <div className='buttons'>
-                        <Button component={Link as any} to={props.workspace.url} target="_blank" underline="hover">Öppna<OpenInNew fontSize="inherit" /></Button>
-                        <Button onClick={onDeleteClick} >Ta bort</Button>
+                        {props.canOpen && <Button component={Link as any} to={props.workspace.url} target="_blank" underline="hover">Öppna<OpenInNew fontSize="inherit" /></Button> }
+                        {props.canDelete && <Button onClick={onDeleteClick} >Ta bort</Button>}                        
                     </div>
                 </CardActions>
             </Card>
