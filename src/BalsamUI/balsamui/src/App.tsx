@@ -28,13 +28,12 @@ function App() {
         setLoading(true);
 
         getConfig().then((config) => {
-            let userName = KeyCloakService.GetUserName();    
-            let userGroups = KeyCloakService.GetUserGroups();    
             let state: AppContextState = {
                     config: config,
                     balsamApi: getBalsamAPI(config.apiurl),
-                    userName: userName,
-                    userGroups: userGroups,
+                    userName: KeyCloakService.GetUserName,
+                    userGroups: KeyCloakService.GetUserGroups,
+                    refreshToken: KeyCloakService.RefreshToken,
                 };
                 setAppContextState(state)
                 setLoading(false);

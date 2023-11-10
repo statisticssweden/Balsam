@@ -156,7 +156,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         }
 
         appContext.balsamApi.projectApi.createProject(project).then((response => {
-            
+            appContext.refreshToken();
             setOpen(false);
             props.onClosing();
             resetDialog();

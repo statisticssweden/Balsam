@@ -133,7 +133,7 @@ export default function ProjectPage() {
             if (response && response.data)
             {
                 let project = response.data;
-                let isProjectGroupMember = appContext.userGroups.findIndex(g => g === project.authGroup) >= 0;
+                let isProjectGroupMember = appContext.userGroups().findIndex(g => g === project.authGroup) >= 0;
                 
                 setProject(project);
                 setBranches(project.branches);

@@ -6,8 +6,9 @@ export interface AppContextState
 {
     config: AppConfiguration,
     balsamApi: BalsamAPI,
-    userName: string,
-    userGroups: Array<string>
+    userName: () => string,
+    userGroups: () => Array<string>,
+    refreshToken: () => void,
 }
 
 

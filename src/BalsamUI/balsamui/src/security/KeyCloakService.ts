@@ -43,6 +43,9 @@ const doLogin = keycloakInstance.login;
 const updateToken = (successCallback: any) =>
   keycloakInstance.updateToken(5).then(successCallback).catch(doLogin);
 
+const refreshToken = () =>
+  keycloakInstance.updateToken(-1);
+
 const KeyCloakService = {
   CallLogin: Login,
   GetUserName: UserName,
@@ -53,6 +56,7 @@ const KeyCloakService = {
   IsLoggedIn: isLoggedIn,
   GetToken: getToken,
   UpdateToken: updateToken,
+  RefreshToken: refreshToken
 };
 
 export default KeyCloakService;
