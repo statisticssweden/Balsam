@@ -9,7 +9,7 @@ balsamApi:
     repository: statisticssweden/balsam-api # The repository for balsamApi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.1.0 # The tag for balsamApi
+    tag: 0.1.1 # The tag for balsamApi
   service:
     type: ClusterIP
     port: 80
@@ -39,7 +39,7 @@ balsamUi:
     repository: statisticssweden/balsam-ui # The repository for balsamUi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.1.0 # The tag for balsamUi
+    tag: 0.1.1 # The tag for balsamUi
   service:
     type: ClusterIP
     port: 80
