@@ -6,10 +6,10 @@ replicaCount: 1
 
 balsamApi:
   image:
-    repository: # The repository for balsamApi
+    repository: statisticssweden/balsam-api # The repository for balsamApi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.22 # The tag for balsamApi
+    tag: 0.1.0 # The tag for balsamApi
   service:
     type: ClusterIP
     port: 80
@@ -36,16 +36,16 @@ balsamApi:
 
 balsamUi:
   image:
-    repository: # The repository for balsamUi
+    repository: statisticssweden/balsam-ui # The repository for balsamUi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.2 # The tag for balsamUi
+    tag: 0.1.0 # The tag for balsamUi
   service:
     type: ClusterIP
     port: 80
   containerPort: 8080 #8080?
   configMap:
-    name: ##the name of the configmap balsam-ui-config 
+    name: balsam-ui-config
   ingress:
     enabled: true
     annotations: {
@@ -58,10 +58,10 @@ balsamUi:
 
 s3Provider:
   image:
-    repository: # The repository for the s3Provider API
+    repository: statisticssweden/balsam-minio-s3-provider # The repository for the s3Provider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.7 # The tag for the s3Provider API
+    tag: 0.1.0 # The tag for the s3Provider API
   service:
     type: ClusterIP
     port: 80
@@ -79,9 +79,9 @@ s3Provider:
 
 oidcProvider:
   image:
-    repository: # The repository for the oidcProvider API
+    repository: statisticssweden/balsam-keycloak-oidc-provider # The repository for the oidcProvider API
     pullPolicy: Always
-    tag: 0.0.5
+    tag: 0.1.0
   service:
     type: ClusterIP
     port: 80
@@ -101,10 +101,10 @@ oidcProvider:
 
 gitProvider:
   image:
-    repository: # The repository for the gitProvider API
+    repository: statisticssweden/balsam-gitlab-git-provider # The repository for the gitProvider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.6 # The tag for the gitProvider API
+    tag: 0.1.0 # The tag for the gitProvider API
   service:
     type: ClusterIP
     port: 80
@@ -122,10 +122,10 @@ gitProvider:
 
 chatProvider:
   image:
-    repository: # The repository for the chatProvider API
+    repository: statisticssweden/balsam-rocketchat-chat-provider # The repository for the chatProvider API
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.1 # The tag for the chatProvider API
+    tag: 0.1.0 # The tag for the chatProvider API
   service:
     type: ClusterIP
     port: 80
