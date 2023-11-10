@@ -133,7 +133,7 @@ export default function ProjectPage() {
             if (response && response.data)
             {
                 let project = response.data;
-                let isProjectGroupMember = appContext.userGroups.findIndex(g => g === project.authGroup) >= 0;
+                let isProjectGroupMember = appContext.getUserGroups().findIndex(g => g === project.authGroup) >= 0;
                 
                 setProject(project);
                 setBranches(project.branches);
@@ -406,7 +406,7 @@ export default function ProjectPage() {
                     <Divider></Divider>
                     <AccordionDetails>
                         {newWorkspaceButton}
-                        <WorkspacesSection projectid={project.id} userName={appContext.userName} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
+                        <WorkspacesSection projectid={project.id} userName={appContext.getUserName()} branch={selectedBranch!} workspaces={workspaces} deleteWorkspaceCallback={deleteWorkspace} templates={templates} />
                         { newWorkspaceDialog }
                     </AccordionDetails>
                 </Accordion>

@@ -149,7 +149,7 @@ export default function MyPage() {
                     showNewCard={true} 
                     workspaces={branchWorkspaces} 
                     templates={templates}
-                    userName={appContext.userName}
+                    userName={appContext.getUserName()}
                     onNewClick={onNewWorkspaceClick} ></WorkspacesSection>
                 
             </div>
