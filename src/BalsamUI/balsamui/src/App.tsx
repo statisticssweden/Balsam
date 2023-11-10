@@ -31,8 +31,8 @@ function App() {
             let state: AppContextState = {
                     config: config,
                     balsamApi: getBalsamAPI(config.apiurl),
-                    userName: KeyCloakService.GetUserName,
-                    userGroups: KeyCloakService.GetUserGroups,
+                    getUserName: KeyCloakService.GetUserName,
+                    getUserGroups: KeyCloakService.GetUserGroups,
                     refreshToken: KeyCloakService.RefreshToken,
                 };
                 setAppContextState(state)
