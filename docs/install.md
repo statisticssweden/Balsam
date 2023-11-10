@@ -1,8 +1,5 @@
 # Installation instructions for installing a demo Balsam hub
-
-Only for demo purposes...
-
-Klowledge of Helm Kubernetes etc.
+# ⚠️ Only for demo purposes ⚠️
 
 ## Prerequisites
 
@@ -19,8 +16,6 @@ Klowledge of Helm Kubernetes etc.
 Replace `<YOUR-DOMAIN>` with your own DNS-entry
 
 ## Install dependencies
-
-xxx
 
 ### Install and configure ArgoCD
 
@@ -202,10 +197,114 @@ helm install rocketchat rocketchat/rocketchat -f RocketChat/values.yaml --namesp
 
 ## Configure and install a Balsam hub
 ### Prepare hub repository
-### Configure ArgoCD
+1. Create a private Git repository (will conatin sensitive information so keep it private)
+2. Copy the files from `dependencies/HubRepoTemplates` and changes the placeholder in the templates in the format `<PLACEHOLDER>` and commit it to the repository
+3. Create a user that has access to read and write to the repository
+
 ### Configure KeyCloak
-1. Create realm
-2. create role
-3. Create user
-4. Create client
-etc
+1. Sign in to the admin console and change the URL:s in gitlab and rocketchat client.
+2. Add a user that should be admin in MiniIO. Add that user to the group `consoleAdmin`.
+3. Add a user that should be admin in GitLab.
+4. Add a user in KeyCloak that should be admin form `Balsam` realm
+
+### Configure MinIO
+1. Sign in with the userer from keycloak in MinIO console.
+2. Create a accesskey with full rights.
+
+### Configure GitLab
+1. Sign in with the KeyCloak user for GitLab and sign out (So that the user is created in GitLab).
+2. Sign in with the root account in GitLab. Password is in secret `gitlab-gitlab-initial-root-password`. 
+3. Make KeyCloak user an admin.
+4. Sign in with KeyCloak user and create a personal access token.
+5. Create a new Group.
+6. Remove the branch protection rules in the new group.
+
+### Configure RocketChat
+1. Sign in as admin.
+2. Create PAT.
+
+### Configure ArgoCD
+1. Add a new application. Point it to the hub repository.
+2. Enable auto sync.
+
+## Install Balsam
+Use helm to install Balsam
+```bash
+helm install balsam oci://registry-1.docker.io/statisticssweden/balsam-chart --version 0.1.0 -f YOUR-VALUES-FILE.yaml
+```
+Use the following values template and replace the placeholder with your settings.
+
+### Values template for Balsam
+
+```yaml
+balsamApi:
+  secret:
+    name: balsam-api-secret
+    data:
+      user: <HUB-REPOSITORY-USER>
+      password: <HUB-REPOSITORY-PASSWORD-OR-TOKEN>
+  configMap:
+    name: balsam-api-config
+    data:
+      repoUrl: <HUB-REPOSITORY-URL>
+      authority: http://<KEYCLOAK-URL>/realms/Balsam
+  ingress:
+    hosts:
+      host: <BALSAM-API-URL>
+
+balsamUi:
+  ingress:    
+    hosts:
+      host: <BALSAM-UI-URL>
+
+s3Provider:  
+  secret:
+    name: minio-s3-provider-secret
+    data:
+      API__ACCESSKEY: <MINIO-ACCESSKEY-FOR-ADMIN>
+      API__SECRETKEY: <MINIO-SECRETKEY-FOR-ADMIN>
+  configMap:
+    name: minio-s3-provider-config
+    data:
+      API__DOMAIN: <MINIO-URL> ##balsam-minio-pilot-api.tanzu.scb.intra
+      API__PROTOCOL: http
+
+gitProvider:  
+  secret:
+    name: gitlab-provider-secret
+    data:
+      API__PAT: <GITLAB-PATH>
+  configMap:
+    name: gitlab-provider-config
+    data:
+      API__GroupID: <GITLAB-GROUP-ID>
+      API__BaseUrl: <GITLAB-URL>
+      API__TemplatePath: /app/templates
+
+oidcProvider:  
+  secret:
+    name: keycloak-provider-secret
+    data:
+      KEYCLOAK__ClientSecret: "MySecretSas"
+      KEYCLOAK__User: "<KEYKLOAK-ADMIN-USER>"
+      KEYCLOAK__Password: "<KEYCLOAK-ADMIN-PASSWORD>"
+  configMap:
+    name: keycloak-provider-config
+    data:
+      KEYCLOAK__BaseUrl: "<KEYCLOAK-URL>"
+      KEYCLOAK__Realm: "Balsam"
+      KEYCLOAK__ClientId: "demo"
+
+chatProvider: 
+  secret:
+    name: rocketchat-provider-secret
+  configMap:
+    name: rocketchat-provider-config
+    data:
+      API__BaseUrl: "<ROCKETCHAT-URL>"
+      API__Token: "<ROCKETCHAT-TOKEN>"
+      API__UserId: "<ROCKETCHAT-USER>"
+
+roleBinding:
+  enabled: true
+```
