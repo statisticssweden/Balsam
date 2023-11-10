@@ -175,7 +175,8 @@ namespace Balsam.Api.Controllers
                 Name = project.Name,
                 Description = project.Description,
                 Branches = MapBranches(project.Branches),
-                AuthGroup = project.Oidc.GroupName
+                AuthGroup = project.Oidc.GroupName,
+                GitUrl = project.Git?.Path
             }).OrderBy(p => p.Name).ToList();
         }
 
