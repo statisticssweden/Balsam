@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{Branch.Id}}-{{Workspace.Id}}-elyra-balsam
+  labels:
+    app: {{Branch.Id}}-{{Workspace.Id}}-elyra-balsam
+  namespace: proj-{{Project.Id}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{Branch.Id}}-{{Workspace.Id}}-elyra-balsam
+  template:
+    metadata:
+      labels:
+        app: {{Branch.Id}}-{{Workspace.Id}}-elyra-balsam
+    spec:
+      serviceAccountName: elyra-sa
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 100
+        runAsGroup: 100
+      containers:
+      - name: oauth2-proxy
+        image: bitnami/oauth2-proxy:7.4.0
+        imagePullPolicy: Always
+        args:
+          - --config=/etc/oauth2-proxy.cfg
+        ports:
+          - containerPort: 3000
+            name: web
+        volumeMounts:
+          - name: {{Branch.Id}}-{{Workspace.Id}}-oauth2
+            mountPath: /etc/oauth2-proxy.cfg
+            subPath: oauth2-proxy.cfg
+          - name: {{Branch.Id}}-{{Workspace.Id}}-oauth22
+            mountPath: /etc/oauth2_proxy/auth_users
+            subPath: auth_mails
+          - name: oauth2-templates
+            mountPath: /templates
+      - name: elyra-balsam
+        image: statisticssweden/balsam-ws-elyra-base:3.15.0
+        command: ["/bin/bash", "-c"]        
+        args: 
+          - elyra-metadata import code-snippets --directory "/home/jovyan/snippets";
+            cd "/home/jovyan/{{Project.Name}}"; 
+            git config --local include.path .gitconfig; 
+            cd /home/jovyan;
+            bash /usr/local/bin/start-elyra.sh --NotebookApp.token=''
+            --NotebookApp.base_url=/{{User.UserName}}/{{Workspace.Id}}
+        env:
+        - name: JUPYTERLAB_S3_ENDPOINT
+          value: <URL-MINIO-API>
+        - name: JUPYTERLAB_S3_ACCESS_KEY_ID
+          value: {{User.S3.AccessKey}}
+        - name: JUPYTERLAB_S3_SECRET_ACCESS_KEY
+          value: {{User.S3.SecretKey}}
+        ports:
+          - containerPort: 8888
+        resources:
+          requests:
+            memory: "2000Mi"
+            cpu: "100m"
+          limits:
+            memory: "10000Mi"
+            cpu: "2000m"
+        volumeMounts:
+        - mountPath: "/home/jovyan"
+          name: pdelyra
+        - mountPath: "/home/jovyan/{{Project.Name}}"
+          name: git-data
+        - mountPath: "/home/jovyan/.gitconfig"
+          name: git-info
+          subPath: .gitconfig
+        - mountPath: "/home/jovyan/snippets"
+          name: git-snippets
+          subPath: Snippets
+      initContainers:
+        - name: git-cloner
+          image: alpine/git
+          command: ["sh", "-c"]
+          args: ["git clone http://{{User.UserName}}:{{User.GitPAT}}@<URL-GITLAB>/<GITLAB-GROUP-NAME>/{{Project.Git.Name}}.git --branch {{Branch.GitBranch}} /data"]
+          volumeMounts:
+          - mountPath: /data
+            name: git-data
+        - name: git-cloner-snippets
+          image: alpine/git
+          command: ["sh", "-c"]
+          args: ["git clone https://github.com/statisticssweden/balsam-snippets.git /data"]  
+          volumeMounts:
+          - mountPath: /data
+            name: git-snippets
+      volumes:
+        - name: pdelyra
+          persistentVolumeClaim:
+            claimName: {{Branch.Id}}-{{Workspace.Id}}-pvc-elyra-claim
+        - name: {{Branch.Id}}-{{Workspace.Id}}-oauth2
+          configMap:
+            name: {{Branch.Id}}-{{Workspace.Id}}-oauth2
+        - name: {{Branch.Id}}-{{Workspace.Id}}-oauth22
+          configMap:
+            name: {{Branch.Id}}-{{Workspace.Id}}-oauth2          
+        - name: oauth2-templates
+          configMap:
+            name: oauth2-templates
+        - name: git-data
+          emptyDir: {}
+        - name: git-snippets
+          emptyDir: {}
+        - name: git-info
+          configMap:
+            name: {{Branch.Id}}-{{Workspace.Id}}-git-info-cm
+            defaultMode: 0777

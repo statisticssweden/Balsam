@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: ${WORKSPACE_NAME}-pvc-elyra-claim
-  namespace: ${PROGRAM_NAME}
+  name: {{Branch.Id}}-{{Workspace.Id}}-pvc-elyra-claim
+  namespace: proj-{{Project.Id}}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -10,4 +10,3 @@ spec:
   resources:
     requests:
       storage: 2Gi
-  storageClassName: tanzu-workload

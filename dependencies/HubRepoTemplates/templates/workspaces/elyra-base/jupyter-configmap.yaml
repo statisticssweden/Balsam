@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{Branch.Id}}-{{Workspace.Id}}-git-info-cm
+  namespace: proj-{{Project.Id}}
+data:
+  .gitconfig: |+
+        [user]
+              name = {{User.UserName}}
+              email = {{User.Mail}}

@@ -1,0 +1,13 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: elyra-sa-psp-binding
+  namespace: proj-{{Project.Id}}
+subjects:
+- kind: ServiceAccount
+  name: elyra-sa
+  namespace: proj-{{Project.Id}}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: psp:vmware-system-restricted

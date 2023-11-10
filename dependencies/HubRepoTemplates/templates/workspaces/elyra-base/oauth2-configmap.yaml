@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{Branch.Id}}-{{Workspace.Id}}-oauth2
+  namespace: proj-{{Project.Id}}
+data:
+  oauth2-proxy.cfg: |+
+    # Provider config
+    provider="keycloak"
+    provider_display_name="Keycloak"
+    login_url="http://<URL-KEYCLOAK>/realms/Balsam/protocol/openid-connect/auth"
+    redeem_url="http://<URL-KEYCLOAK>/realms/Balsam/protocol/openid-connect/token"
+    validate_url="http://<URL-KEYCLOAK>/realms/Balsam/protocol/openid-connect/userinfo"
+    proxy_prefix="/{{User.UserName}}/{{Workspace.Id}}"
+    ssl_insecure_skip_verify=true
+    # Client config
+    client_id="demo" ##${HUB_NAME}?
+    client_secret="MySecretSas"
+    cookie_secret="apPx4MDsknkCT1b8lKn8fb3mfezX2n2TdvNUVeIpF5s="
+    cookie_secure="false"
+    # Upstream config
+    http_address="0.0.0.0:3000"
+    upstreams="http://127.0.0.1:8888/"
+    # Proxy Config
+    user_id_claim="preferred_username"
+    skip_auth_routes=["/health.*"]
+    skip_provider_button="true"
+    reverse_proxy="true"
+    #email_domains=["*"]
+    authenticated_emails_file="/etc/oauth2_proxy/auth_users"
+    cookie_domains=[".<YOUR-DOMAIN>"]
+    whitelist_domains=[".<YOUR-DOMAIN>"]
+    custom_templates_dir="/templates"
+
+  auth_mails: |+
+    {{User.Mail}}
