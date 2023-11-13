@@ -1,4 +1,4 @@
-import { Resource, ResourceType, getResourceType } from "../Model/Model";
+import { Resource, ResourceType, getResourceType } from "../Model/Resource";
 import { toRepoFileTypeEnum } from "../ReposFiles/RepoFiles";
 import { RepoFile, RepoFileTypeEnum } from "../services/BalsamAPIServices";
 

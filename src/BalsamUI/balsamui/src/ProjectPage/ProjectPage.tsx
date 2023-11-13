@@ -8,7 +8,7 @@ import { useState, useEffect, useContext, Fragment } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom'
 import { postError, postSuccess } from '../Alerts/alertsSlice';
 import './ProjectPage.css'
-import { Resource } from '../Model/Model';
+import { Resource } from '../Model/Resource';
 import ResourcesSection from '../ResourceSection/ResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
