@@ -1,7 +1,7 @@
 import NewCard from "../NewCard/NewCard";
 import WorkspaceCard from "../WorkspaceCard/WorkspaceCard";
 import { Template, Workspace } from "../services/BalsamAPIServices";
-import workspaceImage from '../assets/workspace.jpg'
+import workspaceImage from '../assets/workspace.png'
 
 export interface NewWorkspaceCardKeyType
 {

@@ -5,8 +5,8 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import resourceImage from '../assets/text.jpg'
-import markdownImage from '../assets/text.jpg'
+import resourceImage from '../assets/text.png'
+import markdownImage from '../assets/text.png'
 import { Link } from 'react-router-dom';
 import { OpenInNew } from '@mui/icons-material';
 import './ResourceCard.css';

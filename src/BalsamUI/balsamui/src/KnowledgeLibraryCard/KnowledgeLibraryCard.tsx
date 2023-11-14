@@ -5,7 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import projectimage from '../assets/project.jpg'
+import projectimage from '../assets/library.png'
 import { OpenInNew } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { Library } from '../Model/Library';
