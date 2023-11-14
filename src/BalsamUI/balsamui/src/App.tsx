@@ -17,6 +17,9 @@ import { postError } from './Alerts/alertsSlice';
 import MyPage from './MyPage/MyPage';
 import ResoruceFolderPage from './ResourceFolderPage/ResourceFolderPage';
 import KeyCloakService from './security/KeyCloakService.ts';
+import KnowledgeLibrariesPage from './KnowledgeLibrariesPage/KnowledgeLibrariesPage.tsx';
+import KnowledgeLibraryPage from './KnowledgeLibraryPage/KnowledgeLibraryPage.tsx';
+
 
 function App() {
     const [appContextState, setAppContextState] = useState<AppContextState>();
@@ -53,7 +56,7 @@ function App() {
                     <Toolbar>
                         <Button component={Link} color="inherit" to="/">Min sida</Button>
                         <Button component={Link} color="inherit" to="/projects">Projekt</Button>
-                        <Button component={Link} color="inherit" to="/library">Kunskapsbibliotek</Button>
+                        <Button component={Link} color="inherit" to="/knowledgelibraries">Kunskapsbibliotek</Button>
                     </Toolbar>
                 </AppBar>
                 <div className="app">
@@ -61,6 +64,8 @@ function App() {
                         <Route path="/" element={<MyPage />} />
                         <Route path="/projects/" element={<ProjectsPage />} />
                         <Route path="/project/:id" element={<ProjectPage />} />
+                        <Route path="/knowledgelibraries/" element={<KnowledgeLibrariesPage />} />
+                        <Route path="/knowledgelibrary/:id" element={<KnowledgeLibraryPage />} />
                         <Route path="resorucemarkdown/:projectId/:branchId/:fileId" element={<ResoruceMarkdownPage />} />
                         <Route path="resourcefolder/:projectId/:branchId/" element={<ResoruceFolderPage />} />
                     </Routes>

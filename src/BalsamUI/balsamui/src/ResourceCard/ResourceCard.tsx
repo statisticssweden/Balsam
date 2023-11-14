@@ -10,7 +10,7 @@ import markdownImage from '../assets/text.jpg'
 import { Link } from 'react-router-dom';
 import { OpenInNew } from '@mui/icons-material';
 import './ResourceCard.css';
-import { Resource, ResourceType } from '../Model/Model';
+import { Resource, ResourceType } from '../Model/Resource';
 import FolderIcon from '@mui/icons-material/Folder';
 
 export interface ResourceCardProperties {
