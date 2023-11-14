@@ -27,8 +27,6 @@ balsamApi:
   ingress:
     enabled: true
     annotations: {
-      kubernetes.io/ingress.class: "contour",
-      cert-manager.io/cluster-issuer: ca-issuer,
       kubernetes.io/ingress.allow-http: "true"
     }
     hosts:
@@ -50,7 +48,6 @@ balsamUi:
   ingress:
     enabled: true
     annotations: {
-      kubernetes.io/ingress.class: "contour",
       kubernetes.io/ingress.allow-http: "true"
     }
     hosts:
