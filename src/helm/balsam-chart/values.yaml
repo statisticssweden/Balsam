@@ -46,6 +46,7 @@ balsamUi:
   containerPort: 8080 #8080?
   configMap:
     name: balsam-ui-config
+    defaultBranchName: main
   ingress:
     enabled: true
     annotations: {
@@ -57,6 +58,7 @@ balsamUi:
 
 
 s3Provider:
+  enabled: true
   image:
     repository: statisticssweden/balsam-minio-s3-provider # The repository for the s3Provider API
     pullPolicy: Always
@@ -121,6 +123,7 @@ gitProvider:
       API__TemplatePath: /app/templates
 
 chatProvider:
+  enabled: true
   image:
     repository: statisticssweden/balsam-rocketchat-chat-provider # The repository for the chatProvider API
     pullPolicy: Always
@@ -133,12 +136,11 @@ chatProvider:
   secret:
     name: rocketchat-provider-secret
     data:
-      ROCKETCHAT__PAT: # The PAT used by the chatprovider API
+      API__Token: ###
   configMap:
     name: rocketchat-provider-config
     data:
       API__BaseUrl: ###
-      API__Token: ###
       API__UserId: ###
 
 serviceAccount:
