@@ -5,7 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import workspaceImage from '../assets/workspace.jpg'
+import workspaceImage from '../assets/workspace.png'
 import { Link } from 'react-router-dom';
 import { OpenInNew } from '@mui/icons-material';
 import './WorkspaceCard.css';
