@@ -1,3 +1,4 @@
+{{- if .Values.s3Provider.enabled -}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -11,3 +12,4 @@ spec:
     - protocol: TCP
       port: {{ .Values.s3Provider.service.port }}
       targetPort: {{ .Values.s3Provider.containerPort }}
+{{- end }}

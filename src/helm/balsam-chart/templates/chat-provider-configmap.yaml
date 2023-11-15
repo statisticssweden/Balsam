@@ -1,3 +1,4 @@
+{{- if .Values.chatProvider.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -5,5 +6,5 @@ metadata:
   namespace: balsam-system
 data: 
   API__BaseUrl: "{{ .Values.chatProvider.configMap.data.API__BaseUrl }}"
-  API__Token: {{ .Values.chatProvider.configMap.data.API__Token }}
   API__UserId: {{ .Values.chatProvider.configMap.data.API__UserId }}
+{{- end }}

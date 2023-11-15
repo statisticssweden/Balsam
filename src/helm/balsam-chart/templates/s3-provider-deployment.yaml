@@ -1,3 +1,4 @@
+{{- if .Values.s3Provider.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,3 +46,4 @@ spec:
         - name: s3-templates
           configMap:
             name: s3-templates
+{{- end }}

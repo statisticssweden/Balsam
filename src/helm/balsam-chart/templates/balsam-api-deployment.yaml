@@ -32,10 +32,14 @@ spec:
           value: "http://git-provider.balsam-system.svc.cluster.local/api/v1"
         - name: Capabilities__S3__ServiceLocation
           value: "http://s3-provider.balsam-system.svc.cluster.local/api/v1"
+        - name: Capabilities__S3__Enabled
+          value: "{{ .Values.s3Provider.enabled }}"
         - name: Capabilities__AUTHENTICATION__ServiceLocation
           value: "http://oidc-provider.balsam-system.svc.cluster.local/api/v1"
         - name: Capabilities__CHAT__ServiceLocation
           value: "http://chat-provider.balsam-system.svc.cluster.local/api/v1"
+        - name: Capabilities__CHAT__Enabled
+          value: "{{ .Values.chatProvider.enabled }}"
         resources:
           requests:
             memory: "200Mi"

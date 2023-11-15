@@ -196,6 +196,14 @@ helm install rocketchat rocketchat/rocketchat -f RocketChat/values.yaml --namesp
 
 
 ## Configure and install a Balsam hub
+### Configure GitLab
+1. Sign in with the KeyCloak user for GitLab and sign out (So that the user is created in GitLab).
+2. Sign in with the root account in GitLab. Password is in secret `gitlab-gitlab-initial-root-password`. 
+3. Make KeyCloak user an admin.
+4. Sign in with KeyCloak user and create a personal access token.
+5. Create a new Group.
+6. Remove the branch protection rules in the new group.
+
 ### Prepare hub repository
 1. Create a private Git repository (will conatin sensitive information so keep it private)
 2. Copy the files from `dependencies/HubRepoTemplates` and changes the placeholder in the templates in the format `<PLACEHOLDER>` and commit it to the repository
@@ -211,14 +219,6 @@ helm install rocketchat rocketchat/rocketchat -f RocketChat/values.yaml --namesp
 1. Sign in with the userer from keycloak in MinIO console.
 2. Create a accesskey with full rights.
 
-### Configure GitLab
-1. Sign in with the KeyCloak user for GitLab and sign out (So that the user is created in GitLab).
-2. Sign in with the root account in GitLab. Password is in secret `gitlab-gitlab-initial-root-password`. 
-3. Make KeyCloak user an admin.
-4. Sign in with KeyCloak user and create a personal access token.
-5. Create a new Group.
-6. Remove the branch protection rules in the new group.
-
 ### Configure RocketChat
 1. Sign in as admin.
 2. Create PAT.
@@ -230,7 +230,7 @@ helm install rocketchat rocketchat/rocketchat -f RocketChat/values.yaml --namesp
 ## Install Balsam
 Use helm to install Balsam
 ```bash
-helm install balsam oci://registry-1.docker.io/statisticssweden/balsam-chart --version 0.1.1 -f YOUR-VALUES-FILE.yaml
+helm install balsam oci://registry-1.docker.io/statisticssweden/balsam-chart --version 0.1.2 -f YOUR-VALUES-FILE.yaml
 ```
 Use the following values template and replace the placeholder with your settings.
 
@@ -273,7 +273,7 @@ gitProvider:
   secret:
     name: gitlab-provider-secret
     data:
-      API__PAT: <GITLAB-PATH>
+      API__PAT: <GITLAB-PAT>
   configMap:
     name: gitlab-provider-config
     data:
@@ -298,11 +298,12 @@ oidcProvider:
 chatProvider: 
   secret:
     name: rocketchat-provider-secret
+    data:
+      API__Token: "<ROCKETCHAT-TOKEN>"
   configMap:
     name: rocketchat-provider-config
     data:
       API__BaseUrl: "<ROCKETCHAT-URL>"
-      API__Token: "<ROCKETCHAT-TOKEN>"
       API__UserId: "<ROCKETCHAT-USER>"
 
 roleBinding:

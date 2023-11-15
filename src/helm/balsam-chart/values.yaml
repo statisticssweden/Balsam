@@ -9,7 +9,7 @@ balsamApi:
     repository: statisticssweden/balsam-api # The repository for balsamApi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.1.1 # The tag for balsamApi
+    tag: 0.1.2 # The tag for balsamApi
   service:
     type: ClusterIP
     port: 80
@@ -27,8 +27,6 @@ balsamApi:
   ingress:
     enabled: true
     annotations: {
-      kubernetes.io/ingress.class: "contour",
-      cert-manager.io/cluster-issuer: ca-issuer,
       kubernetes.io/ingress.allow-http: "true"
     }
     hosts:
@@ -39,17 +37,17 @@ balsamUi:
     repository: statisticssweden/balsam-ui # The repository for balsamUi
     pullPolicy: Always
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.1.1 # The tag for balsamUi
+    tag: 0.1.3 # The tag for balsamUi
   service:
     type: ClusterIP
     port: 80
   containerPort: 8080 #8080?
   configMap:
     name: balsam-ui-config
+    defaultBranchName: main
   ingress:
     enabled: true
     annotations: {
-      kubernetes.io/ingress.class: "contour",
       kubernetes.io/ingress.allow-http: "true"
     }
     hosts:
@@ -57,6 +55,7 @@ balsamUi:
 
 
 s3Provider:
+  enabled: true
   image:
     repository: statisticssweden/balsam-minio-s3-provider # The repository for the s3Provider API
     pullPolicy: Always
@@ -121,6 +120,7 @@ gitProvider:
       API__TemplatePath: /app/templates
 
 chatProvider:
+  enabled: true
   image:
     repository: statisticssweden/balsam-rocketchat-chat-provider # The repository for the chatProvider API
     pullPolicy: Always
@@ -133,12 +133,11 @@ chatProvider:
   secret:
     name: rocketchat-provider-secret
     data:
-      ROCKETCHAT__PAT: # The PAT used by the chatprovider API
+      API__Token: ###
   configMap:
     name: rocketchat-provider-config
     data:
       API__BaseUrl: ###
-      API__Token: ###
       API__UserId: ###
 
 serviceAccount:
