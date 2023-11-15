@@ -230,7 +230,7 @@ helm install rocketchat rocketchat/rocketchat -f RocketChat/values.yaml --namesp
 ## Install Balsam
 Use helm to install Balsam
 ```bash
-helm install balsam oci://registry-1.docker.io/statisticssweden/balsam-chart --version 0.1.1 -f YOUR-VALUES-FILE.yaml
+helm install balsam oci://registry-1.docker.io/statisticssweden/balsam-chart --version 0.1.2 -f YOUR-VALUES-FILE.yaml
 ```
 Use the following values template and replace the placeholder with your settings.
 
