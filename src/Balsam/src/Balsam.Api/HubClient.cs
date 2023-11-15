@@ -321,7 +321,12 @@ namespace Balsam.Api
 
         private async Task CreateWorkspaceManifests(BalsamProject project, BalsamBranch branch, BalsamWorkspace workspace, UserInfo user, string workspacePath, string templateId)
         {
-            var token = await _s3Client.CreateAccessKeyAsync(project.S3.BucketName);
+            var token = new AccessKeyCreatedResponse("", "");
+            if (_s3.Enabled)
+            {
+                token = await _s3Client.CreateAccessKeyAsync(project.S3.BucketName);
+            }
+
             var s3Token = new S3Token(token.AccessKey, token.SecretKey);
             user.S3 = s3Token;
             var context = new WorkspaceContext(project, branch, workspace, user);
@@ -396,9 +401,11 @@ namespace Balsam.Api
                 return null;
             }
 
-            //TODO do we ned to save the response information?
-            await _s3Client.CreateFolderAsync(project.S3.BucketName, new CreateFolderRequest(branchName));
-            _logger.LogInformation($"Folder {branchName} created in bucket {project.S3.BucketName}.");
+            if (_s3.Enabled)
+            {
+                await _s3Client.CreateFolderAsync(project.S3.BucketName, new CreateFolderRequest(branchName));
+                _logger.LogInformation($"Folder {branchName} created in bucket {project.S3.BucketName}.");
+            }
 
             var branch = new BalsamBranch()
             {
