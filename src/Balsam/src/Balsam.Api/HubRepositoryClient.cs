@@ -62,8 +62,7 @@ namespace Balsam.Api
 
             var remote = _repository.Network.Remotes["origin"];
 
-            var pushRefSpec = @"refs/heads/master";
-            _repository.Network.Push(remote, pushRefSpec, pushOptions);
+            _repository.Network.Push(remote, _repository.Head.CanonicalName, pushOptions);
         }
 
         public void PullChanges()
