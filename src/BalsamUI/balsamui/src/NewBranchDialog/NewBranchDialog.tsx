@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { CreateBranchRequest, Project } from "../services/BalsamAPIServices";
 import { Fragment, useContext, useEffect, useState } from "react";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import AppContext, { AppContextState } from "../configuration/AppContext";
 import { postError, postSuccess } from "../Alerts/alertsSlice";
 
@@ -19,15 +19,11 @@ export default function NewBranchDialog(props: NewBranchDialogProperties)
     const [branchName, setBranchName] = useState<string>("");
     const [branchNameError, setBranchNameError] = useState(false);
     const [branchNameHelperText, setBranchNameHelperText] = useState("")
-
     const [branchDescription, setBranchDescription] = useState<string>("");
     const [branchDescriptionError, setBranchDescriptionError] = useState(false);
     const [branchDescriptionHelperText, setBranchDescriptionHelperText] = useState("")
-
-
-    
+    const [busy, setBusy] = useState(false);
     const [fromBranchId, setFromBranchId] = useState<string>("");
-
     const [okEnabled, setOkEnabled] = useState(false);
     const dispatch = useDispatch();
 
@@ -36,16 +32,16 @@ export default function NewBranchDialog(props: NewBranchDialogProperties)
    
 
     useEffect(() => {
-        updateOkEnabled(branchName, fromBranchId);
+        updateOkEnabled(branchName, fromBranchId, busy);
 
-    }, [branchName, fromBranchId]);
+    }, [branchName, fromBranchId, busy]);
 
 
-    const updateOkEnabled = (branchName: string, fromBranchId: string) => 
+    const updateOkEnabled = (branchName: string, fromBranchId: string, busy: boolean) => 
     {
         let projectNameValid = validateBranchName(branchName).length === 0;
         let fromBranchIdValid = validateFromBranchId(fromBranchId).length === 0;
-        setOkEnabled(projectNameValid && fromBranchIdValid)
+        setOkEnabled(projectNameValid && fromBranchIdValid && !busy)
     }
 
     const handleCancel = () => {
@@ -68,17 +64,13 @@ export default function NewBranchDialog(props: NewBranchDialogProperties)
         setBranchDescriptionHelperText("");
 
         setFromBranchId("");
+        setBusy(false);
     };
 
     const showNewItemCreatedAlert = (message: string) => 
     {
         dispatch(postSuccess(message)); //TODO: Language
     }
-
-    // const showNewItemCreatedAlert = (message: string, branchUrl: string) => 
-    // {
-    //     dispatch(postSuccess(message, {caption: "Öppna", href: branchUrl, target: "_blank"} )); //TODO: Language
-    // }
 
     const validateBranchName = (name: string) : Array<string> => {
         let errors : Array<string> = [];
@@ -142,6 +134,8 @@ export default function NewBranchDialog(props: NewBranchDialogProperties)
             fromBranch: fromBranchId
         }
 
+        setBusy(true);
+        updateOkEnabled(branchName, fromBranchId, true);
         appContext.balsamApi.projectApi.createBranch(props.project.id, branch).then((response => {
             props.onBranchCreated?.(response.data.id);
             props.onClosing();
@@ -150,8 +144,23 @@ export default function NewBranchDialog(props: NewBranchDialogProperties)
             showNewItemCreatedAlert(`Branchen "${response.data.name}" är skapad.`); //TODO: Language
         }), () => {
             dispatch(postError("Det gick inte att skapa branch " + branchName)); //TODO: Language
+            setBusy(false);
         });
     };
+
+    function renderProgress()
+    {
+        if(busy)
+        {
+            return (<CircularProgress size="18px" sx={{marginLeft:"6px"}} />)
+        }
+        else 
+        {
+            return "";
+        }
+    }
+    
+    const progress = renderProgress();
 
     function renderDialog()
     {
@@ -163,7 +172,9 @@ export default function NewBranchDialog(props: NewBranchDialogProperties)
                     fullWidth={true}
                     disableRestoreFocus 
                 >
-                    <DialogTitle>Skapa branch</DialogTitle>
+                    <DialogTitle>Skapa branch
+                        {progress}
+                    </DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             Ange information om branchen
