@@ -41,6 +41,25 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
+  /repos/{repositoryId}:
+    delete:
+      tags: 
+        - Repository
+      operationId: DeleteRepository
+      description: Deletes a repository      
+      parameters:
+        - name: repositoryId
+          in: path
+          description: The name of the repository where the branch should be created.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success          
+        '400':
+          $ref: '#/components/responses/ErrorResponse400' 
+
   /repos/{repositoryId}/branches:
     post:
       tags: 

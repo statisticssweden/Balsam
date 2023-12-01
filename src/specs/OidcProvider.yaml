@@ -38,6 +38,25 @@ paths:
                  
         '400':
           $ref: '#/components/responses/ErrorResponse400'
+  
+  /groups/{groupId}:
+    delete:
+      tags: 
+        - Group
+      operationId: DeleteGroup
+      description: Deletes a user group         
+      parameters:
+        - name: groupId
+          in: path
+          description: The id for the group
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success                
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
 
   /groups/{groupId}/users:
     post:
