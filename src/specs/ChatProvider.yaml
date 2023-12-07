@@ -37,7 +37,25 @@ paths:
                   id: 12
         '400':
           $ref: '#/components/responses/ErrorResponse400'
-
+  
+  /areas/{areaId}:
+    delete:
+      tags: 
+        - Area
+      operationId: DeleteArea
+      description: Deletes an Area
+      parameters:
+        - name: areaId
+          in: path
+          description: The id of the area
+          required: true
+          schema:
+            type: string         
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
    
 components:
   schemas:

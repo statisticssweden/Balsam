@@ -83,6 +83,23 @@ paths:
                 $ref: '#/components/schemas/ProjectResponse'
         '400':
           $ref: '#/components/responses/ErrorResponse400' 
+    delete:
+      tags: 
+        - Project
+      operationId: DeleteProject
+      description: Deletes a project
+      parameters:
+        - name: projectId
+          in: path
+          description: the identity of the project.
+          required: true
+          schema:
+            type: string      
+      responses:
+        '200':
+          description: Success          
+        '400':
+          $ref: '#/components/responses/ErrorResponse400' 
 
   /projects/{projectId}/branches:
     post:
@@ -111,7 +128,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/BranchCreatedResponse'
         '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
+  /projects/{projectId}/branches/{branchId}:
+    delete:
+      tags: 
+        - Project
+      operationId: DeleteBranch
+      description: Deletes branch of project
+      parameters:
+        - name: projectId
+          in: path
+          description: the identity of the project.
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: path
+          description: The identity of the branch.
+          required: true
+          schema:
+            type: string              
+      responses:
+        '200':
+          description: Success          
+        '400':
           $ref: '#/components/responses/ErrorResponse400'    
+  
   /projects/{projectId}/branches/{branchId}/files:
     get:
       tags: 
