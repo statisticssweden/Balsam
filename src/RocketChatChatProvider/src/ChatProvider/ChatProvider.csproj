@@ -11,7 +11,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>ChatProvider</AssemblyName>
     <PackageId>ChatProvider</PackageId>
-    <UserSecretsId>5cc12d06-84b5-452d-85f9-08705b10e0ec</UserSecretsId>
+    <UserSecretsId>aaeabcde-d02f-49e4-ac3f-1d81e64c59a6</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>

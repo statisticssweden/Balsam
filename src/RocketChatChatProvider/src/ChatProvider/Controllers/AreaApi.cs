@@ -44,5 +44,19 @@ namespace ChatProvider.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(AreaCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
         public abstract Task<IActionResult> CreateArea([FromBody]CreateAreaRequest? createAreaRequest);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Deletes an Area</remarks>
+        /// <param name="areaId">The id of the area</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpDelete]
+        [Route("/api/v1/areas/{areaId}")]
+        [ValidateModelState]
+        [SwaggerOperation("DeleteArea")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> DeleteArea([FromRoute (Name = "areaId")][Required]string areaId);
     }
 }

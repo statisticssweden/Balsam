@@ -1,6 +1,7 @@
 ﻿using ChatProvider.Models;
 using Microsoft.AspNetCore.Mvc;
 using RocketChatChatProvider.Client;
+using System.ComponentModel.DataAnnotations;
 
 namespace RocketChatChatProvider.Controllers
 {
@@ -37,6 +38,25 @@ namespace RocketChatChatProvider.Controllers
             {
                 _logger.LogError(e, "An error occurred when creating area {area}", createAreaRequest.Name);
                 return BadRequest(new Problem {Type = "404", Title = "Could not create channel"});
+            }
+        }
+
+        public override async Task<IActionResult> DeleteArea([FromRoute(Name = "areaId"), Required] string areaId)
+        {
+            if (string.IsNullOrEmpty(areaId))
+            {
+                return BadRequest(new Problem { Type = "404", Title = "Request must have a value" });
+            }
+
+            try
+            {
+                await _client.DeleteArea(areaId);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "An error occurred when delete area: ", areaId);
+                return BadRequest(new Problem { Type = "404", Title = "Could not delete channel" });
             }
         }
     }
