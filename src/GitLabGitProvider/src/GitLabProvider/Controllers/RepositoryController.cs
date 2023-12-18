@@ -119,7 +119,7 @@ namespace GitLabProvider.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Cloud not delete repository");
+                _logger.LogError(ex, "Could not delete repository");
             }
 
             return BadRequest(new Problem { Type = "Could not delete repository", Detail = "Could not delete repository internal error" });
@@ -137,7 +137,7 @@ namespace GitLabProvider.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Cloud not delete repository branch");
+                _logger.LogError(ex, "Could not delete repository branch");
             }
 
             return BadRequest(new Problem { Type = "Could not delete repository brach ", Detail = "Could not delete repository branch internal error" });
