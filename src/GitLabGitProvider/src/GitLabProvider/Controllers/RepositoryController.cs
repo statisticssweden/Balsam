@@ -106,5 +106,23 @@ namespace GitLabProvider.Controllers
 
             return name;
         }
+
+        public async override Task<IActionResult> DeleteRepository([FromRoute(Name = "repositoryId"), Required] string repositoryId)
+        {
+            try
+            {
+                bool deleted = await _gitLabClient.DeleteRepository(repositoryId);
+                if (deleted)
+                {
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Cloud not delete repository");
+            }
+
+            return BadRequest(new Problem { Type = "Could not delete repository", Detail = "Could not delete repository internal error" });
+        }
     }
 }

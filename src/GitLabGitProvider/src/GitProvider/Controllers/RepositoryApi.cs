@@ -65,6 +65,20 @@ namespace GitProvider.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Deletes a repository</remarks>
+        /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpDelete]
+        [Route("/api/v1/repos/{repositoryId}")]
+        [ValidateModelState]
+        [SwaggerOperation("DeleteRepository")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> DeleteRepository([FromRoute (Name = "repositoryId")][Required]string repositoryId);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Get file contents</remarks>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The identity of the branch.</param>

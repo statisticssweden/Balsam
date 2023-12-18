@@ -92,6 +92,27 @@ namespace GitLabProvider.Client
             return null;           
         }
 
+        public async Task<bool> DeleteRepository(string projectId)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{_baseUrl}/api/v4/projects/{projectId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);
+
+            try
+            {
+                using var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to delete repository", ex);
+            }
+            return false;
+        }
+
+
         public async Task<bool> CreateBranch(string repositoryId, string fromBranch, string branchName)
         {
             var projectId = repositoryId;
@@ -283,5 +304,7 @@ namespace GitLabProvider.Client
 
             return null;
         }
+
+
     }
 }
