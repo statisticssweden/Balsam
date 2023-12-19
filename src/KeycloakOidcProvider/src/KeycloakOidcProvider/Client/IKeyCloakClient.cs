@@ -6,4 +6,5 @@ public interface IKeyCloakClient
 {
     Task<GroupCreatedResponse> CreateGroup(string name);
     Task AddUserToGroup(string groupId, string userName);
+    Task DeleteGroup(string groupId);
 }

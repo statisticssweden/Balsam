@@ -31,5 +31,11 @@ namespace Keycloak.OidcProvider.Controllers
 
             return Ok(group);
         }
+
+        public override async Task<IActionResult> DeleteGroup([FromRoute(Name = "groupId"), Required] string groupId)
+        {
+            await _keyCloakClient.DeleteGroup(groupId);
+            return Ok();
+        }
     }
 }
