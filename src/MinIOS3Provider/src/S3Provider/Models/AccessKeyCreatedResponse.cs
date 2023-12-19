@@ -43,6 +43,14 @@ namespace S3Provider.Models
         public string SecretKey { get; set; }
 
         /// <summary>
+        /// URL to the API.
+        /// </summary>
+        /// <value>URL to the API.</value>
+        [Required]
+        [DataMember(Name="apiUrl", EmitDefaultValue=false)]
+        public string ApiUrl { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -52,6 +60,7 @@ namespace S3Provider.Models
             sb.Append("class AccessKeyCreatedResponse {\n");
             sb.Append("  AccessKey: ").Append(AccessKey).Append("\n");
             sb.Append("  SecretKey: ").Append(SecretKey).Append("\n");
+            sb.Append("  ApiUrl: ").Append(ApiUrl).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -97,6 +106,11 @@ namespace S3Provider.Models
                     SecretKey == other.SecretKey ||
                     SecretKey != null &&
                     SecretKey.Equals(other.SecretKey)
+                ) && 
+                (
+                    ApiUrl == other.ApiUrl ||
+                    ApiUrl != null &&
+                    ApiUrl.Equals(other.ApiUrl)
                 );
         }
 
@@ -114,6 +128,8 @@ namespace S3Provider.Models
                     hashCode = hashCode * 59 + AccessKey.GetHashCode();
                     if (SecretKey != null)
                     hashCode = hashCode * 59 + SecretKey.GetHashCode();
+                    if (ApiUrl != null)
+                    hashCode = hashCode * 59 + ApiUrl.GetHashCode();
                 return hashCode;
             }
         }

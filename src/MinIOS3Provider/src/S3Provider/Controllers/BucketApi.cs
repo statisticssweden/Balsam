@@ -74,5 +74,34 @@ namespace S3Provider.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(FolderCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
         public abstract IActionResult CreateFolder([FromRoute (Name = "bucketId")][Required]string bucketId, [FromBody]CreateFolderRequest? createFolderRequest);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Deletes a new Bucket</remarks>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpDelete]
+        [Route("/api/v1/buckets/{bucketId}")]
+        [ValidateModelState]
+        [SwaggerOperation("DeleteBucket")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract IActionResult DeleteBucket([FromRoute (Name = "bucketId")][Required]string bucketId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Deletes a new virtual folder in the bucket.</remarks>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="folderName">the name of the folder</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpDelete]
+        [Route("/api/v1/buckets/{bucketId}/folder/{folderName}")]
+        [ValidateModelState]
+        [SwaggerOperation("DeleteFolder")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract IActionResult DeleteFolder([FromRoute (Name = "bucketId")][Required]string bucketId, [FromRoute (Name = "folderName")][Required]string folderName);
     }
 }
