@@ -703,5 +703,33 @@ namespace Balsam.Api
             return workspaces;
         }
 
+        public async Task DeleteBranch(string projectId, string branchId)
+        {
+            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
+
+            var project = await GetProject(projectId);
+            var branch = await GetBranch(projectId, branchId);
+            
+            //Asure that the id are correct
+            if (project == null || branch == null) return;
+
+
+            if (_s3.Enabled)
+            {
+                await _s3Client.DeleteFolderAsync(project.S3?.BucketName??"", branch.Name);
+            }
+
+            _hubRepositoryClient.PullChanges();
+
+            if (Directory.Exists(branchPath))
+            {
+                //EmptyDirectory(branchPath);
+                Directory.Delete(branchPath, true);
+            }
+
+            _hubRepositoryClient.PersistChanges($"Branch {branch.Name} deleted for project {project.Name}");
+
+        }
+
     }
 }

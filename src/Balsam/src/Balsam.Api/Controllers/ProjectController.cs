@@ -204,5 +204,25 @@ namespace Balsam.Api.Controllers
             return BadRequest(new Problem() { Status = 404, Type = "file not found", Detail = "Can not find the file" });
 
         }
+
+        public async override Task<IActionResult> DeleteBranch([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId)
+        {
+            try
+            {
+                await _hubClient.DeleteBranch(projectId, branchId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not delete branch");
+                return BadRequest(new Problem() { Status = 400, Type = "Could not delete branch", Detail = "Could not delete branch internal error" });
+            }
+
+            return Ok();
+        }
+
+        public override Task<IActionResult> DeleteProject([FromRoute(Name = "projectId"), Required] string projectId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
