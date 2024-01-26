@@ -15,6 +15,7 @@ using HandlebarsDotNet;
 using File = System.IO.File;
 using Microsoft.AspNetCore.Mvc;
 using BalsamApi.Server.Models;
+using LibGit2Sharp;
 
 namespace Balsam.Api
 {
@@ -731,5 +732,40 @@ namespace Balsam.Api
 
         }
 
+        internal async Task DeleteProject(string projectId)
+        {
+            var project = await GetProject(projectId);
+
+            if (project == null)
+            {
+                return;
+            }
+
+            if (_authentication.Enabled)
+            {
+                await _oidcClient.DeleteGroupAsync(project.Oidc?.GroupId ?? "");
+            }
+
+            if (_git.Enabled)
+            {
+               await _repositoryApi.DeleteRepositoryAsync(project.Git?.Id ?? "");
+            }
+
+            if (_s3.Enabled)
+            {
+                await _s3Client.DeleteBucketAsync(project.S3?.BucketName ?? "");
+            }
+
+            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId);
+
+            _hubRepositoryClient.PullChanges();
+
+            if (Directory.Exists(branchPath))
+            {
+                Directory.Delete(branchPath, true);
+            }
+
+            _hubRepositoryClient.PersistChanges($"Project {project.Name} deleted");
+        }
     }
 }
