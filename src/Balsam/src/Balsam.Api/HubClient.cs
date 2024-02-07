@@ -743,17 +743,37 @@ namespace Balsam.Api
 
             if (_authentication.Enabled)
             {
-                await _oidcClient.DeleteGroupAsync(project.Oidc?.GroupId ?? "");
+                try
+                {
+                    await _oidcClient.DeleteGroupAsync(project.Oidc?.GroupId ?? "");
+                } catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete oidc group");
+                }
             }
 
             if (_git.Enabled)
             {
-               await _repositoryApi.DeleteRepositoryAsync(project.Git?.Id ?? "");
+                try
+                {
+                    await _repositoryApi.DeleteRepositoryAsync(project.Git?.Id ?? "");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete git repository");
+                }
             }
 
             if (_s3.Enabled)
             {
-                await _s3Client.DeleteBucketAsync(project.S3?.BucketName ?? "");
+                try
+                {
+                    await _s3Client.DeleteBucketAsync(project.S3?.BucketName ?? "");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete s3 bucket");
+                }
             }
 
             var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId);
