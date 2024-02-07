@@ -717,7 +717,14 @@ namespace Balsam.Api
 
             if (_s3.Enabled)
             {
-                await _s3Client.DeleteFolderAsync(project.S3?.BucketName??"", branch.Name);
+                try
+                { 
+                    await _s3Client.DeleteFolderAsync(project.S3?.BucketName??"", branch.Name);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete s3 folder");
+                }
             }
 
             _hubRepositoryClient.PullChanges();
