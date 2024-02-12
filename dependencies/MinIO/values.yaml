@@ -17,7 +17,7 @@ extraEnvVars:
   - name: MINIO_IDENTITY_OPENID_CLIENT_SECRET
     value: <YOUR-KEYCLOAK-SECRET>
   - name: MINIO_IDENTITY_OPENID_CLAIM_NAME
-    value: roles
+    value: groups
   - name: MINIO_IDENTITY_OPENID_SCOPES
     value: balsamscope
   - name: MINIO_IDENTITY_OPENID_REDIRECT_URI
