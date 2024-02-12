@@ -23,15 +23,16 @@ Replace `<YOUR-DOMAIN>` with your own DNS-entry
 2. Add an ingress to ArgoCD with the following definition
 
 ```yaml
-apiVersion: extensions/v1beta1
-kind: Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: argocd-ingress
+  name: argocd-ingress
+  namespace: argocd
 spec:
-  rules:****
-  - host: argo-cd.<YOUR-DOMAIN>
-    http:
-      paths:
+  rules:
+  - host: argo-cd.<YOUR-DOMAIN>
+    http:
+      paths:
       - backend:
           serviceName: argocd-server
           servicePort: http
