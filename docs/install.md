@@ -47,7 +47,7 @@ have to create a ConfigMap to import the realm to the keycloak installation. You
 kubectl create ns keycloak
 kubectl create cm keycloak-realm --namespace=keycloak --from-file=realm-export.json
 ```
-1. Install KeyCloak with Helm from Bitnami see (https://bitnami.com/stack/keycloak/helm)[https://bitnami.com/stack/keycloak/helm] and use the following values.yaml file:
+1. Install KeyCloak with Helm from Bitnami see [https://bitnami.com/stack/keycloak/helm](https://bitnami.com/stack/keycloak/helm) and use the following values.yaml file:
 
   ```yaml
 auth:
