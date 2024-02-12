@@ -45,7 +45,7 @@ Prerequisites: To be able to get a demo functionality in keycloak you will have 
 have to create a ConfigMap to import the realm to the keycloak installation. You do this with the following command: 
 ```bash
 kubectl create ns keycloak
-kubectl create cm keycloak-realm --namespace=keycloak --from-file=realm.json
+kubectl create cm keycloak-realm --namespace=keycloak --from-file=realm-export.json
 ```
 1. Install KeyCloak with Helm from Bitnami see (https://bitnami.com/stack/keycloak/helm)[https://bitnami.com/stack/keycloak/helm] and use the following values.yaml file:
 
