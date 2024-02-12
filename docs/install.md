@@ -19,7 +19,7 @@ Replace `<YOUR-DOMAIN>` with your own DNS-entry
 
 ### Install and configure ArgoCD
 
-1. Install ArgoCD following the instruction at (https://argo-cd.readthedocs.io/en/stable/getting_started/)[https://argo-cd.readthedocs.io/en/stable/getting_started/]
+1. Install ArgoCD following the instruction at [https://argo-cd.readthedocs.io/en/stable/getting_started/](https://argo-cd.readthedocs.io/en/stable/getting_started/)
 2. Add an ingress to ArgoCD with the following definition
 
 ```yaml
