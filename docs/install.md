@@ -87,10 +87,6 @@ extraEnvVars:
 
   ```
 
-2. Sign in and verify that it is running.
-3. Add new Realm `Balsam`
-4. Create new Client `demo`
-5. 
 
 ### Install and configure GitLab
 
