@@ -110,6 +110,7 @@ args:
   name_identifier_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
 ```
 ```bash
+kubectl create ns gitlab
 kubectl create secret generic gitlab-saml -n gitlab --from-file=provider=provider.yaml
 ```
 
