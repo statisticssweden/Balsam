@@ -69,7 +69,7 @@ namespace Balsam.Api.Controllers
             _logger.LogInformation($"The user is {username}");
             try
             {
-                BalsamProject? project = await _hubClient.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName, username);
+                BalsamProject? project = await _hubClient.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName, username, createProjectRequest.SourceLocation);
 
                 if (project == null)
                 {

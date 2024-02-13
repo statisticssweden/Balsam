@@ -50,6 +50,13 @@ namespace BalsamApi.Server.Models
         public string BranchName { get; set; }
 
         /// <summary>
+        /// the location to a git-repository containing files that the repository will be initiated with
+        /// </summary>
+        /// <value>the location to a git-repository containing files that the repository will be initiated with</value>
+        [DataMember(Name="sourceLocation", EmitDefaultValue=false)]
+        public string SourceLocation { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -60,6 +67,7 @@ namespace BalsamApi.Server.Models
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
             sb.Append("  BranchName: ").Append(BranchName).Append("\n");
+            sb.Append("  SourceLocation: ").Append(SourceLocation).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -110,6 +118,11 @@ namespace BalsamApi.Server.Models
                     BranchName == other.BranchName ||
                     BranchName != null &&
                     BranchName.Equals(other.BranchName)
+                ) && 
+                (
+                    SourceLocation == other.SourceLocation ||
+                    SourceLocation != null &&
+                    SourceLocation.Equals(other.SourceLocation)
                 );
         }
 
@@ -129,6 +142,8 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + Description.GetHashCode();
                     if (BranchName != null)
                     hashCode = hashCode * 59 + BranchName.GetHashCode();
+                    if (SourceLocation != null)
+                    hashCode = hashCode * 59 + SourceLocation.GetHashCode();
                 return hashCode;
             }
         }

@@ -178,7 +178,7 @@ namespace Balsam.Api
             return true;
         }
 
-        public async Task<BalsamProject?> CreateProject(string preferredName, string description, string defaultBranchName, string username)
+        public async Task<BalsamProject?> CreateProject(string preferredName, string description, string defaultBranchName, string username, string? sourceLocation)
         {
             //Check if there is a program with the same name.
             _logger.LogDebug("Chack for duplicate names");
@@ -219,7 +219,7 @@ namespace Balsam.Api
                 _logger.LogDebug($"Begin call Git");
                 var gitData = await _repositoryApi.CreateRepositoryAsync(new CreateRepositoryRequest(preferredName, description, defaultBranchName));
                 defaultBranchName = gitData.DefaultBranchName;
-                project.Git = new GitData() { Id = gitData.Id, Name = gitData.Name, Path = gitData.Path };
+                project.Git = new GitData() { Id = gitData.Id, Name = gitData.Name, Path = gitData.Path, SourceLocation = sourceLocation };
                 _logger.LogInformation($"Git repository {project.Git.Name} created");
             }
 
