@@ -78,6 +78,29 @@ namespace GitProviderApiClient.Api
         /// 
         /// </summary>
         /// <remarks>
+        /// Deletes a repository
+        /// </remarks>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns></returns>
+        void DeleteRepository(string repositoryId, int operationIndex = 0);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a repository
+        /// </remarks>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns>ApiResponse of Object(void)</returns>
+        ApiResponse<Object> DeleteRepositoryWithHttpInfo(string repositoryId, int operationIndex = 0);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
         /// Get file contents
         /// </remarks>
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
@@ -187,6 +210,31 @@ namespace GitProviderApiClient.Api
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of ApiResponse (RepositoryCreatedResponse)</returns>
         System.Threading.Tasks.Task<ApiResponse<RepositoryCreatedResponse>> CreateRepositoryWithHttpInfoAsync(CreateRepositoryRequest? createRepositoryRequest = default(CreateRepositoryRequest?), int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a repository
+        /// </remarks>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of void</returns>
+        System.Threading.Tasks.Task DeleteRepositoryAsync(string repositoryId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a repository
+        /// </remarks>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of ApiResponse</returns>
+        System.Threading.Tasks.Task<ApiResponse<Object>> DeleteRepositoryWithHttpInfoAsync(string repositoryId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
         /// <summary>
         /// 
         /// </summary>
@@ -644,6 +692,148 @@ namespace GitProviderApiClient.Api
             if (this.ExceptionFactory != null)
             {
                 Exception _exception = this.ExceptionFactory("CreateRepository", localVarResponse);
+                if (_exception != null)
+                {
+                    throw _exception;
+                }
+            }
+
+            return localVarResponse;
+        }
+
+        /// <summary>
+        ///  Deletes a repository
+        /// </summary>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns></returns>
+        public void DeleteRepository(string repositoryId, int operationIndex = 0)
+        {
+            DeleteRepositoryWithHttpInfo(repositoryId);
+        }
+
+        /// <summary>
+        ///  Deletes a repository
+        /// </summary>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns>ApiResponse of Object(void)</returns>
+        public GitProviderApiClient.Client.ApiResponse<Object> DeleteRepositoryWithHttpInfo(string repositoryId, int operationIndex = 0)
+        {
+            // verify the required parameter 'repositoryId' is set
+            if (repositoryId == null)
+            {
+                throw new GitProviderApiClient.Client.ApiException(400, "Missing required parameter 'repositoryId' when calling RepositoryApi->DeleteRepository");
+            }
+
+            GitProviderApiClient.Client.RequestOptions localVarRequestOptions = new GitProviderApiClient.Client.RequestOptions();
+
+            string[] _contentTypes = new string[] {
+            };
+
+            // to determine the Accept header
+            string[] _accepts = new string[] {
+                "application/problem+json"
+            };
+
+            var localVarContentType = GitProviderApiClient.Client.ClientUtils.SelectHeaderContentType(_contentTypes);
+            if (localVarContentType != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Content-Type", localVarContentType);
+            }
+
+            var localVarAccept = GitProviderApiClient.Client.ClientUtils.SelectHeaderAccept(_accepts);
+            if (localVarAccept != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
+            }
+
+            localVarRequestOptions.PathParameters.Add("repositoryId", GitProviderApiClient.Client.ClientUtils.ParameterToString(repositoryId)); // path parameter
+
+            localVarRequestOptions.Operation = "RepositoryApi.DeleteRepository";
+            localVarRequestOptions.OperationIndex = operationIndex;
+
+
+            // make the HTTP request
+            var localVarResponse = this.Client.Delete<Object>("/repos/{repositoryId}", localVarRequestOptions, this.Configuration);
+            if (this.ExceptionFactory != null)
+            {
+                Exception _exception = this.ExceptionFactory("DeleteRepository", localVarResponse);
+                if (_exception != null)
+                {
+                    throw _exception;
+                }
+            }
+
+            return localVarResponse;
+        }
+
+        /// <summary>
+        ///  Deletes a repository
+        /// </summary>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of void</returns>
+        public async System.Threading.Tasks.Task DeleteRepositoryAsync(string repositoryId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            await DeleteRepositoryWithHttpInfoAsync(repositoryId, operationIndex, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        ///  Deletes a repository
+        /// </summary>
+        /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of ApiResponse</returns>
+        public async System.Threading.Tasks.Task<GitProviderApiClient.Client.ApiResponse<Object>> DeleteRepositoryWithHttpInfoAsync(string repositoryId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            // verify the required parameter 'repositoryId' is set
+            if (repositoryId == null)
+            {
+                throw new GitProviderApiClient.Client.ApiException(400, "Missing required parameter 'repositoryId' when calling RepositoryApi->DeleteRepository");
+            }
+
+
+            GitProviderApiClient.Client.RequestOptions localVarRequestOptions = new GitProviderApiClient.Client.RequestOptions();
+
+            string[] _contentTypes = new string[] {
+            };
+
+            // to determine the Accept header
+            string[] _accepts = new string[] {
+                "application/problem+json"
+            };
+
+            var localVarContentType = GitProviderApiClient.Client.ClientUtils.SelectHeaderContentType(_contentTypes);
+            if (localVarContentType != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Content-Type", localVarContentType);
+            }
+
+            var localVarAccept = GitProviderApiClient.Client.ClientUtils.SelectHeaderAccept(_accepts);
+            if (localVarAccept != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
+            }
+
+            localVarRequestOptions.PathParameters.Add("repositoryId", GitProviderApiClient.Client.ClientUtils.ParameterToString(repositoryId)); // path parameter
+
+            localVarRequestOptions.Operation = "RepositoryApi.DeleteRepository";
+            localVarRequestOptions.OperationIndex = operationIndex;
+
+
+            // make the HTTP request
+            var localVarResponse = await this.AsynchronousClient.DeleteAsync<Object>("/repos/{repositoryId}", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
+
+            if (this.ExceptionFactory != null)
+            {
+                Exception _exception = this.ExceptionFactory("DeleteRepository", localVarResponse);
                 if (_exception != null)
                 {
                     throw _exception;

@@ -53,8 +53,8 @@ namespace BalsamApi.Server.Models
         /// the location to a git-repository containing files that the repository will be initiated with
         /// </summary>
         /// <value>the location to a git-repository containing files that the repository will be initiated with</value>
-        [DataMember(Name="sourceLocation", EmitDefaultValue=false)]
-        public string SourceLocation { get; set; }
+        [DataMember(Name="sourceLocation", EmitDefaultValue=true)]
+        public string? SourceLocation { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
