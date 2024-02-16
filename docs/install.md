@@ -19,19 +19,20 @@ Replace `<YOUR-DOMAIN>` with your own DNS-entry
 
 ### Install and configure ArgoCD
 
-1. Install ArgoCD following the instruction at (https://argo-cd.readthedocs.io/en/stable/getting_started/)[https://argo-cd.readthedocs.io/en/stable/getting_started/]
+1. Install ArgoCD following the instruction at [https://argo-cd.readthedocs.io/en/stable/getting_started/](https://argo-cd.readthedocs.io/en/stable/getting_started/)
 2. Add an ingress to ArgoCD with the following definition
 
 ```yaml
-apiVersion: extensions/v1beta1
-kind: Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: argocd-ingress
+  name: argocd-ingress
+  namespace: argocd
 spec:
-  rules:****
-  - host: argo-cd.<YOUR-DOMAIN>
-    http:
-      paths:
+  rules:
+  - host: argo-cd.<YOUR-DOMAIN>
+    http:
+      paths:
       - backend:
           serviceName: argocd-server
           servicePort: http
@@ -43,9 +44,10 @@ spec:
 Prerequisites: To be able to get a demo functionality in keycloak you will have to create a realm named Balsam. We have prepared this for you in the realm.json file. For the helm deployment to work you will
 have to create a ConfigMap to import the realm to the keycloak installation. You do this with the following command: 
 ```bash
-kubectl create cm keycloak-realm --namespace=keycloak --from-file=realm.json
+kubectl create ns keycloak
+kubectl create cm keycloak-realm --namespace=keycloak --from-file=realm-export.json
 ```
-1. Install KeyCloak with Helm from Bitnami see (https://bitnami.com/stack/keycloak/helm)[https://bitnami.com/stack/keycloak/helm] and use the following values.yaml file:
+1. Install KeyCloak with Helm from Bitnami see [https://bitnami.com/stack/keycloak/helm](https://bitnami.com/stack/keycloak/helm) and use the following values.yaml file:
 
   ```yaml
 auth:
@@ -85,10 +87,6 @@ extraEnvVars:
 
   ```
 
-2. Sign in and verify that it is running.
-3. Add new Realm `Balsam`
-4. Create new Client `demo`
-5. 
 
 ### Install and configure GitLab
 
@@ -112,6 +110,7 @@ args:
   name_identifier_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
 ```
 ```bash
+kubectl create ns gitlab
 kubectl create secret generic gitlab-saml -n gitlab --from-file=provider=provider.yaml
 ```
 
