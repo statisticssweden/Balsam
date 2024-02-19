@@ -95,6 +95,31 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400NoRepo'    
 
+  /repos/{repositoryId}/branches/{branchId}:
+    delete:
+      tags: 
+        - Repository
+      operationId: DeleteRepositoryBranch
+      description: Deletes git branch for specified repository
+      parameters:
+        - name: repositoryId
+          in: path
+          description: The id of the repository.
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: path
+          description: The id of the branch.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/ErrorResponse400NoRepo'  
+
   /repos/{repositoryId}/branches/{branchId}/files:
     get:
       tags: 
