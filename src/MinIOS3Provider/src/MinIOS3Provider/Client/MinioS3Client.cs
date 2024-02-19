@@ -3,6 +3,8 @@ using System.Diagnostics;
 using Minio;
 using Minio.Exceptions;
 using MinIOS3Provider.Configuration;
+using Minio.DataModel;
+using System.IO;
 
 namespace MinIOS3Provider.Client
 {
@@ -283,6 +285,30 @@ namespace MinIOS3Provider.Client
 
             var finalToken = new String(stringChars);
             return finalToken;
+        }
+
+        public async Task DeleteBucket(string bucketName)
+        {
+            //https://min.io/docs/minio/linux/reference/minio-mc/mc-rb.html
+            var cmd = $"rb --force balsam/{bucketName}";
+            var i = await MC(cmd);
+
+            if (i != 0)
+            {
+                _logger.LogWarning("Could not delete bucket");
+            }
+        }
+
+        public async Task DeleteDirectory(string bucket, string directory)
+        {
+            //https://min.io/docs/minio/linux/reference/minio-mc/mc-rm.html
+            var cmd = $"rm --recursive --force balsam/{bucket}/{directory}";
+            var i = await MC(cmd);
+
+            if (i != 0)
+            {
+                _logger.LogWarning("Could not delete bucket");
+            }
         }
     }
 }
