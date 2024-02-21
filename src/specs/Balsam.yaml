@@ -337,26 +337,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeLibraryListResponse'
-    post:
-      tags: 
-        - KnowledgeLibrary
-      operationId: CreateKnowledgeLibrary
-      description: Create a new connection to a knowledge library
-      requestBody:
-        description: Definition of a new Knowledge library connection
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateKnowledgeLibraryRequest'                 
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/KnowledgeLibraryCreatedResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse400'
+    # post:
+    #   tags: 
+    #     - KnowledgeLibrary
+    #   operationId: CreateKnowledgeLibrary
+    #   description: Create a new connection to a knowledge library
+    #   requestBody:
+    #     description: Definition of a new Knowledge library connection
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/CreateKnowledgeLibraryRequest'                 
+    #   responses:
+    #     '200':
+    #       description: Success
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/KnowledgeLibraryCreatedResponse'
+    #     '400':
+    #       $ref: '#/components/responses/ErrorResponse400'
 
   /knowledge-libraries/{libraryId}:
     delete:
@@ -524,19 +524,19 @@ components:
         url:
           type: string
           description: Url to the workspace
-    KnowledgeLibraryCreatedResponse:
-      type: object
-      description: Connection to a knowledge library created response
-      required:
-        - "id"
-        - "name"
-      properties:
-        id:
-          type: string
-          description: The identifier
-        name:
-          type: string
-          description: The name of the knowledge library
+    # KnowledgeLibraryCreatedResponse:
+    #   type: object
+    #   description: Connection to a knowledge library created response
+    #   required:
+    #     - "id"
+    #     - "name"
+    #   properties:
+    #     id:
+    #       type: string
+    #       description: The identifier
+    #     name:
+    #       type: string
+    #       description: The name of the knowledge library
 
     FileListResponse:
       type: array
