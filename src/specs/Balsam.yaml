@@ -183,6 +183,42 @@ paths:
                 $ref: '#/components/schemas/FileListResponse'
         '400':
           $ref: '#/components/responses/ErrorResponse400'
+    put: 
+      tags: 
+        - Project
+      operationId: CopyFromKnowleadgeLibrary
+      description: Copy files from a knowledge library to a branch
+      parameters:
+        - name: projectId
+          in: path
+          description: the identity of the project.
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: path
+          description: The identity of the branch.
+          required: true
+          schema:
+            type: string
+        - name: libraryId
+          in: query
+          description: id for the knowledge library
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: query
+          description: id for the file/drectory
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
 
   /projects/{projectId}/branches/{branchId}/files/{fileId}:
     get:
@@ -392,7 +428,7 @@ paths:
                 format: binary
         '400':
           $ref: '#/components/responses/ErrorResponse400'
-                
+
     # post:
     #   tags: 
     #     - KnowledgeLibrary
