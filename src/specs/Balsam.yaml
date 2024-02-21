@@ -359,7 +359,40 @@ paths:
                 $ref: '#/components/schemas/FileListResponse'
         '400':
           $ref: '#/components/responses/ErrorResponse400'
-          
+
+  /knowledge-libraries/{libraryId}/files/{fileId}:
+    get:
+      tags: 
+        - KnowledgeLibrary
+      operationId: ListKnowledgeLibaryFiles
+      description: List all files for a knowledge library
+      parameters:
+        - name: libraryId
+          in: path
+          description: id for the knowledge library
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          description: id for the file
+          required: true
+          schema:
+            type: string  
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string          
+            "*/*":
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+                
     # post:
     #   tags: 
     #     - KnowledgeLibrary
