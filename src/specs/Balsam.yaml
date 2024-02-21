@@ -569,6 +569,7 @@ components:
             - Folder
         contentUrl:
           type: string
+          nullable: true
           description: Url to the raw content of the file
 
     WorkspaceListResponse:
