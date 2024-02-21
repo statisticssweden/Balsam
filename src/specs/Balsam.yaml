@@ -358,24 +358,24 @@ paths:
     #     '400':
     #       $ref: '#/components/responses/ErrorResponse400'
 
-  /knowledge-libraries/{libraryId}:
-    delete:
-      tags: 
-        - KnowledgeLibrary
-      operationId: DeleteKnowledgeLibary
-      description: Removes knowledge library
-      parameters:
-        - name: libraryId
-          in: path
-          description: id for the knowledge library
-          required: true
-          schema:
-            type: string  
-      responses:
-        '200':
-          description: Success
-        '400':
-          $ref: '#/components/responses/ErrorResponse400'
+  # /knowledge-libraries/{libraryId}:
+  #   delete:
+  #     tags: 
+  #       - KnowledgeLibrary
+  #     operationId: DeleteKnowledgeLibary
+  #     description: Removes knowledge library
+  #     parameters:
+  #       - name: libraryId
+  #         in: path
+  #         description: id for the knowledge library
+  #         required: true
+  #         schema:
+  #           type: string  
+  #     responses:
+  #       '200':
+  #         description: Success
+  #       '400':
+  #         $ref: '#/components/responses/ErrorResponse400'
 
 components:
   schemas:
