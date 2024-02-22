@@ -113,7 +113,7 @@ All URIs are relative to *http://git-provider.balsam-system.svc.cluster.local/ap
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*RepositoryApi* | [**AddResourceFiles**](docs/RepositoryApi.md#addresourcefiles) | **PUT** /repos/{repositoryId}/branches/{branchId}/resource-files | 
+*RepositoryApi* | [**AddResourceFiles**](docs/RepositoryApi.md#addresourcefiles) | **PUT** /repos/{repositoryId}/branches/{branchId}/resources | 
 *RepositoryApi* | [**CreateBranch**](docs/RepositoryApi.md#createbranch) | **POST** /repos/{repositoryId}/branches | 
 *RepositoryApi* | [**CreateRepository**](docs/RepositoryApi.md#createrepository) | **POST** /repos | 
 *RepositoryApi* | [**DeleteRepository**](docs/RepositoryApi.md#deleterepository) | **DELETE** /repos/{repositoryId} | 

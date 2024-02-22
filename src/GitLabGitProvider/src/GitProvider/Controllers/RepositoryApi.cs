@@ -39,7 +39,7 @@ namespace GitProvider.Controllers
         /// <response code="200">Success</response>
         /// <response code="400">Error respsone for 400</response>
         [HttpPut]
-        [Route("/api/v1/repos/{repositoryId}/branches/{branchId}/resource-files")]
+        [Route("/api/v1/repos/{repositoryId}/branches/{branchId}/resources")]
         [Consumes("application/zip")]
         [ValidateModelState]
         [SwaggerOperation("AddResourceFiles")]

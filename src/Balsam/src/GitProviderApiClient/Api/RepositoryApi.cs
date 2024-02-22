@@ -588,7 +588,7 @@ namespace GitProviderApiClient.Api
 
 
             // make the HTTP request
-            var localVarResponse = this.Client.Put<Object>("/repos/{repositoryId}/branches/{branchId}/resource-files", localVarRequestOptions, this.Configuration);
+            var localVarResponse = this.Client.Put<Object>("/repos/{repositoryId}/branches/{branchId}/resources", localVarRequestOptions, this.Configuration);
             if (this.ExceptionFactory != null)
             {
                 Exception _exception = this.ExceptionFactory("AddResourceFiles", localVarResponse);
@@ -673,7 +673,7 @@ namespace GitProviderApiClient.Api
 
 
             // make the HTTP request
-            var localVarResponse = await this.AsynchronousClient.PutAsync<Object>("/repos/{repositoryId}/branches/{branchId}/resource-files", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
+            var localVarResponse = await this.AsynchronousClient.PutAsync<Object>("/repos/{repositoryId}/branches/{branchId}/resources", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
 
             if (this.ExceptionFactory != null)
             {

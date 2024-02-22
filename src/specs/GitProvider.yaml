@@ -195,7 +195,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse400'
 
 
-  /repos/{repositoryId}/branches/{branchId}/resource-files:
+  /repos/{repositoryId}/branches/{branchId}/resources:
     put:
       tags: 
         - Repository
