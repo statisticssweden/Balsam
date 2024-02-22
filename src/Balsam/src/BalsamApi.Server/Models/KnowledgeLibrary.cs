@@ -46,8 +46,23 @@ namespace BalsamApi.Server.Models
         /// Description of the knowledge library
         /// </summary>
         /// <value>Description of the knowledge library</value>
-        [DataMember(Name="description", EmitDefaultValue=false)]
-        public string Description { get; set; }
+        [DataMember(Name="description", EmitDefaultValue=true)]
+        public string? Description { get; set; }
+
+        /// <summary>
+        /// Url to the repository that one can use to clone the library
+        /// </summary>
+        /// <value>Url to the repository that one can use to clone the library</value>
+        [Required]
+        [DataMember(Name="repositoryUrl", EmitDefaultValue=false)]
+        public string RepositoryUrl { get; set; }
+
+        /// <summary>
+        /// Friendly url to the repository that one can use to browse the content of the repository
+        /// </summary>
+        /// <value>Friendly url to the repository that one can use to browse the content of the repository</value>
+        [DataMember(Name="repositoryFriendlyUrl", EmitDefaultValue=true)]
+        public string? RepositoryFriendlyUrl { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -60,6 +75,8 @@ namespace BalsamApi.Server.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  RepositoryUrl: ").Append(RepositoryUrl).Append("\n");
+            sb.Append("  RepositoryFriendlyUrl: ").Append(RepositoryFriendlyUrl).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -110,6 +127,16 @@ namespace BalsamApi.Server.Models
                     Description == other.Description ||
                     Description != null &&
                     Description.Equals(other.Description)
+                ) && 
+                (
+                    RepositoryUrl == other.RepositoryUrl ||
+                    RepositoryUrl != null &&
+                    RepositoryUrl.Equals(other.RepositoryUrl)
+                ) && 
+                (
+                    RepositoryFriendlyUrl == other.RepositoryFriendlyUrl ||
+                    RepositoryFriendlyUrl != null &&
+                    RepositoryFriendlyUrl.Equals(other.RepositoryFriendlyUrl)
                 );
         }
 
@@ -129,6 +156,10 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + Name.GetHashCode();
                     if (Description != null)
                     hashCode = hashCode * 59 + Description.GetHashCode();
+                    if (RepositoryUrl != null)
+                    hashCode = hashCode * 59 + RepositoryUrl.GetHashCode();
+                    if (RepositoryFriendlyUrl != null)
+                    hashCode = hashCode * 59 + RepositoryFriendlyUrl.GetHashCode();
                 return hashCode;
             }
         }

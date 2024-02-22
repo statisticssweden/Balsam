@@ -259,5 +259,10 @@ namespace Balsam.Api.Controllers
 
             return Ok();
         }
+
+        public override Task<IActionResult> CopyFromKnowleadgeLibrary([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId, [FromQuery(Name = "libraryId"), Required] string libraryId, [FromQuery(Name = "fileId"), Required] string fileId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

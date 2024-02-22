@@ -194,6 +194,40 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
+
+  /repos/{repositoryId}/branches/{branchId}/resources:
+    put:
+      tags: 
+        - Repository
+      operationId: AddResourceFiles
+      description: Adds resource files to a branch in a repository in the resource folder
+   
+      parameters:
+        - name: repositoryId
+          in: path
+          description: The id of the repository.
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: path
+          description: The id of the branch.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: zip file with resource files
+        content:
+          application/zip:
+            schema:
+              type: string
+              format: binary  
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/ErrorResponse400NoRepo' 
+
   /users/{id}/PAT:
     post:
       tags: 

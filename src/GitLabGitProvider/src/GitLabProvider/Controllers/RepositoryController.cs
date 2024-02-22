@@ -142,5 +142,10 @@ namespace GitLabProvider.Controllers
 
             return BadRequest(new Problem { Type = "Could not delete repository brach ", Detail = "Could not delete repository branch internal error" });
         }
+
+        public override Task<IActionResult> AddResourceFiles([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromRoute(Name = "branchId"), Required] string branchId, [FromBody] Stream? body)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

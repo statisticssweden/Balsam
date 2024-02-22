@@ -183,6 +183,42 @@ paths:
                 $ref: '#/components/schemas/FileListResponse'
         '400':
           $ref: '#/components/responses/ErrorResponse400'
+    put: 
+      tags: 
+        - Project
+      operationId: CopyFromKnowleadgeLibrary
+      description: Copy files from a knowledge library to a branch
+      parameters:
+        - name: projectId
+          in: path
+          description: the identity of the project.
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: path
+          description: The identity of the branch.
+          required: true
+          schema:
+            type: string
+        - name: libraryId
+          in: query
+          description: id for the knowledge library
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: query
+          description: id for the file/drectory
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
 
   /projects/{projectId}/branches/{branchId}/files/{fileId}:
     get:
@@ -337,33 +373,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/KnowledgeLibraryListResponse'
-    post:
+  /knowledge-libraries/{libraryId}/files:
+    get:
       tags: 
         - KnowledgeLibrary
-      operationId: CreateKnowledgeLibrary
-      description: Create a new connection to a knowledge library
-      requestBody:
-        description: Definition of a new Knowledge library connection
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateKnowledgeLibraryRequest'                 
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/KnowledgeLibraryCreatedResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse400'
-
-  /knowledge-libraries/{libraryId}:
-    delete:
-      tags: 
-        - KnowledgeLibrary
-      operationId: DeleteKnowledgeLibary
-      description: Removes knowledge library
+      operationId: ListKnowledgeLibaryFiles
+      description: List all files for a knowledge library
       parameters:
         - name: libraryId
           in: path
@@ -374,8 +389,85 @@ paths:
       responses:
         '200':
           description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileListResponse'
         '400':
           $ref: '#/components/responses/ErrorResponse400'
+
+  /knowledge-libraries/{libraryId}/files/{fileId}:
+    get:
+      tags: 
+        - KnowledgeLibrary
+      operationId: ListKnowledgeLibaryFileContent
+      description: List all files for a knowledge library
+      parameters:
+        - name: libraryId
+          in: path
+          description: id for the knowledge library
+          required: true
+          schema:
+            type: string
+        - name: fileId
+          in: path
+          description: id for the file
+          required: true
+          schema:
+            type: string  
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: string          
+            "*/*":
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
+    # post:
+    #   tags: 
+    #     - KnowledgeLibrary
+    #   operationId: CreateKnowledgeLibrary
+    #   description: Create a new connection to a knowledge library
+    #   requestBody:
+    #     description: Definition of a new Knowledge library connection
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/CreateKnowledgeLibraryRequest'                 
+    #   responses:
+    #     '200':
+    #       description: Success
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/KnowledgeLibraryCreatedResponse'
+    #     '400':
+    #       $ref: '#/components/responses/ErrorResponse400'
+
+  # /knowledge-libraries/{libraryId}:
+  #   delete:
+  #     tags: 
+  #       - KnowledgeLibrary
+  #     operationId: DeleteKnowledgeLibary
+  #     description: Removes knowledge library
+  #     parameters:
+  #       - name: libraryId
+  #         in: path
+  #         description: id for the knowledge library
+  #         required: true
+  #         schema:
+  #           type: string  
+  #     responses:
+  #       '200':
+  #         description: Success
+  #       '400':
+  #         $ref: '#/components/responses/ErrorResponse400'
 
 components:
   schemas:
@@ -528,19 +620,19 @@ components:
         url:
           type: string
           description: Url to the workspace
-    KnowledgeLibraryCreatedResponse:
-      type: object
-      description: Connection to a knowledge library created response
-      required:
-        - "id"
-        - "name"
-      properties:
-        id:
-          type: string
-          description: The identifier
-        name:
-          type: string
-          description: The name of the knowledge library
+    # KnowledgeLibraryCreatedResponse:
+    #   type: object
+    #   description: Connection to a knowledge library created response
+    #   required:
+    #     - "id"
+    #     - "name"
+    #   properties:
+    #     id:
+    #       type: string
+    #       description: The identifier
+    #     name:
+    #       type: string
+    #       description: The name of the knowledge library
 
     FileListResponse:
       type: array
@@ -573,6 +665,7 @@ components:
             - Folder
         contentUrl:
           type: string
+          nullable: true
           description: Url to the raw content of the file
 
     WorkspaceListResponse:
@@ -597,6 +690,7 @@ components:
       required:
         - "id"
         - "name"
+        - "repositoryUrl"
       properties:
         id:
           type: string
@@ -606,7 +700,15 @@ components:
           description: The name
         description:
           type: string
+          nullable: true
           description: Description of the knowledge library
+        repositoryUrl:
+          type: string
+          description: Url to the repository that one can use to clone the library
+        repositoryFriendlyUrl:
+          type: string
+          nullable: true
+          description: Friendly url to the repository that one can use to browse the content of the repository
 
     Template:
       type: object
