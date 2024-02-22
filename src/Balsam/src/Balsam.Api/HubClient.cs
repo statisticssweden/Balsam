@@ -739,6 +739,25 @@ namespace Balsam.Api
 
         }
 
+        public async Task<List<KnowledgeLibrary>> ListKnowledgelibraries()
+        {
+            var knowledgeLibraries = new List<KnowledgeLibrary>();
+            var kbPath = Path.Combine(_hubRepositoryClient.Path, "kb");
+
+            foreach (var knowledgelibraryFile in Directory.GetFiles(kbPath))
+            {
+                var knowledgeLibrary = JsonConvert.DeserializeObject<KnowledgeLibrary>(await File.ReadAllTextAsync(knowledgelibraryFile));
+                if (knowledgeLibrary != null)
+                {
+                    knowledgeLibraries.Add(knowledgeLibrary);
+                }
+                else
+                {
+                    _logger.LogWarning($"Could not parse properties file for knowledgelibrary {knowledgelibraryFile}");
+                }
+            }
+            return knowledgeLibraries;
+        }
         internal async Task DeleteProject(string projectId)
         {
             var project = await GetProject(projectId);
