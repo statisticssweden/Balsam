@@ -65,6 +65,35 @@ namespace BalsamApi.Server.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Deletes branch of project</remarks>
+        /// <param name="projectId">the identity of the project.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpDelete]
+        [Route("/api/v1/projects/{projectId}/branches/{branchId}")]
+        [ValidateModelState]
+        [SwaggerOperation("DeleteBranch")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> DeleteBranch([FromRoute (Name = "projectId")][Required]string projectId, [FromRoute (Name = "branchId")][Required]string branchId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Deletes a project</remarks>
+        /// <param name="projectId">the identity of the project.</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpDelete]
+        [Route("/api/v1/projects/{projectId}")]
+        [ValidateModelState]
+        [SwaggerOperation("DeleteProject")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> DeleteProject([FromRoute (Name = "projectId")][Required]string projectId);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Get file contents</remarks>
         /// <param name="projectId">the identity of the project.</param>
         /// <param name="branchId">The identity of the branch.</param>

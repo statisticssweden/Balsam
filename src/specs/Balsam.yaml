@@ -487,6 +487,10 @@ components:
         branchName:
           type: string
           description: Name of the default branch
+        sourceLocation:
+          type: string
+          nullable: true
+          description: the location to a git-repository containing files that the repository will be initiated with
 
     CreateBranchRequest:
       type: object

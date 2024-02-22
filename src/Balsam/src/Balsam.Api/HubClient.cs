@@ -15,6 +15,7 @@ using HandlebarsDotNet;
 using File = System.IO.File;
 using Microsoft.AspNetCore.Mvc;
 using BalsamApi.Server.Models;
+using LibGit2Sharp;
 
 namespace Balsam.Api
 {
@@ -155,7 +156,7 @@ namespace Balsam.Api
             return branches;
         }
 
-        private async Task<BalsamBranch?> GetBranch(string projectId, string branchId)
+        public async Task<BalsamBranch?> GetBranch(string projectId, string branchId)
         {
             var propsFile = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId, "properties.json");
 
@@ -178,13 +179,13 @@ namespace Balsam.Api
             return true;
         }
 
-        public async Task<BalsamProject?> CreateProject(string preferredName, string description, string defaultBranchName, string username)
+        public async Task<BalsamProject?> CreateProject(string preferredName, string description, string defaultBranchName, string username, string? sourceLocation)
         {
             //Check if there is a program with the same name.
-            _logger.LogDebug("Chack for duplicate names");
+            _logger.LogDebug("Check for duplicate names");
             if (await ProjectExists(preferredName))
             {
-                _logger.LogInformation($"Could not create project {preferredName}, due to name dublication");
+                _logger.LogInformation($"Could not create project {preferredName}, due to name duplication");
                 return null;
             }
 
@@ -219,7 +220,7 @@ namespace Balsam.Api
                 _logger.LogDebug($"Begin call Git");
                 var gitData = await _repositoryApi.CreateRepositoryAsync(new CreateRepositoryRequest(preferredName, description, defaultBranchName));
                 defaultBranchName = gitData.DefaultBranchName;
-                project.Git = new GitData() { Id = gitData.Id, Name = gitData.Name, Path = gitData.Path };
+                project.Git = new GitData() { Id = gitData.Id, Name = gitData.Name, Path = gitData.Path, SourceLocation = sourceLocation };
                 _logger.LogInformation($"Git repository {project.Git.Name} created");
             }
 
@@ -703,5 +704,95 @@ namespace Balsam.Api
             return workspaces;
         }
 
+        public async Task DeleteBranch(string projectId, string branchId)
+        {
+            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
+
+            var project = await GetProject(projectId);
+            var branch = await GetBranch(projectId, branchId);
+            
+            //Asure that the id are correct
+            if (project == null || branch == null) return;
+
+
+            if (_s3.Enabled)
+            {
+                try
+                { 
+                    await _s3Client.DeleteFolderAsync(project.S3?.BucketName??"", branch.Name);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete s3 folder");
+                }
+            }
+
+            _hubRepositoryClient.PullChanges();
+
+            if (Directory.Exists(branchPath))
+            {
+                //EmptyDirectory(branchPath);
+                Directory.Delete(branchPath, true);
+            }
+
+            _hubRepositoryClient.PersistChanges($"Branch {branch.Name} deleted for project {project.Name}");
+
+        }
+
+        internal async Task DeleteProject(string projectId)
+        {
+            var project = await GetProject(projectId);
+
+            if (project == null)
+            {
+                return;
+            }
+
+            if (_authentication.Enabled)
+            {
+                try
+                {
+                    await _oidcClient.DeleteGroupAsync(project.Oidc?.GroupId ?? "");
+                } catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete oidc group");
+                }
+            }
+
+            if (_git.Enabled)
+            {
+                try
+                {
+                    await _repositoryApi.DeleteRepositoryAsync(project.Git?.Id ?? "");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete git repository");
+                }
+            }
+
+            if (_s3.Enabled)
+            {
+                try
+                {
+                    await _s3Client.DeleteBucketAsync(project.S3?.BucketName ?? "");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete s3 bucket");
+                }
+            }
+
+            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId);
+
+            _hubRepositoryClient.PullChanges();
+
+            if (Directory.Exists(branchPath))
+            {
+                Directory.Delete(branchPath, true);
+            }
+
+            _hubRepositoryClient.PersistChanges($"Project {project.Name} deleted");
+        }
     }
 }

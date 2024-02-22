@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
+using LibGit2Sharp;
 
 namespace Balsam.Api.Controllers
 {
@@ -69,7 +70,7 @@ namespace Balsam.Api.Controllers
             _logger.LogInformation($"The user is {username}");
             try
             {
-                BalsamProject? project = await _hubClient.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName, username);
+                BalsamProject? project = await _hubClient.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName, username, createProjectRequest.SourceLocation);
 
                 if (project == null)
                 {
@@ -133,7 +134,7 @@ namespace Balsam.Api.Controllers
                 evt.Name = balsamProject.Name;
                 evt.Description = balsamProject.Description;
                 evt.GitUrl = balsamProject.Git is null ? "" : balsamProject.Git.Path;
-                evt.Branches = balsamProject.Branches.Select(b => new Branch() { Id = b.Id, Description = b.Description, Name = b.Name, IsDefault = b.IsDefault }).ToList();
+                evt.Branches = balsamProject.Branches.Select(b => new BalsamApi.Server.Models.Branch() { Id = b.Id, Description = b.Description, Name = b.Name, IsDefault = b.IsDefault }).ToList();
                 evt.AuthGroup = balsamProject.Oidc.GroupName;
 
                 return Ok(evt);
@@ -180,9 +181,9 @@ namespace Balsam.Api.Controllers
             }).OrderBy(p => p.Name).ToList();
         }
 
-        private List<Branch> MapBranches(List<BalsamBranch> branches)
+        private List<BalsamApi.Server.Models.Branch> MapBranches(List<BalsamBranch> branches)
         {
-            return branches.Select(branch => new Branch()
+            return branches.Select(branch => new BalsamApi.Server.Models.Branch()
             {
                 Id = branch.Id,
                 Description = branch.Description,
@@ -203,6 +204,60 @@ namespace Balsam.Api.Controllers
 
             return BadRequest(new Problem() { Status = 404, Type = "file not found", Detail = "Can not find the file" });
 
+        }
+
+        public async override Task<IActionResult> DeleteBranch([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId)
+        {
+            try
+            {
+                var project = await _hubClient.GetProject(projectId);
+                var branch = await _hubClient.GetBranch(projectId, branchId);
+
+                if (project is null || branch is null)
+                {
+                    return BadRequest(new Problem() { Status = 404, Type = "Project/branch not found", Detail = "Can not find the project/branch" });
+
+                }
+                else if (User.Claims.FirstOrDefault(x => x.Type == "groups" && x.Value == project.Oidc?.GroupName) is null)
+                {
+                    return Unauthorized(new Problem() { Status = 401, Type = "Unauthorized", Detail = "User is not authorized to delete the branch" });
+                }
+
+                await _hubClient.DeleteBranch(projectId, branchId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not delete branch");
+                return BadRequest(new Problem() { Status = 400, Type = "Could not delete branch", Detail = "Could not delete branch, internal error" });
+            }
+
+            return Ok();
+        }
+
+        public async override Task<IActionResult> DeleteProject([FromRoute(Name = "projectId"), Required] string projectId)
+        {
+            try
+            {
+                var project = await _hubClient.GetProject(projectId);
+
+                if (project is null )
+                {
+                    return BadRequest(new Problem() { Status = 404, Type = "Project not found", Detail = "Can not find the project" });
+                    
+                } else if (User.Claims.FirstOrDefault(x => x.Type == "groups" && x.Value == project.Oidc?.GroupName) is null)
+                {
+                    return Unauthorized(new Problem() { Status = 401, Type = "Unauthorized", Detail = "User is not authorized to delete the project" });
+                }
+
+                await _hubClient.DeleteProject(projectId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not delete project");
+                return BadRequest(new Problem() { Status = 400, Type = "Could not delete project", Detail = "Could not delete project, internal error" });
+            }
+
+            return Ok();
         }
     }
 }
