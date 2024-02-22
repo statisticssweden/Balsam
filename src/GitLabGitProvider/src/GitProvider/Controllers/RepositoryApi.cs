@@ -32,6 +32,23 @@ namespace GitProvider.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Adds resource files to a branch in a repository in the resource folder</remarks>
+        /// <param name="repositoryId">The id of the repository.</param>
+        /// <param name="branchId">The id of the branch.</param>
+        /// <param name="body">zip file with resource files</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpPut]
+        [Route("/api/v1/repos/{repositoryId}/branches/{branchId}/resource-files")]
+        [Consumes("application/zip")]
+        [ValidateModelState]
+        [SwaggerOperation("AddResourceFiles")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> AddResourceFiles([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromRoute (Name = "branchId")][Required]string branchId, [FromBody]System.IO.Stream? body);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Create a branch from main branch in a existing repository</remarks>
         /// <param name="repositoryId">The name of the repository where the branch should be created.</param>
         /// <param name="createBranchRequest">Definition of a new repository</param>
