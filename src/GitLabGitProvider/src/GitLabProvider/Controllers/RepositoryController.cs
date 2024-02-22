@@ -106,5 +106,41 @@ namespace GitLabProvider.Controllers
 
             return name;
         }
+
+        public async override Task<IActionResult> DeleteRepository([FromRoute(Name = "repositoryId"), Required] string repositoryId)
+        {
+            try
+            {
+                bool deleted = await _gitLabClient.DeleteRepository(repositoryId);
+                if (deleted)
+                {
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not delete repository");
+            }
+
+            return BadRequest(new Problem { Type = "Could not delete repository", Detail = "Could not delete repository internal error" });
+        }
+
+        public override async Task<IActionResult> DeleteRepositoryBranch([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromRoute(Name = "branchId"), Required] string branchId)
+        {
+            try
+            {
+                bool deleted = await _gitLabClient.DeleteBranch(repositoryId, branchId);
+                if (deleted)
+                {
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not delete repository branch");
+            }
+
+            return BadRequest(new Problem { Type = "Could not delete repository brach ", Detail = "Could not delete repository branch internal error" });
+        }
     }
 }

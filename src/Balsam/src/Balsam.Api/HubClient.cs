@@ -156,7 +156,7 @@ namespace Balsam.Api
             return branches;
         }
 
-        private async Task<BalsamBranch?> GetBranch(string projectId, string branchId)
+        public async Task<BalsamBranch?> GetBranch(string projectId, string branchId)
         {
             var propsFile = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId, "properties.json");
 

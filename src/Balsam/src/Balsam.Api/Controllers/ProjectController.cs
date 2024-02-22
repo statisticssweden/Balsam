@@ -210,6 +210,19 @@ namespace Balsam.Api.Controllers
         {
             try
             {
+                var project = await _hubClient.GetProject(projectId);
+                var branch = await _hubClient.GetBranch(projectId, branchId);
+
+                if (project is null || branch is null)
+                {
+                    return BadRequest(new Problem() { Status = 404, Type = "Project/branch not found", Detail = "Can not find the project/branch" });
+
+                }
+                else if (User.Claims.FirstOrDefault(x => x.Type == "groups" && x.Value == project.Oidc?.GroupName) is null)
+                {
+                    return Unauthorized(new Problem() { Status = 401, Type = "Unauthorized", Detail = "User is not authorized to delete the branch" });
+                }
+
                 await _hubClient.DeleteBranch(projectId, branchId);
             }
             catch (Exception ex)
@@ -225,6 +238,17 @@ namespace Balsam.Api.Controllers
         {
             try
             {
+                var project = await _hubClient.GetProject(projectId);
+
+                if (project is null )
+                {
+                    return BadRequest(new Problem() { Status = 404, Type = "Project not found", Detail = "Can not find the project" });
+                    
+                } else if (User.Claims.FirstOrDefault(x => x.Type == "groups" && x.Value == project.Oidc?.GroupName) is null)
+                {
+                    return Unauthorized(new Problem() { Status = 401, Type = "Unauthorized", Detail = "User is not authorized to delete the project" });
+                }
+
                 await _hubClient.DeleteProject(projectId);
             }
             catch (Exception ex)
