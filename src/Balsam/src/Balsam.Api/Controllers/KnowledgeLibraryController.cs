@@ -13,9 +13,37 @@ namespace Balsam.Api.Controllers
             throw new NotImplementedException();
         }
 
-        public override Task<IActionResult> ListKnowledgeLibaryFileContent([FromRoute(Name = "libraryId"), Required] string libraryId, [FromRoute(Name = "fileId"), Required] string fileId)
+        public async override Task<IActionResult> ListKnowledgeLibaryFileContent([FromRoute(Name = "libraryId"), Required] string libraryId, [FromRoute(Name = "fileId"), Required] string fileId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //TODO Ensure the file exists
+                string filePath = string.Empty;
+                //filePath = KnowledgeLibraryClient.GetRepositoryFilePath(libraryId, fileId);
+
+                // Open the file
+                var stream = System.IO.File.OpenRead(filePath);
+
+                // Get the file extension
+                var extension = System.IO.Path.GetExtension(filePath);
+
+                // Determine the content type
+                var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+                if (!provider.TryGetContentType(fileId, out var contentType))
+                {
+                    contentType = "application/octet-stream";
+                }
+
+                Response.Headers.Add("content-disposition", "inline");
+
+                // Return the file stream
+                return File(stream, contentType);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception here
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         public override Task<IActionResult> ListKnowledgeLibaryFiles([FromRoute(Name = "libraryId"), Required] string libraryId)

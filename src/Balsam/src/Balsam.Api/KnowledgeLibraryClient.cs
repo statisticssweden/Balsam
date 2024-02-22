@@ -1,5 +1,7 @@
 ﻿using BalsamApi.Server.Models;
 using LibGit2Sharp;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Balsam.Api
 {
@@ -16,6 +18,26 @@ namespace Balsam.Api
             AddContents(localRepositoryPath, localRepositoryPath.Length + 1, repositoryContents);
 
             return repositoryContents;
+        }
+
+        public string GetRepositoryFilePath(string repositoryId, string fileId)
+        {
+            string relativePath = Encoding.UTF8.GetString(Convert.FromBase64String(fileId));
+
+            if (relativePath.Contains(".."))
+            {
+                throw new ArgumentException("Invalid file id");
+            }
+
+            string filePath = Path.Combine(Path.GetTempPath(), "kb", repositoryId, relativePath);
+
+            if (!File.Exists(filePath))
+            {
+                throw new ArgumentException("File not found");
+            }
+
+            return filePath;
+
         }
 
         private Repository GetOrCreateRepository(string localRepositoryPath, string repositoryUrl)
@@ -55,7 +77,7 @@ namespace Balsam.Api
             var repoFile = new RepoFile();
             repoFile.Path = path.Substring(relativePathPosition);
             repoFile.Name = Path.GetFileName(path);
-            repoFile.Id = Guid.NewGuid().ToString();
+            repoFile.Id = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(repoFile.Path));
             repoFile.Type = RepoFile.TypeEnum.FileEnum;
             return repoFile;
         }
@@ -65,7 +87,7 @@ namespace Balsam.Api
             var repoFile = new RepoFile();
             repoFile.Path = path.Substring(relativePathPosition);
             repoFile.Name = Path.GetFileName(path);
-            repoFile.Id = Guid.NewGuid().ToString();
+            repoFile.Id = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(repoFile.Path)); 
             repoFile.Type = RepoFile.TypeEnum.FolderEnum;
             return repoFile;
         }
