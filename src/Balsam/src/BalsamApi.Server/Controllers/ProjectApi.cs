@@ -32,6 +32,23 @@ namespace BalsamApi.Server.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Copy files from a knowledge library to a branch</remarks>
+        /// <param name="projectId">the identity of the project.</param>
+        /// <param name="branchId">The identity of the branch.</param>
+        /// <param name="libraryId">id for the knowledge library</param>
+        /// <param name="fileId">id for the file/drectory</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpPut]
+        [Route("/api/v1/projects/{projectId}/branches/{branchId}/files")]
+        [ValidateModelState]
+        [SwaggerOperation("CopyFromKnowleadgeLibrary")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> CopyFromKnowleadgeLibrary([FromRoute (Name = "projectId")][Required]string projectId, [FromRoute (Name = "branchId")][Required]string branchId, [FromQuery (Name = "libraryId")][Required()]string libraryId, [FromQuery (Name = "fileId")][Required()]string fileId);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>Create a new branch for a project</remarks>
         /// <param name="projectId">the identity of the project.</param>
         /// <param name="createBranchRequest">Definition of a new branch</param>

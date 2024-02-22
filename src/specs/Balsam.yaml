@@ -400,7 +400,7 @@ paths:
     get:
       tags: 
         - KnowledgeLibrary
-      operationId: ListKnowledgeLibaryFiles
+      operationId: ListKnowledgeLibaryFileContent
       description: List all files for a knowledge library
       parameters:
         - name: libraryId
