@@ -1,8 +1,4 @@
-﻿using Balsam.Api.Models;
-using BalsamApi.Server.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace Balsam.Api.Controllers
@@ -24,7 +20,7 @@ namespace Balsam.Api.Controllers
             _logger.LogInformation("calling endpoint: Listing Knowledgelibraries");
             try
             {
-                var knowledgeLibraries = await _hubClient.ListKnowledgelibraries();
+                var knowledgeLibraries = await _hubClient.ListKnowledgeLibraries();
                 return Ok(knowledgeLibraries);
             }
             catch(Exception ex)

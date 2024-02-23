@@ -739,7 +739,7 @@ namespace Balsam.Api
 
         }
 
-        public async Task<List<KnowledgeLibrary>> ListKnowledgelibraries()
+        public async Task<List<KnowledgeLibrary>> ListKnowledgeLibraries()
         {
             var knowledgeLibraries = new List<KnowledgeLibrary>();
             var kbPath = Path.Combine(_hubRepositoryClient.Path, "kb");
@@ -759,7 +759,7 @@ namespace Balsam.Api
                 }
                 catch(Exception ex)
                 {
-                    _logger.LogError($"Error with deserilization of file, error message: {ex.Message}", ex);
+                    _logger.LogError($"Error with deserialization of file, error message: {ex.Message}", ex);
                 }
             }
             return knowledgeLibraries;
