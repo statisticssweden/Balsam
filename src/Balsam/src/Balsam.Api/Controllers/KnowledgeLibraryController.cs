@@ -1,5 +1,4 @@
-﻿using Balsam.Api.Models;
-using BalsamApi.Server.Models;
+﻿using BalsamApi.Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
@@ -13,16 +12,26 @@ namespace Balsam.Api.Controllers
         private readonly HubClient _hubClient;
         private readonly ILogger<ProjectController> _logger;
         private readonly KnowledgeLibraryClient _knowledgeLibraryClient;
-        KnowledgeLibraryController(ILogger<ProjectController> logger, HubClient hubClient, KnowledgeLibraryClient knowledgeLibraryClient)
+
+        public KnowledgeLibraryController(ILogger<ProjectController> logger, HubClient hubClient, KnowledgeLibraryClient knowledgeLibraryClient)
         {
             _hubClient = hubClient;
             _logger = logger;
             _knowledgeLibraryClient = knowledgeLibraryClient;
         }
-
-        public override Task<IActionResult> ListKnowledgeLibaries()
+        public async override Task<IActionResult> ListKnowledgeLibaries() //A. Implementera
         {
-            throw new NotImplementedException();
+            _logger.LogInformation("calling endpoint: Listing Knowledgelibraries");
+            try
+            {
+                var knowledgeLibraries = await _hubClient.ListKnowledgeLibraries();
+                return Ok(knowledgeLibraries);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error listing knowledgelibraries");
+                return BadRequest(ex);
+            }
         }
 
         public async override Task<IActionResult> ListKnowledgeLibaryFileContent([FromRoute(Name = "libraryId"), Required] string libraryId, [FromRoute(Name = "fileId"), Required] string fileId)
