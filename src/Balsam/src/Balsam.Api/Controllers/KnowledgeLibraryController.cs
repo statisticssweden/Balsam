@@ -62,6 +62,7 @@ namespace Balsam.Api.Controllers
             catch (Exception ex)
             {
                 // Log the exception here
+                _logger.LogError(ex, "Error listing knowledge library file content");
                 return StatusCode(500, "Internal server error");
             }
         }
