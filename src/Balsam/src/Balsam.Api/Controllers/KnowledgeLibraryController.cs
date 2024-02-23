@@ -1,5 +1,7 @@
-﻿using BalsamApi.Server.Models;
+﻿using Balsam.Api.Models;
+using BalsamApi.Server.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 
 namespace Balsam.Api.Controllers
@@ -8,6 +10,16 @@ namespace Balsam.Api.Controllers
     [ApiController]
     public class KnowledgeLibraryController : BalsamApi.Server.Controllers.KnowledgeLibraryApiController
     {
+        private readonly HubClient _hubClient;
+        private readonly ILogger<ProjectController> _logger;
+        private readonly KnowledgeLibraryClient _knowledgeLibraryClient;
+        KnowledgeLibraryController(ILogger<ProjectController> logger, HubClient hubClient, KnowledgeLibraryClient knowledgeLibraryClient)
+        {
+            _hubClient = hubClient;
+            _logger = logger;
+            _knowledgeLibraryClient = knowledgeLibraryClient;
+        }
+
         public override Task<IActionResult> ListKnowledgeLibaries()
         {
             throw new NotImplementedException();
@@ -19,7 +31,7 @@ namespace Balsam.Api.Controllers
             {
                 //TODO Ensure the file exists
                 string filePath = string.Empty;
-                //filePath = KnowledgeLibraryClient.GetRepositoryFilePath(libraryId, fileId);
+                filePath = _knowledgeLibraryClient.GetRepositoryFilePath(libraryId, fileId);
 
                 // Open the file
                 var stream = System.IO.File.OpenRead(filePath);
@@ -46,9 +58,18 @@ namespace Balsam.Api.Controllers
             }
         }
 
-        public override Task<IActionResult> ListKnowledgeLibaryFiles([FromRoute(Name = "libraryId"), Required] string libraryId)
+        public async override Task<IActionResult> ListKnowledgeLibaryFiles([FromRoute(Name = "libraryId"), Required] string libraryId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //TODO Ensure the library exists and get the repositoryUrl
+                var contents = _knowledgeLibraryClient.GetRepositoryContent(libraryId, "");
+                return Ok(contents.ToArray());
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error listing knowledge library files");
+                return BadRequest(new Problem() { Status = 404, Title = "Error fetching knowledge libraries", Detail = "Error fetching knowledge libraries" });
+            }
         }
     }
 }
