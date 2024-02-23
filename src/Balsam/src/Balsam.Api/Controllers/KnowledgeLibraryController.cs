@@ -14,18 +14,24 @@ namespace Balsam.Api.Controllers
         private readonly HubClient _hubClient;
         private readonly ILogger<ProjectController> _logger;
 
-        public KnowledgeLibraryController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, ILogger<ProjectController> logger, HubClient hubClient)
+        public KnowledgeLibraryController(ILogger<ProjectController> logger, HubClient hubClient)
         {
             _hubClient = hubClient;
             _logger = logger;
-            capabilityOptions.Get(Capabilities.Git);
-            capabilityOptions.Get(Capabilities.Authentication);
         }
         public async override Task<IActionResult> ListKnowledgeLibaries() //A. Implementera
         {
             _logger.LogInformation("calling endpoint: Listing Knowledgelibraries");
-            var knowledgeLibraries = await _hubClient.ListKnowledgelibraries();
-            return Ok(knowledgeLibraries);
+            try
+            {
+                var knowledgeLibraries = await _hubClient.ListKnowledgelibraries();
+                return Ok(knowledgeLibraries);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("Error listing knowledgelibraries", ex);
+                return BadRequest(ex);
+            }
         }
 
         public override Task<IActionResult> ListKnowledgeLibaryFileContent([FromRoute(Name = "libraryId"), Required] string libraryId, [FromRoute(Name = "fileId"), Required] string fileId)

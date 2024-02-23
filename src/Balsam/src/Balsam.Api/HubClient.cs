@@ -743,17 +743,23 @@ namespace Balsam.Api
         {
             var knowledgeLibraries = new List<KnowledgeLibrary>();
             var kbPath = Path.Combine(_hubRepositoryClient.Path, "kb");
-
             foreach (var knowledgelibraryFile in Directory.GetFiles(kbPath))
             {
-                var knowledgeLibrary = JsonConvert.DeserializeObject<KnowledgeLibrary>(await File.ReadAllTextAsync(knowledgelibraryFile));
-                if (knowledgeLibrary != null)
+                try
                 {
-                    knowledgeLibraries.Add(knowledgeLibrary);
+                    var knowledgeLibrary = JsonConvert.DeserializeObject<KnowledgeLibrary>(await File.ReadAllTextAsync(knowledgelibraryFile));
+                    if (knowledgeLibrary != null)
+                    {
+                        knowledgeLibraries.Add(knowledgeLibrary);
+                    }
+                    else
+                    {
+                        _logger.LogWarning($"Could not parse properties file for knowledgelibrary {knowledgelibraryFile}");
+                    }
                 }
-                else
+                catch(Exception ex)
                 {
-                    _logger.LogWarning($"Could not parse properties file for knowledgelibrary {knowledgelibraryFile}");
+                    _logger.LogError($"Error with deserilization of file, error message: {ex.Message}", ex);
                 }
             }
             return knowledgeLibraries;
