@@ -326,6 +326,56 @@ namespace GitLabProvider.Client
             return null;
         }
 
+        public async Task AddResourceFiles(string repositoryId, string branchId, string workPath)
+        {
+            try
+            {
+                var path = workPath;
 
+                if (!Directory.Exists(path))
+                {
+                    _logger.LogWarning($"Path {path} does not exist. Can not initiate git repo files");
+                    return;
+                }
+
+                var directoryInfo = new DirectoryInfo(path);
+
+                var actions = new List<Action>();
+
+                foreach (var fileInfo in directoryInfo.GetFiles("*", SearchOption.AllDirectories))
+                {
+                    var bytes = await File.ReadAllBytesAsync(fileInfo.FullName);
+                    var file = Convert.ToBase64String(bytes);
+                    var relativePath = "Resources/" + fileInfo.FullName.Substring(workPath.Length + 1).Replace(@"\", "/");
+                    actions.Add(new Action { action = "create", file_path = relativePath, encoding = "base64", content = file });
+                }
+
+                var gitContent = new GitContent
+                {
+                    branch = branchId,
+                    commit_message = "commit",
+                    actions = actions
+                };
+
+                var jsonGitContent = JsonConvert.SerializeObject(gitContent);
+
+                var projectId = repositoryId;
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/api/v4/projects/{projectId}/repository/commits")
+                {
+                    Content = new StringContent(jsonGitContent, Encoding.UTF8, "application/json")
+
+                };
+
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);
+
+                using var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Could not initiate repo with files, due to error" + ex.ToString(), ex);
+            }
+        }
     }
 }
