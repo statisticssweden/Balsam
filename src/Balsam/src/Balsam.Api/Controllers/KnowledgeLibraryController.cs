@@ -38,7 +38,6 @@ namespace Balsam.Api.Controllers
         {
             try
             {
-                //TODO Ensure the file exists
                 string filePath = string.Empty;
                 filePath = _knowledgeLibraryClient.GetRepositoryFilePath(libraryId, fileId);
 
@@ -71,8 +70,14 @@ namespace Balsam.Api.Controllers
         {
             try
             {
-                //TODO Ensure the library exists and get the repositoryUrl
-                var contents = _knowledgeLibraryClient.GetRepositoryContent(libraryId, "");
+                var knowledgeLibrary = (await _hubClient.ListKnowledgeLibraries()).FirstOrDefault(kb => kb.Id == libraryId);
+
+                if (knowledgeLibrary is null)
+                {
+                    return BadRequest(new Problem() { Status = 404, Title = "Knowledge library not found", Detail = "Knowledge library not found" });
+                }
+
+                var contents = _knowledgeLibraryClient.GetRepositoryContent(libraryId, knowledgeLibrary.RepositoryUrl);
                 return Ok(contents.ToArray());
             } catch (Exception ex)
             {
