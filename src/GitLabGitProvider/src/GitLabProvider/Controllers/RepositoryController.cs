@@ -165,7 +165,7 @@ namespace GitLabProvider.Controllers
 
                 ZipFile.ExtractToDirectory(zipPath, workPath);
 
-                var files = await _gitLabClient.AddResourceFiles(repositoryId, branchId, workPath);
+                await _gitLabClient.AddResourceFiles(repositoryId, branchId, workPath);
 
             }
             catch (Exception ex)
@@ -179,6 +179,7 @@ namespace GitLabProvider.Controllers
                 {
                     System.IO.File.Delete(zipPath);
                 }
+                //TODO: Delete workPath directory
             }
 
             return Ok();
