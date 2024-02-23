@@ -13,7 +13,7 @@ namespace Balsam.Api.Controllers
         private readonly ILogger<ProjectController> _logger;
         private readonly KnowledgeLibraryClient _knowledgeLibraryClient;
 
-        public KnowledgeLibraryController(ILogger<ProjectController> logger, HubClient hubClient, KnowledgeLibraryClient knowledgeLibraryClient)
+        public KnowledgeLibraryController(ILogger<KnowledgeLibraryController> logger, HubClient hubClient, KnowledgeLibraryClient knowledgeLibraryClient)
         {
             _hubClient = hubClient;
             _logger = logger;
