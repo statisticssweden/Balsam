@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BalsamApi.Server.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 
 namespace Balsam.Api.Controllers
@@ -8,12 +10,14 @@ namespace Balsam.Api.Controllers
     public class KnowledgeLibraryController : BalsamApi.Server.Controllers.KnowledgeLibraryApiController
     {
         private readonly HubClient _hubClient;
-        private readonly ILogger<ProjectController> _logger;
+        private readonly ILogger<KnowledgeLibraryController> _logger;
+        private readonly KnowledgeLibraryClient _knowledgeLibraryClient;
 
-        public KnowledgeLibraryController(ILogger<ProjectController> logger, HubClient hubClient)
+        public KnowledgeLibraryController(ILogger<KnowledgeLibraryController> logger, HubClient hubClient, KnowledgeLibraryClient knowledgeLibraryClient)
         {
             _hubClient = hubClient;
             _logger = logger;
+            _knowledgeLibraryClient = knowledgeLibraryClient;
         }
         public async override Task<IActionResult> ListKnowledgeLibaries() //A. Implementera
         {
@@ -30,14 +34,55 @@ namespace Balsam.Api.Controllers
             }
         }
 
-        public override Task<IActionResult> ListKnowledgeLibaryFileContent([FromRoute(Name = "libraryId"), Required] string libraryId, [FromRoute(Name = "fileId"), Required] string fileId)
+        public async override Task<IActionResult> GetKnowledgeLibraryFileContent([FromRoute(Name = "libraryId"), Required] string libraryId, [FromRoute(Name = "fileId"), Required] string fileId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string filePath = string.Empty;
+                filePath = _knowledgeLibraryClient.GetRepositoryFilePath(libraryId, fileId);
+
+                // Open the file
+                var stream = System.IO.File.OpenRead(filePath);
+
+                
+                // Determine the content type
+                var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+                if (!provider.TryGetContentType(fileId, out var contentType))
+                {
+                    contentType = "application/octet-stream";
+                }
+
+                Response.Headers.Add("content-disposition", "inline");
+
+                // Return the file stream
+                return File(stream, contentType);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception here
+                _logger.LogError(ex, "Error listing knowledge library file content");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
-        public override Task<IActionResult> ListKnowledgeLibaryFiles([FromRoute(Name = "libraryId"), Required] string libraryId)
+        public async override Task<IActionResult> ListKnowledgeLibraryFiles([FromRoute(Name = "libraryId"), Required] string libraryId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var knowledgeLibrary = (await _hubClient.ListKnowledgeLibraries()).FirstOrDefault(kb => kb.Id == libraryId);
+
+                if (knowledgeLibrary is null)
+                {
+                    return BadRequest(new Problem() { Status = 404, Title = "Knowledge library not found", Detail = "Knowledge library not found" });
+                }
+
+                var contents = _knowledgeLibraryClient.GetRepositoryContent(libraryId, knowledgeLibrary.RepositoryUrl);
+                return Ok(contents.ToArray());
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error listing knowledge library files");
+                return BadRequest(new Problem() { Status = 404, Title = "Error fetching knowledge libraries", Detail = "Error fetching knowledge libraries" });
+            }
         }
     }
 }

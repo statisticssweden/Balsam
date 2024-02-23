@@ -32,6 +32,22 @@ namespace BalsamApi.Server.Controllers
         /// <summary>
         /// 
         /// </summary>
+        /// <remarks>Fetch content for file in knowledge library</remarks>
+        /// <param name="libraryId">id for the knowledge library</param>
+        /// <param name="fileId">id for the file</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpGet]
+        [Route("/api/v1/knowledge-libraries/{libraryId}/files/{fileId}")]
+        [ValidateModelState]
+        [SwaggerOperation("GetKnowledgeLibraryFileContent")]
+        [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Success")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> GetKnowledgeLibraryFileContent([FromRoute (Name = "libraryId")][Required]string libraryId, [FromRoute (Name = "fileId")][Required]string fileId);
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <remarks>List available knowledge Libraries</remarks>
         /// <response code="200">Success</response>
         [HttpGet]
@@ -46,30 +62,14 @@ namespace BalsamApi.Server.Controllers
         /// </summary>
         /// <remarks>List all files for a knowledge library</remarks>
         /// <param name="libraryId">id for the knowledge library</param>
-        /// <param name="fileId">id for the file</param>
-        /// <response code="200">Success</response>
-        /// <response code="400">Error respsone for 400</response>
-        [HttpGet]
-        [Route("/api/v1/knowledge-libraries/{libraryId}/files/{fileId}")]
-        [ValidateModelState]
-        [SwaggerOperation("ListKnowledgeLibaryFileContent")]
-        [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Success")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> ListKnowledgeLibaryFileContent([FromRoute (Name = "libraryId")][Required]string libraryId, [FromRoute (Name = "fileId")][Required]string fileId);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>List all files for a knowledge library</remarks>
-        /// <param name="libraryId">id for the knowledge library</param>
         /// <response code="200">Success</response>
         /// <response code="400">Error respsone for 400</response>
         [HttpGet]
         [Route("/api/v1/knowledge-libraries/{libraryId}/files")]
         [ValidateModelState]
-        [SwaggerOperation("ListKnowledgeLibaryFiles")]
+        [SwaggerOperation("ListKnowledgeLibraryFiles")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<RepoFile>), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> ListKnowledgeLibaryFiles([FromRoute (Name = "libraryId")][Required]string libraryId);
+        public abstract Task<IActionResult> ListKnowledgeLibraryFiles([FromRoute (Name = "libraryId")][Required]string libraryId);
     }
 }
