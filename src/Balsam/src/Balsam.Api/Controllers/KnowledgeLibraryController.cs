@@ -34,7 +34,7 @@ namespace Balsam.Api.Controllers
             }
         }
 
-        public async override Task<IActionResult> ListKnowledgeLibaryFileContent([FromRoute(Name = "libraryId"), Required] string libraryId, [FromRoute(Name = "fileId"), Required] string fileId)
+        public async override Task<IActionResult> ListKnowledgeLibraryFileContent([FromRoute(Name = "libraryId"), Required] string libraryId, [FromRoute(Name = "fileId"), Required] string fileId)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace Balsam.Api.Controllers
             }
         }
 
-        public async override Task<IActionResult> ListKnowledgeLibaryFiles([FromRoute(Name = "libraryId"), Required] string libraryId)
+        public async override Task<IActionResult> ListKnowledgeLibraryFiles([FromRoute(Name = "libraryId"), Required] string libraryId)
         {
             try
             {

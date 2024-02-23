@@ -377,7 +377,7 @@ paths:
     get:
       tags: 
         - KnowledgeLibrary
-      operationId: ListKnowledgeLibaryFiles
+      operationId: ListKnowledgeLibraryFiles
       description: List all files for a knowledge library
       parameters:
         - name: libraryId
@@ -400,7 +400,7 @@ paths:
     get:
       tags: 
         - KnowledgeLibrary
-      operationId: ListKnowledgeLibaryFileContent
+      operationId: ListKnowledgeLibraryFileContent
       description: List all files for a knowledge library
       parameters:
         - name: libraryId

@@ -52,10 +52,10 @@ namespace BalsamApi.Server.Controllers
         [HttpGet]
         [Route("/api/v1/knowledge-libraries/{libraryId}/files/{fileId}")]
         [ValidateModelState]
-        [SwaggerOperation("ListKnowledgeLibaryFileContent")]
+        [SwaggerOperation("ListKnowledgeLibraryFileContent")]
         [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> ListKnowledgeLibaryFileContent([FromRoute (Name = "libraryId")][Required]string libraryId, [FromRoute (Name = "fileId")][Required]string fileId);
+        public abstract Task<IActionResult> ListKnowledgeLibraryFileContent([FromRoute (Name = "libraryId")][Required]string libraryId, [FromRoute (Name = "fileId")][Required]string fileId);
 
         /// <summary>
         /// 
@@ -67,9 +67,9 @@ namespace BalsamApi.Server.Controllers
         [HttpGet]
         [Route("/api/v1/knowledge-libraries/{libraryId}/files")]
         [ValidateModelState]
-        [SwaggerOperation("ListKnowledgeLibaryFiles")]
+        [SwaggerOperation("ListKnowledgeLibraryFiles")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<RepoFile>), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> ListKnowledgeLibaryFiles([FromRoute (Name = "libraryId")][Required]string libraryId);
+        public abstract Task<IActionResult> ListKnowledgeLibraryFiles([FromRoute (Name = "libraryId")][Required]string libraryId);
     }
 }
