@@ -34,7 +34,7 @@ namespace Balsam.Api.Controllers
             }
         }
 
-        public async override Task<IActionResult> ListKnowledgeLibraryFileContent([FromRoute(Name = "libraryId"), Required] string libraryId, [FromRoute(Name = "fileId"), Required] string fileId)
+        public async override Task<IActionResult> GetKnowledgeLibraryFileContent([FromRoute(Name = "libraryId"), Required] string libraryId, [FromRoute(Name = "fileId"), Required] string fileId)
         {
             try
             {
