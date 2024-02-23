@@ -25,7 +25,7 @@ namespace Balsam.Api.Controllers
             }
             catch(Exception ex)
             {
-                _logger.LogError("Error listing knowledgelibraries", ex);
+                _logger.LogError(ex, "Error listing knowledgelibraries");
                 return BadRequest(ex);
             }
         }

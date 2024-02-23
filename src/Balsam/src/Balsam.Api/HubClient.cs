@@ -759,7 +759,7 @@ namespace Balsam.Api
                 }
                 catch(Exception ex)
                 {
-                    _logger.LogError($"Error with deserialization of file, error message: {ex.Message}", ex);
+                    _logger.LogError(ex, "Error with deserialization of file");
                 }
             }
             return knowledgeLibraries;
