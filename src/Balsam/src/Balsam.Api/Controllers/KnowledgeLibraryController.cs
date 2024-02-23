@@ -44,9 +44,7 @@ namespace Balsam.Api.Controllers
                 // Open the file
                 var stream = System.IO.File.OpenRead(filePath);
 
-                // Get the file extension
-                var extension = System.IO.Path.GetExtension(filePath);
-
+                
                 // Determine the content type
                 var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
                 if (!provider.TryGetContentType(fileId, out var contentType))
