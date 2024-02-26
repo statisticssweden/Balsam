@@ -1,6 +1,8 @@
+{{- if .Values.s3Provider.enabled -}}
 apiVersion: v1
 data:
   readme.txt: Empty
 kind: ConfigMap
 metadata:
   name: s3-templates
+{{- end }}

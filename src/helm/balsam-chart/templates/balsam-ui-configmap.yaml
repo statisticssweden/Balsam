@@ -6,7 +6,8 @@ metadata:
 data:
   config.json: |-
     {
-        "apiurl": "http://{{ .Values.balsamApi.ingress.hosts.host }}/api/v1"
+        "apiurl": "http://{{ .Values.balsamApi.ingress.hosts.host }}/api/v1",
+        "defaultGitBranchName": "{{ .Values.balsamUi.configMap.defaultBranchName }}"
     }
   keycloak.json: |-
     {

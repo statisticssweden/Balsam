@@ -32,16 +32,18 @@ namespace BalsamApi.Server.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <remarks>Removes knowledge library</remarks>
+        /// <remarks>Fetch content for file in knowledge library</remarks>
         /// <param name="libraryId">id for the knowledge library</param>
+        /// <param name="fileId">id for the file</param>
         /// <response code="200">Success</response>
         /// <response code="400">Error respsone for 400</response>
-        [HttpDelete]
-        [Route("/api/v1/knowledge-libraries/{libraryId}")]
+        [HttpGet]
+        [Route("/api/v1/knowledge-libraries/{libraryId}/files/{fileId}")]
         [ValidateModelState]
-        [SwaggerOperation("DeleteKnowledgeLibary")]
+        [SwaggerOperation("GetKnowledgeLibraryFileContent")]
+        [SwaggerResponse(statusCode: 200, type: typeof(string), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> DeleteKnowledgeLibary([FromRoute (Name = "libraryId")][Required]string libraryId);
+        public abstract Task<IActionResult> GetKnowledgeLibraryFileContent([FromRoute (Name = "libraryId")][Required]string libraryId, [FromRoute (Name = "fileId")][Required]string fileId);
 
         /// <summary>
         /// 
@@ -54,5 +56,20 @@ namespace BalsamApi.Server.Controllers
         [SwaggerOperation("ListKnowledgeLibaries")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<KnowledgeLibrary>), description: "Success")]
         public abstract Task<IActionResult> ListKnowledgeLibaries();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>List all files for a knowledge library</remarks>
+        /// <param name="libraryId">id for the knowledge library</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpGet]
+        [Route("/api/v1/knowledge-libraries/{libraryId}/files")]
+        [ValidateModelState]
+        [SwaggerOperation("ListKnowledgeLibraryFiles")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<RepoFile>), description: "Success")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> ListKnowledgeLibraryFiles([FromRoute (Name = "libraryId")][Required]string libraryId);
     }
 }

@@ -6,7 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
-import { Box, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Box, CircularProgress, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { postSuccess, postError} from '../Alerts/alertsSlice';
 import { CreateWorkspaceRequest, Project, Template } from '../services/BalsamAPIServices'
@@ -19,17 +19,17 @@ export interface NewWorkspaceDialogProperties
     selectedBranchId: string,
     templates: Array<Template>,
     onClosing: () => void,
+    onWorkspaceCreated?: (workspaceId: string) => void,
     open: boolean,
 }
 
-export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
+export default function NewWorkspaceDialog(props: NewWorkspaceDialogProperties ) {
     const [workspaceName, setWorkspaceName] = useState<string>("");
     const [workspaceNameError, setWorkspaceNameError] = useState(false);
     const [workspaceNameHelperText, setWorkspaceNameHelperText] = useState("")
-
     const [templateId, setTemplateId] = useState<string>();
     const [branchName, setBranchName] = useState<string>();
-
+    const [busy, setBusy] = useState(false);
     const [okEnabled, setOkEnabled] = useState(false);
     const dispatch = useDispatch();
 
@@ -46,25 +46,26 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
 
 
     useEffect(() => {
-        updateOkEnabled(workspaceName);
+        updateOkEnabled(workspaceName, busy);
 
-    }, [workspaceName]);
+    }, [workspaceName, busy]);
 
-    const updateOkEnabled = (workspaceName: string) => 
+    const updateOkEnabled = (workspaceName: string, busy: boolean) => 
     {
-        let projectNameValid = validateWorkspaceName(workspaceName).length == 0;
-        setOkEnabled(projectNameValid)
+        let projectNameValid = validateWorkspaceName(workspaceName).length === 0;
+        setOkEnabled(projectNameValid && !busy)
     }
 
     const showNewItemCreatedAlert = (message: string, workspaceUrl: string) => 
     {
-        dispatch(postSuccess(message, {caption: "Öppna", href: workspaceUrl} )); //TODO: Language
+        dispatch(postSuccess(message, {caption: "Öppna", href: workspaceUrl, target: "_blank"} )); //TODO: Language
     }
 
     const resetDialog = () => {
         setWorkspaceName("");
         setWorkspaceNameError(false);
         setWorkspaceNameHelperText("");
+        setBusy(false);
     };
 
     const handleCancel = () => {
@@ -119,23 +120,35 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
             branchId: props.selectedBranchId,
             templateId: templateId!,
         }
-
+        setBusy(true);
+        updateOkEnabled(workspaceName, true);
         appContext.balsamApi.workspaceApi.createWorkspace(workspace).then((response => {
+            let workspaceUrl = response.data.url;
             
+            props.onWorkspaceCreated?.(response.data.id);
             props.onClosing();
             resetDialog();
 
-            //TODO: Set url to response url when it is generated on response object
-            let workspaceUrl = "";
-
-            showNewItemCreatedAlert(`Bearbetningsmiljön "${response.data.name}" är skapad`, workspaceUrl); //TODO: Language
+            showNewItemCreatedAlert(`Bearbetningsmiljön "${response.data.name}" är skapad. Det kan ta en liten stund innan den är redo att öppnas.`, workspaceUrl); //TODO: Language
         }), () => {
-                
             dispatch(postError("Det gick inte att skapa bearbetningsmiljön " + workspaceName)); //TODO: Language
-
+            setBusy(false);
         });
     };
 
+    function renderProgress()
+    {
+        if(busy)
+        {
+            return (<CircularProgress size="18px" sx={{marginLeft:"6px"}} />)
+        }
+        else 
+        {
+            return "";
+        }
+    }
+
+    const progress = renderProgress();
 
     function renderDialog()
     {
@@ -147,7 +160,9 @@ export default function NewProjectDialog(props: NewWorkspaceDialogProperties ) {
                     fullWidth={true}
                     disableRestoreFocus 
                 >
-                    <DialogTitle>Skapa bearbetningsmiljö</DialogTitle>
+                    <DialogTitle>Skapa bearbetningsmiljö
+                        {progress}
+                    </DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             Ange information om bearbetningsmiljön

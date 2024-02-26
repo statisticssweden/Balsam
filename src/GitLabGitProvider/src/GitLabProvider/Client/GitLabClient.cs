@@ -1,5 +1,6 @@
 ﻿using GitLabProvider.Configuration;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -91,7 +92,28 @@ namespace GitLabProvider.Client
             return null;           
         }
 
-        public async Task<bool> CreateBranch(string branchname, string repositoryId)
+        public async Task<bool> DeleteRepository(string projectId)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{_baseUrl}/api/v4/projects/{projectId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);
+
+            try
+            {
+                using var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to delete repository", ex);
+            }
+            return false;
+        }
+
+
+        public async Task<bool> CreateBranch(string repositoryId, string fromBranch, string branchName)
         {
             var projectId = repositoryId;
 
@@ -101,8 +123,8 @@ namespace GitLabProvider.Client
                 {
                     Content = new FormUrlEncodedContent(new KeyValuePair<string?, string?>[]
                     {
-                        new("branch", branchname.ToLower()),
-                        new("ref", "main")
+                        new("branch", branchName),
+                        new("ref", fromBranch)
                     })
                 };
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);
@@ -117,6 +139,27 @@ namespace GitLabProvider.Client
                 _logger.LogError("Could not create branch", ex);
             }
 
+            return false;
+        }
+
+
+        public async Task<bool> DeleteBranch(string projectId, string branchId)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{_baseUrl}/api/v4/projects/{projectId}/repository/branches/{branchId}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);
+
+            try
+            {
+                using var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to delete repository branch", ex);
+            }
             return false;
         }
 
@@ -151,7 +194,7 @@ namespace GitLabProvider.Client
                     Content = new FormUrlEncodedContent(new KeyValuePair<string?, string?>[]
                     {
                         new("name", patName),
-                        new("expires_at", DateTime.Now.AddMonths(12).ToString("yyyy-MM-dd")),
+                        new("expires_at", DateTime.Now.AddMonths(11).ToString("yyyy-MM-dd")),
                         new("scopes", "api")
                     })
                 };
@@ -167,7 +210,7 @@ namespace GitLabProvider.Client
             } 
             catch (Exception ex)
             {
-                _logger.LogError($"Could not create token for user: {userName}({userId})", ex);
+                _logger.LogError(ex,"Could not create token for user: {userName}({userId})", userName, userId);
             }
             return null;
         }
@@ -254,6 +297,83 @@ namespace GitLabProvider.Client
 
             }
             catch (Exception ex) {
+                _logger.LogError("Could not initiate repo with files, due to error" + ex.ToString(), ex);
+            }
+        }
+
+        public async Task<FileContentResult?> GetFile(string repositoryId, string branchName, string fileId)
+        {
+            var projectId = repositoryId;
+
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_baseUrl}/api/v4/projects/{projectId}/repository/blobs/{fileId}/raw");
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);
+
+                var response = await HttpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsByteArrayAsync();
+                    return new FileContentResult(data, response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not read files from repository");
+            }
+
+            return null;
+        }
+
+        public async Task AddResourceFiles(string repositoryId, string branchId, string workPath)
+        {
+            try
+            {
+                var path = workPath;
+
+                if (!Directory.Exists(path))
+                {
+                    _logger.LogWarning($"Path {path} does not exist. Can not initiate git repo files");
+                    return;
+                }
+
+                var directoryInfo = new DirectoryInfo(path);
+
+                var actions = new List<Action>();
+
+                foreach (var fileInfo in directoryInfo.GetFiles("*", SearchOption.AllDirectories))
+                {
+                    var bytes = await File.ReadAllBytesAsync(fileInfo.FullName);
+                    var file = Convert.ToBase64String(bytes);
+                    var relativePath = "Resources/" + fileInfo.FullName.Substring(workPath.Length + 1).Replace(@"\", "/");
+                    actions.Add(new Action { action = "create", file_path = relativePath, encoding = "base64", content = file });
+                }
+
+                var gitContent = new GitContent
+                {
+                    branch = branchId,
+                    commit_message = "commit",
+                    actions = actions
+                };
+
+                var jsonGitContent = JsonConvert.SerializeObject(gitContent);
+
+                var projectId = repositoryId;
+                var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/api/v4/projects/{projectId}/repository/commits")
+                {
+                    Content = new StringContent(jsonGitContent, Encoding.UTF8, "application/json")
+
+                };
+
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accesstoken);
+
+                using var response = await HttpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+                response.EnsureSuccessStatusCode();
+
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError("Could not initiate repo with files, due to error" + ex.ToString(), ex);
             }
         }

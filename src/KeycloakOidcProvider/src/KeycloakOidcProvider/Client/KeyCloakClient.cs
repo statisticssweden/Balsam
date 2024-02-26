@@ -56,6 +56,25 @@ public class KeyCloakClient : IKeyCloakClient
 
     }
 
+    public async Task DeleteGroup(string deletedGroupId)
+    {
+        var accessToken = await GetAccessToken();
+        var requestUri = $"{_baseUrl}/admin/realms/{_realm}/groups/{deletedGroupId}";
+
+        try
+        {
+            using var response = await DeleteRequest(requestUri, accessToken);
+            response.EnsureSuccessStatusCode();
+            _logger.LogInformation("User Group deleted with id {deletedGroupId}", deletedGroupId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to delete usergroup with id {deletedGroupId}",deletedGroupId);
+            throw;
+        }
+
+    }
+
     public async Task AddUserToGroup(string groupId, string userName)
     {
         var accessToken = await GetAccessToken();
@@ -117,6 +136,18 @@ public class KeyCloakClient : IKeyCloakClient
         var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
         {
             Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json"),
+            Headers =
+            {
+                Authorization = new AuthenticationHeaderValue("Bearer", accessToken)
+            }
+        };
+        return await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+    }
+
+    private async Task<HttpResponseMessage> DeleteRequest(string requestUri, string accessToken)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Delete, requestUri)
+        {
             Headers =
             {
                 Authorization = new AuthenticationHeaderValue("Bearer", accessToken)

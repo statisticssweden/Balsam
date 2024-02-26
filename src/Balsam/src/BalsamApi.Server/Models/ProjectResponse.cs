@@ -30,7 +30,6 @@ namespace BalsamApi.Server.Models
         /// URL to the git repository
         /// </summary>
         /// <value>URL to the git repository</value>
-        [Required]
         [DataMember(Name="gitUrl", EmitDefaultValue=false)]
         public string GitUrl { get; set; }
 
@@ -58,8 +57,16 @@ namespace BalsamApi.Server.Models
         public string Description { get; set; }
 
         /// <summary>
+        /// Authorized group name
+        /// </summary>
+        /// <value>Authorized group name</value>
+        [DataMember(Name="authGroup", EmitDefaultValue=false)]
+        public string AuthGroup { get; set; }
+
+        /// <summary>
         /// Gets or Sets Branches
         /// </summary>
+        [Required]
         [DataMember(Name="branches", EmitDefaultValue=false)]
         public List<Branch> Branches { get; set; }
 
@@ -75,6 +82,7 @@ namespace BalsamApi.Server.Models
             sb.Append("  Id: ").Append(Id).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Description: ").Append(Description).Append("\n");
+            sb.Append("  AuthGroup: ").Append(AuthGroup).Append("\n");
             sb.Append("  Branches: ").Append(Branches).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
@@ -133,6 +141,11 @@ namespace BalsamApi.Server.Models
                     Description.Equals(other.Description)
                 ) && 
                 (
+                    AuthGroup == other.AuthGroup ||
+                    AuthGroup != null &&
+                    AuthGroup.Equals(other.AuthGroup)
+                ) && 
+                (
                     Branches == other.Branches ||
                     Branches != null &&
                     other.Branches != null &&
@@ -158,6 +171,8 @@ namespace BalsamApi.Server.Models
                     hashCode = hashCode * 59 + Name.GetHashCode();
                     if (Description != null)
                     hashCode = hashCode * 59 + Description.GetHashCode();
+                    if (AuthGroup != null)
+                    hashCode = hashCode * 59 + AuthGroup.GetHashCode();
                     if (Branches != null)
                     hashCode = hashCode * 59 + Branches.GetHashCode();
                 return hashCode;

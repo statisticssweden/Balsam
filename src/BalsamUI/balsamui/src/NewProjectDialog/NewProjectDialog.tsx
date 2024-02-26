@@ -6,45 +6,45 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormControl from '@mui/material/FormControl';
-import { Box, TextField } from '@mui/material';
+import { Box, CircularProgress, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { postSuccess, postError} from '../Alerts/alertsSlice';
 import { CreateProjectRequest } from '../services/BalsamAPIServices'
 import AppContext, { AppContextState } from '../configuration/AppContext';
 
-
 export interface NewProjectDialogProperties
 {
-    onClosing: () => void
+    onClosing: () => void,
 }
 
-const defaultBranchName = "main";
-
 export default function NewProjectDialog(props: NewProjectDialogProperties ) {
+    const appContext = useContext(AppContext) as AppContextState;
     const [open, setOpen] = useState(false);
     const [projectName, setProjectName] = useState("");
     const [projectDescription, setProjectDescription] = useState("");
-    const [branchName, setBranchName] = useState(defaultBranchName);
+    const [branchName, setBranchName] = useState(appContext.config.defaultGitBranchName);
     const [projectNameError, setProjectNameError] = useState(false);
     const [projectNameHelperText, setProjectNameHelperText] = useState("")
     const [branchNameError, setBranchNameError] = useState(false);
-    const [branchNameHelperText, setBranchNameHelperText] = useState("")
+    const [branchNameHelperText, setBranchNameHelperText] = useState("");
+    const [busy, setBusy] = useState(false);
     const [okEnabled, setOkEnabled] = useState(false);
+    
     const dispatch = useDispatch();
 
-    const appContext = useContext(AppContext) as AppContextState;
-
     useEffect(() => {
-        updateOkEnabled(projectName, branchName);
+        updateOkEnabled(projectName, branchName, busy);
 
-    }, [branchName, projectName]);
+    }, [branchName, projectName, busy]);
 
-    const updateOkEnabled = (projectName: string, branchName: string) => 
+    
+
+    const updateOkEnabled = (projectName: string, branchName: string, busy: boolean) => 
     {
         let projectNameValid = validateProjectName(projectName).length == 0;
         let branchNameValid = validateBranchName(branchName).length == 0;
-        setOkEnabled(projectNameValid && branchNameValid)
 
+        setOkEnabled(projectNameValid && branchNameValid && !busy)
     }
 
     const showNewItemCreatedAlert = (message: string, id: string) => 
@@ -61,9 +61,10 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         setProjectNameError(false);
         setProjectNameHelperText("");
         setProjectDescription("");
-        setBranchName(defaultBranchName);
+        setBranchName(appContext.config.defaultGitBranchName);
         setBranchNameError(false);
         setBranchNameHelperText("");
+        setBusy(false);
     };
 
     const handleCancel = () => {
@@ -150,6 +151,17 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         return errors;
     };
 
+    function renderProgress()
+    {
+        if(busy)
+        {
+            return (<CircularProgress size="18px" sx={{marginLeft:"6px"}} />)
+        }
+        else 
+        {
+            return "";
+        }
+    }
 
     const handleCreate = () => {
 
@@ -158,9 +170,10 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
             description: projectDescription,
             branchName: branchName
         }
-
+        setBusy(true);
+        updateOkEnabled(projectName, branchName, true);
         appContext.balsamApi.projectApi.createProject(project).then((response => {
-            
+            appContext.refreshToken(); //Update the users user groups
             setOpen(false);
             props.onClosing();
             resetDialog();
@@ -168,11 +181,14 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         }), () => {
                 
             dispatch(postError("Det gick inte att skapa projektet")); //TODO: Language
+            setBusy(false);
 
         });
 
         
     };
+
+    const progress = renderProgress();
 
     return (
         <Fragment>
@@ -186,8 +202,11 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                 onClose={handleClose}
                 fullWidth={true}
             >
-                <DialogTitle>Skapa projekt</DialogTitle>
+                <DialogTitle>Skapa projekt
+                    {progress}
+                </DialogTitle>
                 <DialogContent>
+                
                     <DialogContentText>
                         Ange information om projektet
                     </DialogContentText>
@@ -210,11 +229,16 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                             <TextField id="branch-input" error={branchNameError} helperText={branchNameHelperText} variant='standard' label="Branchnamn" required value={branchName} onChange={e => branchNameChanged(e.target.value)} aria-describedby="Namn på defaultbranch" />
                         </FormControl>
                     </Box>
+                    
                 </DialogContent>
-                <DialogActions>
+                
+                    <DialogActions>
+                    
                     <Button onClick={handleCancel} >Avbryt</Button>
                     <Button onClick={handleCreate} disabled={!okEnabled}>Skapa</Button>
-                </DialogActions>
+                    
+                </DialogActions>      
+                
             </Dialog>
         </Fragment>
     );

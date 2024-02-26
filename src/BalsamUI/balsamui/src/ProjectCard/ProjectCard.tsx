@@ -5,29 +5,30 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import projectimage from '../assets/project.jpg'
+import projectimage from '../assets/project.png'
 import { OpenInNew } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { Project } from '../services/BalsamAPIServices';
 
 type ProjectCardProperties = {
-    project: any
+    project: Project
 }
 
-export default function ProjectCard(properties : ProjectCardProperties) {
+export default function ProjectCard(props : ProjectCardProperties) {
+    const toActionUrl = '/project/' + props.project.id;
     return (
         <Card sx={{ maxWidth: 300, minWidth: 300 }}>
-            <CardActionArea component={Link} to={'/project/' + properties.project.id}>
+            <CardActionArea component={Link} to={toActionUrl}>
                 <CardMedia
                     sx={{ height: 140 }}
                     image={projectimage}
-                    title="green iguana"
                 />
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                        {properties.project.name}
+                        {props.project.name}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                        {properties.project.description}
+                        {props.project.description}
                     </Typography>
                 </CardContent>
             </CardActionArea>
@@ -36,7 +37,7 @@ export default function ProjectCard(properties : ProjectCardProperties) {
                 <Button component={Link as any} 
                     target="_blank" 
                     underline="hover" 
-                    to={'/project/' + properties.project.id}
+                    to={toActionUrl}
                 >
                     Öppna<OpenInNew fontSize="inherit" />
                 </Button>

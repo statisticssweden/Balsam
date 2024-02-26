@@ -13,6 +13,9 @@ using System.IO.Hashing;
 using RocketChatChatProviderApiClient.Api;
 using HandlebarsDotNet;
 using File = System.IO.File;
+using Microsoft.AspNetCore.Mvc;
+using BalsamApi.Server.Models;
+using LibGit2Sharp;
 
 namespace Balsam.Api
 {
@@ -153,7 +156,7 @@ namespace Balsam.Api
             return branches;
         }
 
-        private async Task<BalsamBranch?> GetBranch(string projectId, string branchId)
+        public async Task<BalsamBranch?> GetBranch(string projectId, string branchId)
         {
             var propsFile = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId, "properties.json");
 
@@ -176,15 +179,17 @@ namespace Balsam.Api
             return true;
         }
 
-        public async Task<BalsamProject?> CreateProject(string preferredName, string description, string defaultBranchName, string username)
+        public async Task<BalsamProject?> CreateProject(string preferredName, string description, string defaultBranchName, string username, string? sourceLocation)
         {
             //Check if there is a program with the same name.
-            _logger.LogDebug("Chack for duplicate names");
+            _logger.LogDebug("Check for duplicate names");
             if (await ProjectExists(preferredName))
             {
-                _logger.LogInformation($"Could not create project {preferredName}, due to name dublication");
+                _logger.LogInformation($"Could not create project {preferredName}, due to name duplication");
                 return null;
             }
+
+            _hubRepositoryClient.PullChanges();
 
             _logger.LogDebug($"create project information");
             var project = new BalsamProject(SanitizeName(preferredName), preferredName, description);
@@ -214,7 +219,8 @@ namespace Balsam.Api
             {
                 _logger.LogDebug($"Begin call Git");
                 var gitData = await _repositoryApi.CreateRepositoryAsync(new CreateRepositoryRequest(preferredName, description, defaultBranchName));
-                project.Git = new GitData() { Id = gitData.Id, Name = gitData.Name, Path = gitData.Path };
+                defaultBranchName = gitData.DefaultBranchName;
+                project.Git = new GitData() { Id = gitData.Id, Name = gitData.Name, Path = gitData.Path, SourceLocation = sourceLocation };
                 _logger.LogInformation($"Git repository {project.Git.Name} created");
             }
 
@@ -236,12 +242,11 @@ namespace Balsam.Api
 
             string propPath = Path.Combine(projectPath, "properties.json");
 
-            if (await CreateBranch(project, defaultBranchName, description, true))
+            if (await CreateBranch(project, defaultBranchName, description, true) != null)
             {
                 _logger.LogInformation($"Default Balsam branch {defaultBranchName} created");
             }
-
-            _hubRepositoryClient.PullChanges();
+            
             // serialize JSON to a string and then write string to a file
             await File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(project));
 
@@ -255,12 +260,12 @@ namespace Balsam.Api
         {
             var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
 
-            if (!System.IO.Directory.Exists(branchPath))
+            if (!Directory.Exists(branchPath))
             {
                 return null;
             }
 
-            var workspace = new BalsamWorkspace(CreateWorkspaceId(name), name, templateId);
+            var workspace = new BalsamWorkspace(CreateWorkspaceId(name), name, templateId, projectId, branchId, userName);
 
             var workspacePath = Path.Combine(branchPath, userName, workspace.Id);
 
@@ -269,26 +274,62 @@ namespace Balsam.Api
 
             var project = await GetProject(projectId);
             var branch = project.Branches.FirstOrDefault(b => b.Id == branchId);
-            string gitPAT = "";
+            var gitPAT = string.Empty;
+
             if (_git.Enabled)
             {
                 var patResponse = await _gitUserClient.CreatePATAsync(userName);
                 gitPAT = patResponse.Token;
+                _logger.LogInformation($"Git PAT created");
             }
-            var user = new UserInfo(userName, userMail, gitPAT);
 
-            string propPath = Path.Combine(workspacePath, "properties.json");
+            var user = new UserInfo(userName, userMail, gitPAT);
+            var propPath = Path.Combine(workspacePath, "properties.json");
+
+            _logger.LogDebug("Pulling changes");
             _hubRepositoryClient.PullChanges();
             // serialize JSON to a string and then write string to a file
-            await System.IO.File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(workspace));
             await CreateWorkspaceManifests(project, branch, workspace, user, workspacePath, templateId);
+            
+            var template = await GetWorkspaceTemplate(templateId);
+            workspace.Url = ManifestUtil.GetWorkspaceUrl(Path.Combine(workspacePath, template.UrlConfig));
+            await File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(workspace));
+            
             _hubRepositoryClient.PersistChanges($"New workspace with id {project.Id}");
-
+            _logger.LogInformation("Workspace created");
             return workspace;
+        }
+
+        public async Task<string?> DeleteWorkspace(string projectId, string branchId, string workspaceId, string userName)
+        {
+            _hubRepositoryClient.PullChanges();
+            var workspacePath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId, userName, workspaceId);
+
+            if (!Directory.Exists(workspacePath))
+            {
+                return null;
+            }
+
+            if (Directory.Exists(workspacePath))
+            {
+                EmptyDirectory(workspacePath);
+                Directory.Delete(workspacePath, true);
+            }
+
+            _hubRepositoryClient.PersistChanges($"Deleted workspace with id {workspaceId}");
+            return "workspace deleted";
         }
 
         private async Task CreateWorkspaceManifests(BalsamProject project, BalsamBranch branch, BalsamWorkspace workspace, UserInfo user, string workspacePath, string templateId)
         {
+            var token = new AccessKeyCreatedResponse("", "");
+            if (_s3.Enabled)
+            {
+                token = await _s3Client.CreateAccessKeyAsync(project.S3.BucketName);
+            }
+
+            var s3Token = new S3Token(token.AccessKey, token.SecretKey);
+            user.S3 = s3Token;
             var context = new WorkspaceContext(project, branch, workspace, user);
             await CreateManifests(context, workspacePath, "workspaces" + Path.DirectorySeparatorChar +  templateId);
         }
@@ -306,7 +347,7 @@ namespace Balsam.Api
 
             foreach (var file in Directory.GetFiles(templatePath, "*.yaml"))
             {
-                var source = await System.IO.File.ReadAllTextAsync(file);
+                var source = await File.ReadAllTextAsync(file);
 
                 var template = Handlebars.Compile(source);
 
@@ -314,31 +355,58 @@ namespace Balsam.Api
 
                 var destinationFilePath = Path.Combine(destinationPath, Path.GetFileName(file));
 
-                await System.IO.File.WriteAllTextAsync(destinationFilePath, result);
+                await File.WriteAllTextAsync(destinationFilePath, result);
             }
 
         }
 
-        private async Task<bool> CreateBranch(BalsamProject project, string branchName, string description, bool isDefault = false)
+        private async Task<WorkspaceTemplate?> GetWorkspaceTemplate(string templateId)
+        {
+            var templatePath = Path.Combine(_hubRepositoryClient.Path, "templates", "workspaces",  templateId, "properties.json");
+
+            if (!File.Exists(templatePath)) return null;
+
+            return  JsonConvert.DeserializeObject<WorkspaceTemplate>(await File.ReadAllTextAsync(templatePath));
+        }
+
+        public async Task<BalsamBranch?> CreateBranch(string projectId, string fromBranch, string branchName, string description)
+        {
+            var project = await GetProject(projectId, false);
+            var branch = await GetBranch(projectId, fromBranch);
+     
+            if (project is null || project.Git is null || branch is null || branch.GitBranch is null)
+            {
+                return null;
+            }
+
+            var response = await _repositoryApi.CreateBranchAsync(project.Git.Id, new GitProviderApiClient.Model.CreateBranchRequest(branchName, branch.GitBranch));
+            branchName = response.Name;
+
+            _hubRepositoryClient.PullChanges();
+
+            var createdBranch = await CreateBranch(project, branchName, description, false);
+            _hubRepositoryClient.PersistChanges($"Branch {branchName} created for project {project.Name}");
+
+            return createdBranch;
+        }
+
+        private async Task<BalsamBranch?> CreateBranch(BalsamProject project, string branchName, string description, bool isDefault = false)
         {
             var branchId = SanitizeName(branchName);
             var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", project.Id, branchId);
 
             DirectoryUtil.AssureDirectoryExists(branchPath);
 
-            if (!isDefault)
-            {
-                //TODO create a Git branch
-            }
-
             if (project.S3 is null || string.IsNullOrEmpty(project.S3.BucketName))
             {
-                return false;
+                return null;
             }
 
-            //TODO do we ned to save the response information?
-            await _s3Client.CreateFolderAsync(project.S3.BucketName, new CreateFolderRequest(branchName));
-            _logger.LogInformation($"Folder {branchName} created in bucket {project.S3.BucketName}.");
+            if (_s3.Enabled)
+            {
+                await _s3Client.CreateFolderAsync(project.S3.BucketName, new CreateFolderRequest(branchName));
+                _logger.LogInformation($"Folder {branchName} created in bucket {project.S3.BucketName}.");
+            }
 
             var branch = new BalsamBranch()
             {
@@ -352,10 +420,10 @@ namespace Balsam.Api
             var propPath = Path.Combine(branchPath, "properties.json");
             await File.WriteAllTextAsync(propPath, JsonConvert.SerializeObject(branch));
 
-            return true;
+            return branch;
         }
 
-        public async Task<List<GitProviderApiClient.Model.File>?> GetGitBranchFiles(string projectId, string branchId)
+        public async Task<List<GitProviderApiClient.Model.RepoFile>?> GetGitBranchFiles(string projectId, string branchId)
         {
             var project = await GetProject(projectId);
             var branch = await GetBranch(projectId, branchId);
@@ -365,6 +433,38 @@ namespace Balsam.Api
             }
             return _repositoryApi.GetFilesInBranch(project.Git.Id, branch.Name);
         }
+
+        public async Task<FileContentResult?> GetFile(string projectId, string branchId, string fileId)
+        {
+            var project = await GetProject(projectId);
+            var branch = await GetBranch(projectId, branchId);
+            if (project is null || branch is null || project.Git is null)
+            {
+                return null;
+            }
+
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, $"{_git.ServiceLocation}/repos/{project.Git.Id}/branches/{branch.GitBranch}/files/{fileId}");
+
+                var httpClient = new HttpClient();
+
+                var response = await httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsByteArrayAsync();
+                    return new FileContentResult(data, response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not read files from repository");
+            }
+
+            return null;
+        }
+
 
         private string SanitizeName(string name)
         {
@@ -381,6 +481,19 @@ namespace Balsam.Api
 
             return name;
 
+        }
+
+        private static void EmptyDirectory(string directory)
+        {
+            var di = new DirectoryInfo(directory);
+            foreach (var file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            foreach (var dir in di.GetDirectories())
+            {
+                dir.Delete(true);
+            }
         }
 
         private static string CreateWorkspaceId(string name)
@@ -427,6 +540,297 @@ namespace Balsam.Api
 
             _logger.LogDebug("End ListWorkspaceTemplates");
             return workspaceTemplates;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspaces()
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            foreach (var projectPath in Directory.GetDirectories(hubPath))
+            {
+                foreach (var branchPath in Directory.GetDirectories(projectPath))
+                {
+                    foreach (var userPath in Directory.GetDirectories(branchPath))
+                    {
+                        foreach (var workspacePath in Directory.GetDirectories(userPath))
+                        {
+                            var propsFile = Path.Combine(workspacePath, "properties.json");
+                            var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                            if (workspace == null) continue;
+                            workspaces.Add(workspace);
+                        }
+                    }
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspacesByUser(string userId, List<string> projectIds)
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            foreach (var projectId in projectIds)
+            {
+                var projectPath = Path.Combine(hubPath, projectId);
+                if (Directory.Exists(projectPath))
+                {
+                    foreach (var branchPath in Directory.GetDirectories(projectPath))
+                    {
+                        var userPath = Path.Combine(branchPath, userId);
+
+                        if (Directory.Exists(userPath))
+                        {
+                            foreach (var workspacePath in Directory.GetDirectories(userPath))
+                            {
+                                var propsFile = Path.Combine(workspacePath, "properties.json");
+                                var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                                if (workspace == null) continue;
+                                workspaces.Add(workspace);
+                            }
+                        }
+                    }
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspacesByProject(string projectId)
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            var projectPath = Path.Combine(hubPath, projectId);
+
+            if (Directory.Exists(projectPath))
+            {
+                foreach (var branchPath in Directory.GetDirectories(projectPath))
+                {
+                    foreach (var userPath in Directory.GetDirectories(branchPath))
+                    {
+                        foreach (var workspacePath in Directory.GetDirectories(userPath))
+                        {
+                            var propsFile = Path.Combine(workspacePath, "properties.json");
+                            var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                            if (workspace == null) continue;
+                            workspaces.Add(workspace);
+                        }
+                    }
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspacesByProjectAndBranch(string projectId, string branchId)
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            var branchPath = Path.Combine(hubPath, projectId, branchId);
+
+            if (Directory.Exists(branchPath))
+            {
+                foreach (var userPath in Directory.GetDirectories(branchPath))
+                {
+                    foreach (var workspacePath in Directory.GetDirectories(userPath))
+                    {
+                        var propsFile = Path.Combine(workspacePath, "properties.json");
+                        var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                        if (workspace == null) continue;
+                        workspaces.Add(workspace);
+                    }
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspacesByProjectAndUser(string projectId, string userId)
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            var projectPath = Path.Combine(hubPath, projectId);
+
+            if (Directory.Exists(projectPath))
+            {
+                foreach (var branchPath in Directory.GetDirectories(projectPath))
+                {
+                    var userPath = Path.Combine(branchPath, userId);
+                    if (Directory.Exists(userPath))
+                    {
+                        foreach (var workspacePath in Directory.GetDirectories(userPath))
+                        {
+                            var propsFile = Path.Combine(workspacePath, "properties.json");
+                            var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                            if (workspace == null) continue;
+                            workspaces.Add(workspace);
+                        }
+                    }
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task<List<BalsamWorkspace>> GetWorkspacesByProjectBranchAndUser(string projectId, string branchId, string userId)
+        {
+            var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
+
+            var workspaces = new List<BalsamWorkspace>();
+
+            var userPath = Path.Combine(hubPath, projectId, branchId, userId);
+
+            if (Directory.Exists(userPath))
+            {
+                foreach (var workspacePath in Directory.GetDirectories(userPath))
+                {
+                    var propsFile = Path.Combine(workspacePath, "properties.json");
+                    var workspace = JsonConvert.DeserializeObject<BalsamWorkspace>(await File.ReadAllTextAsync(propsFile));
+
+                    if (workspace == null) continue;
+                    workspaces.Add(workspace);
+                }
+            }
+            return workspaces;
+        }
+
+        public async Task DeleteBranch(string projectId, string branchId)
+        {
+            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId);
+
+            var project = await GetProject(projectId);
+            var branch = await GetBranch(projectId, branchId);
+            
+            //Asure that the id are correct
+            if (project == null || branch == null) return;
+
+
+            if (_s3.Enabled)
+            {
+                try
+                { 
+                    await _s3Client.DeleteFolderAsync(project.S3?.BucketName??"", branch.Name);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete s3 folder");
+                }
+            }
+
+            if (_git.Enabled)
+            {
+                try
+                {
+                    await _repositoryApi.DeleteRepositoryBranchAsync(project.Git?.Id ?? "", branch.GitBranch);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete git branch");
+                }
+            }
+
+
+            _hubRepositoryClient.PullChanges();
+
+            if (Directory.Exists(branchPath))
+            {
+                //EmptyDirectory(branchPath);
+                Directory.Delete(branchPath, true);
+            }
+
+            _hubRepositoryClient.PersistChanges($"Branch {branch.Name} deleted for project {project.Name}");
+
+        }
+
+        public async Task<List<KnowledgeLibrary>> ListKnowledgeLibraries()
+        {
+            var knowledgeLibraries = new List<KnowledgeLibrary>();
+            var kbPath = Path.Combine(_hubRepositoryClient.Path, "kb");
+            foreach (var knowledgelibraryFile in Directory.GetFiles(kbPath))
+            {
+                try
+                {
+                    var knowledgeLibrary = JsonConvert.DeserializeObject<KnowledgeLibrary>(await File.ReadAllTextAsync(knowledgelibraryFile));
+                    if (knowledgeLibrary != null)
+                    {
+                        knowledgeLibraries.Add(knowledgeLibrary);
+                    }
+                    else
+                    {
+                        _logger.LogWarning($"Could not parse properties file for knowledgelibrary {knowledgelibraryFile}");
+                    }
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex, "Error with deserialization of file");
+                }
+            }
+            return knowledgeLibraries;
+        }
+        internal async Task DeleteProject(string projectId)
+        {
+            var project = await GetProject(projectId);
+
+            if (project == null)
+            {
+                return;
+            }
+
+            if (_authentication.Enabled)
+            {
+                try
+                {
+                    await _oidcClient.DeleteGroupAsync(project.Oidc?.GroupId ?? "");
+                } catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete oidc group");
+                }
+            }
+
+            if (_git.Enabled)
+            {
+                try
+                {
+                    await _repositoryApi.DeleteRepositoryAsync(project.Git?.Id ?? "");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete git repository");
+                }
+            }
+
+            if (_s3.Enabled)
+            {
+                try
+                {
+                    await _s3Client.DeleteBucketAsync(project.S3?.BucketName ?? "");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete s3 bucket");
+                }
+            }
+
+            var branchPath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId);
+
+            _hubRepositoryClient.PullChanges();
+
+            if (Directory.Exists(branchPath))
+            {
+                Directory.Delete(branchPath, true);
+            }
+
+            _hubRepositoryClient.PersistChanges($"Project {project.Name} deleted");
         }
     }
 }

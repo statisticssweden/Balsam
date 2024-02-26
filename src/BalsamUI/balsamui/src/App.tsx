@@ -15,6 +15,10 @@ import { getConfig } from './configuration/configuration';
 import { getBalsamAPI } from './services/BalsamAPIServices';
 import { postError } from './Alerts/alertsSlice';
 import MyPage from './MyPage/MyPage';
+import ResoruceFolderPage from './ResourceFolderPage/ResourceFolderPage';
+import KeyCloakService from './security/KeyCloakService.ts';
+import KnowledgeLibrariesPage from './KnowledgeLibrariesPage/KnowledgeLibrariesPage.tsx';
+import KnowledgeLibraryPage from './KnowledgeLibraryPage/KnowledgeLibraryPage.tsx';
 
 
 function App() {
@@ -27,9 +31,12 @@ function App() {
         setLoading(true);
 
         getConfig().then((config) => {
-                let state: AppContextState = {
+            let state: AppContextState = {
                     config: config,
                     balsamApi: getBalsamAPI(config.apiurl),
+                    getUserName: KeyCloakService.GetUserName,
+                    getUserGroups: KeyCloakService.GetUserGroups,
+                    refreshToken: KeyCloakService.RefreshToken,
                 };
                 setAppContextState(state)
                 setLoading(false);
@@ -38,7 +45,7 @@ function App() {
                 dispatch(postError("Det gick inte att ladda konfigurationsfil")); //TODO: Language
             })
 
-        }, []);
+    }, []);
 
     const renderApp =  () =>
     {
@@ -49,7 +56,7 @@ function App() {
                     <Toolbar>
                         <Button component={Link} color="inherit" to="/">Min sida</Button>
                         <Button component={Link} color="inherit" to="/projects">Projekt</Button>
-                        <Button component={Link} color="inherit" to="/library">Kunskapsbibliotek</Button>
+                        <Button component={Link} color="inherit" to="/knowledgelibraries">Kunskapsbibliotek</Button>
                     </Toolbar>
                 </AppBar>
                 <div className="app">
@@ -57,7 +64,10 @@ function App() {
                         <Route path="/" element={<MyPage />} />
                         <Route path="/projects/" element={<ProjectsPage />} />
                         <Route path="/project/:id" element={<ProjectPage />} />
-                        <Route path="resorucemarkdown" element={<ResoruceMarkdownPage />} />
+                        <Route path="/knowledgelibraries/" element={<KnowledgeLibrariesPage />} />
+                        <Route path="/knowledgelibrary/:id" element={<KnowledgeLibraryPage />} />
+                        <Route path="resorucemarkdown/:projectId/:branchId/:fileId" element={<ResoruceMarkdownPage />} />
+                        <Route path="resourcefolder/:projectId/:branchId/" element={<ResoruceFolderPage />} />
                     </Routes>
                 </div>
                 </AppContext.Provider>

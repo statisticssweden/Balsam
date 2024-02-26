@@ -1,3 +1,4 @@
+{{- if .Values.chatProvider.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,3 +37,4 @@ spec:
             cpu: "500m"
         ports:
         - containerPort: {{ .Values.chatProvider.containerPort }}
+{{- end }}

@@ -5,7 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import workspaceImage from '../assets/workspace.jpg'
+import workspaceImage from '../assets/workspace.png'
 import { Link } from 'react-router-dom';
 import { OpenInNew } from '@mui/icons-material';
 import './WorkspaceCard.css';
@@ -16,7 +16,9 @@ import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
 export interface WorkspaceCardProperties {
     workspace: Workspace,
     templateName: string,
-    deleteWorkspaceCallback: (workspaceId: string) => void,
+    canOpen: boolean,
+    canDelete: boolean,
+    deleteWorkspaceCallback: (projectId: string, branchId: string, workspaceId: string) => void,
 }
 
 export default function WorkspaceCard(props : WorkspaceCardProperties) {
@@ -24,16 +26,12 @@ export default function WorkspaceCard(props : WorkspaceCardProperties) {
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     let secondaryText = props.templateName;
-    let cardActionAreaTo = "";
     let image = workspaceImage;
     let workspaceTitle = props.workspace.name;
 
-
-    cardActionAreaTo = "";
-    
     function onDeleteConfirm()
     {
-        props.deleteWorkspaceCallback(props.workspace.id);
+        props.deleteWorkspaceCallback(props.workspace.projectId, props.workspace.branchId, props.workspace.id);
         setShowDeleteConfirmation(false);
         
     }
@@ -65,12 +63,14 @@ export default function WorkspaceCard(props : WorkspaceCardProperties) {
     }
 
     const deleteDialogContent = renderDeleteDialog();
-
+    const cardNavigationUrl = props.canOpen ? props.workspace.url : "";
+    
+    
     return (
         <Fragment>
             {deleteDialogContent}
             <Card sx={{ height:300, maxWidth: 300, minWidth: 300 }}>
-                <CardActionArea component={Link} to={cardActionAreaTo}>
+                <CardActionArea component={Link} to={cardNavigationUrl} disabled={!props.canOpen}>
                     <CardMedia
                         sx={{ height: 140 }}
                         image={image}
@@ -87,8 +87,8 @@ export default function WorkspaceCard(props : WorkspaceCardProperties) {
                 </CardActionArea>
                 <CardActions>
                     <div className='buttons'>
-                        <Button component={Link as any} to={cardActionAreaTo} target="_blank" underline="hover">Öppna<OpenInNew fontSize="inherit" /></Button>
-                        <Button onClick={onDeleteClick} >Ta bort</Button>
+                        {props.canOpen && <Button component={Link as any} to={props.workspace.url} target="_blank" underline="hover">Öppna<OpenInNew fontSize="inherit" /></Button> }
+                        {props.canDelete && <Button onClick={onDeleteClick} >Ta bort</Button>}                        
                     </div>
                 </CardActions>
             </Card>

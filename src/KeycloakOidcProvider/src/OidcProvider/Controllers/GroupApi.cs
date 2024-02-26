@@ -60,5 +60,19 @@ namespace OidcProvider.Controllers
         [SwaggerResponse(statusCode: 200, type: typeof(GroupCreatedResponse), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
         public abstract Task<IActionResult> CreateGroup([FromBody]CreateGroupRequest? createGroupRequest);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>Deletes a user group</remarks>
+        /// <param name="groupId">The id for the group</param>
+        /// <response code="200">Success</response>
+        /// <response code="400">Error respsone for 400</response>
+        [HttpDelete]
+        [Route("/api/v1/groups/{groupId}")]
+        [ValidateModelState]
+        [SwaggerOperation("DeleteGroup")]
+        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
+        public abstract Task<IActionResult> DeleteGroup([FromRoute (Name = "groupId")][Required]string groupId);
     }
 }

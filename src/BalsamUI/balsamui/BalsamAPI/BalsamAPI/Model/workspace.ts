@@ -50,5 +50,17 @@ export interface Workspace {
      * @memberof Workspace
      */
     'branchId': string;
+    /**
+     * The url to the workspace
+     * @type {string}
+     * @memberof Workspace
+     */
+    'url': string;
+    /**
+     * Owner of workspace
+     * @type {string}
+     * @memberof Workspace
+     */
+    'owner': string;
 }
 

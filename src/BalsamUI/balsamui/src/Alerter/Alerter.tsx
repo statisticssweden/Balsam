@@ -4,6 +4,7 @@ import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
 import {selectAlerts, AlertItem, removeAlert } from '../Alerts/alertsSlice';
 import "./Alerter.css"
+import { OpenInNew } from '@mui/icons-material';
 
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
         props,
@@ -55,10 +56,16 @@ export default function Alerter() {
     {
         if (currentAlert !== undefined)
         {
-            const link = currentAlert.link ? (<a className='alert-link-button' href={currentAlert.link.href}>
-                                    {currentAlert.link.caption}
+            let link;
+            if (currentAlert.link)
+            {
+                let showInNewIcon = currentAlert.link.target === "_blank" ? <OpenInNew sx={{fontSize:"inherit"}}></OpenInNew> : "";
+
+                link = currentAlert.link ? (<a className='alert-link-button' href={currentAlert.link.href} target={currentAlert.link.target}>
+                                    {currentAlert.link.caption} {showInNewIcon}
                                     </a>) : ("");
-            
+            }
+
             return <Snackbar anchorOrigin={{vertical: "top", horizontal: "center"}} open={true} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <Alert onClose={handleAlertClose} severity={currentAlert.severity as AlertColor} sx={{ width: '100%' }}>
                 <div className='alert-content' ><div>{currentAlert.text}</div><div> {link}</div></div>

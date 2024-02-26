@@ -20,6 +20,7 @@ const Login = (onAuthenticatedCallback: Function) => {
 };
 
 const UserName = () => keycloakInstance.tokenParsed?.preferred_username;
+const UserGroups = () => keycloakInstance.tokenParsed?.groups;
 
 const UserClientRoles = () => {
   if (keycloakInstance.resourceAccess === undefined) return undefined;
@@ -42,15 +43,20 @@ const doLogin = keycloakInstance.login;
 const updateToken = (successCallback: any) =>
   keycloakInstance.updateToken(5).then(successCallback).catch(doLogin);
 
+const refreshToken = () =>
+  keycloakInstance.updateToken(-1);
+
 const KeyCloakService = {
   CallLogin: Login,
   GetUserName: UserName,
+  GetUserGroups: UserGroups,
   GetUserClientRoles: UserClientRoles,
   GetUserRealmRoles: UserRealmRoles,
   CallLogout: Logout,
   IsLoggedIn: isLoggedIn,
   GetToken: getToken,
   UpdateToken: updateToken,
+  RefreshToken: refreshToken
 };
 
 export default KeyCloakService;

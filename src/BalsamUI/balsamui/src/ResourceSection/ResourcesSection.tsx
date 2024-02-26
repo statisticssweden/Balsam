@@ -1,10 +1,10 @@
 import ResourceCard from '../ResourceCard/ResourceCard';
-import { Resource } from "../Model/Model";
+import { Resource } from "../Model/Resource";
 
 
 export interface ResourceSectionProperties{
     projectid: string,
-    branch: string,
+    branchId: string,
     resources?: Array<Resource>,
 }
 

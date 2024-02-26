@@ -18,6 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddTransient<HubClient>();
 builder.Services.AddSingleton<HubRepositoryClient>();
+builder.Services.AddSingleton<KnowledgeLibraryClient>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<GitProviderApiClient.Api.IRepositoryApi>(

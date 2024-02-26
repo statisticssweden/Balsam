@@ -1,8 +1,5 @@
 # Installation instructions for installing a demo Balsam hub
-
-Only for demo purposes...
-
-Klowledge of Helm Kubernetes etc.
+# ⚠️ Only for demo purposes ⚠️
 
 ## Prerequisites
 
@@ -20,23 +17,22 @@ Replace `<YOUR-DOMAIN>` with your own DNS-entry
 
 ## Install dependencies
 
-xxx
-
 ### Install and configure ArgoCD
 
-1. Install ArgoCD following the instruction at (https://argo-cd.readthedocs.io/en/stable/getting_started/)[https://argo-cd.readthedocs.io/en/stable/getting_started/]
+1. Install ArgoCD following the instruction at [https://argo-cd.readthedocs.io/en/stable/getting_started/](https://argo-cd.readthedocs.io/en/stable/getting_started/)
 2. Add an ingress to ArgoCD with the following definition
 
 ```yaml
-apiVersion: extensions/v1beta1
-kind: Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: argocd-ingress
+  name: argocd-ingress
+  namespace: argocd
 spec:
-  rules:****
-  - host: argo-cd.<YOUR-DOMAIN>
-    http:
-      paths:
+  rules:
+  - host: argo-cd.<YOUR-DOMAIN>
+    http:
+      paths:
       - backend:
           serviceName: argocd-server
           servicePort: http
@@ -48,9 +44,10 @@ spec:
 Prerequisites: To be able to get a demo functionality in keycloak you will have to create a realm named Balsam. We have prepared this for you in the realm.json file. For the helm deployment to work you will
 have to create a ConfigMap to import the realm to the keycloak installation. You do this with the following command: 
 ```bash
-kubectl create cm keycloak-realm --namespace=keycloak --from-file=realm.json
+kubectl create ns keycloak
+kubectl create cm keycloak-realm --namespace=keycloak --from-file=realm-export.json
 ```
-1. Install KeyCloak with Helm from Bitnami see (https://bitnami.com/stack/keycloak/helm)[https://bitnami.com/stack/keycloak/helm] and use the following values.yaml file:
+1. Install KeyCloak with Helm from Bitnami see [https://bitnami.com/stack/keycloak/helm](https://bitnami.com/stack/keycloak/helm) and use the following values.yaml file:
 
   ```yaml
 auth:
@@ -90,10 +87,6 @@ extraEnvVars:
 
   ```
 
-2. Sign in and verify that it is running.
-3. Add new Realm `Balsam`
-4. Create new Client `demo`
-5. 
 
 ### Install and configure GitLab
 
@@ -117,6 +110,7 @@ args:
   name_identifier_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
 ```
 ```bash
+kubectl create ns gitlab
 kubectl create secret generic gitlab-saml -n gitlab --from-file=provider=provider.yaml
 ```
 
@@ -201,11 +195,116 @@ helm install rocketchat rocketchat/rocketchat -f RocketChat/values.yaml --namesp
 
 
 ## Configure and install a Balsam hub
+### Configure GitLab
+1. Sign in with the KeyCloak user for GitLab and sign out (So that the user is created in GitLab).
+2. Sign in with the root account in GitLab. Password is in secret `gitlab-gitlab-initial-root-password`. 
+3. Make KeyCloak user an admin.
+4. Sign in with KeyCloak user and create a personal access token.
+5. Create a new Group.
+6. Remove the branch protection rules in the new group.
+
 ### Prepare hub repository
-### Configure ArgoCD
+1. Create a private Git repository (will conatin sensitive information so keep it private)
+2. Copy the files from `dependencies/HubRepoTemplates` and changes the placeholder in the templates in the format `<PLACEHOLDER>` and commit it to the repository
+3. Create a user that has access to read and write to the repository
+
 ### Configure KeyCloak
-1. Create realm
-2. create role
-3. Create user
-4. Create client
-etc
+1. Sign in to the admin console and change the URL:s in gitlab and rocketchat client.
+2. Add a user that should be admin in MiniIO. Add that user to the group `consoleAdmin`.
+3. Add a user that should be admin in GitLab.
+4. Add a user in KeyCloak that should be admin form `Balsam` realm
+
+### Configure MinIO
+1. Sign in with the userer from keycloak in MinIO console.
+2. Create a accesskey with full rights.
+
+### Configure RocketChat
+1. Sign in as admin.
+2. Create PAT.
+
+### Configure ArgoCD
+1. Add a new application. Point it to the hub repository.
+2. Enable auto sync.
+
+## Install Balsam
+Use helm to install Balsam
+```bash
+helm install balsam oci://registry-1.docker.io/statisticssweden/balsam-chart --version 0.1.2 -f YOUR-VALUES-FILE.yaml
+```
+Use the following values template and replace the placeholder with your settings.
+
+### Values template for Balsam
+
+```yaml
+balsamApi:
+  secret:
+    name: balsam-api-secret
+    data:
+      user: <HUB-REPOSITORY-USER>
+      password: <HUB-REPOSITORY-PASSWORD-OR-TOKEN>
+  configMap:
+    name: balsam-api-config
+    data:
+      repoUrl: <HUB-REPOSITORY-URL>
+      authority: http://<KEYCLOAK-URL>/realms/Balsam
+  ingress:
+    hosts:
+      host: <BALSAM-API-URL>
+
+balsamUi:
+  ingress:    
+    hosts:
+      host: <BALSAM-UI-URL>
+
+s3Provider:  
+  secret:
+    name: minio-s3-provider-secret
+    data:
+      API__ACCESSKEY: <MINIO-ACCESSKEY-FOR-ADMIN>
+      API__SECRETKEY: <MINIO-SECRETKEY-FOR-ADMIN>
+  configMap:
+    name: minio-s3-provider-config
+    data:
+      API__DOMAIN: <MINIO-URL> ##balsam-minio-pilot-api.tanzu.scb.intra
+      API__PROTOCOL: http
+
+gitProvider:  
+  secret:
+    name: gitlab-provider-secret
+    data:
+      API__PAT: <GITLAB-PAT>
+  configMap:
+    name: gitlab-provider-config
+    data:
+      API__GroupID: <GITLAB-GROUP-ID>
+      API__BaseUrl: <GITLAB-URL>
+      API__TemplatePath: /app/templates
+
+oidcProvider:  
+  secret:
+    name: keycloak-provider-secret
+    data:
+      KEYCLOAK__ClientSecret: "MySecretSas"
+      KEYCLOAK__User: "<KEYKLOAK-ADMIN-USER>"
+      KEYCLOAK__Password: "<KEYCLOAK-ADMIN-PASSWORD>"
+  configMap:
+    name: keycloak-provider-config
+    data:
+      KEYCLOAK__BaseUrl: "<KEYCLOAK-URL>"
+      KEYCLOAK__Realm: "Balsam"
+      KEYCLOAK__ClientId: "demo"
+
+chatProvider: 
+  secret:
+    name: rocketchat-provider-secret
+    data:
+      API__Token: "<ROCKETCHAT-TOKEN>"
+  configMap:
+    name: rocketchat-provider-config
+    data:
+      API__BaseUrl: "<ROCKETCHAT-URL>"
+      API__UserId: "<ROCKETCHAT-USER>"
+
+roleBinding:
+  enabled: true
+```

@@ -24,7 +24,7 @@ namespace MinIOS3Provider.Controllers
             _client = client;
         }
 
-        public override IActionResult CreateAccessKey([FromRoute(Name = "id"), Required] string id)
+        public override IActionResult CreateAccessKey([FromRoute(Name = "bucketId"), Required] string id)
         {
             //TODO maybe we should have the userId in the accesskey name which will require us to take it as a input parameter.
             var keyPair = _client.CreateAccessKey(id);
@@ -62,6 +62,35 @@ namespace MinIOS3Provider.Controllers
             _client.CreateDirectory(bucketId, name);
 
             return Ok(new FolderCreatedResponse() { Name = name, RequestedName = createFolderRequest.Name });
+        }
+
+        public override IActionResult DeleteBucket([FromRoute(Name = "bucketId"), Required] string bucketId)
+        {
+            try
+            {
+                _client.DeleteBucket(bucketId);
+                return Ok();
+
+            } catch (Exception ex)
+            {
+                _logger.LogError(ex, "Delete bucket failed");
+            }
+            return BadRequest(new Problem() { Status = 400, Title = "Delete bucket failed", Detail = "Delete bucket failed, internal error" });
+
+        }
+
+        public override IActionResult DeleteFolder([FromRoute(Name = "bucketId"), Required] string bucketId, [FromRoute(Name = "folderName"), Required] string folderName)
+        {
+            try
+            {
+                _client.DeleteDirectory(bucketId, folderName);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Delete directory failed");
+            }
+            return BadRequest(new Problem() { Status = 400, Title = "Delete directory failed", Detail = "Delete directory failed, internal error" });
         }
     }
 }

@@ -43,7 +43,8 @@ namespace GitProviderApiClient.Model
         /// <param name="preferredName">The preferred name for the repository (required).</param>
         /// <param name="name">The name of the repository (required).</param>
         /// <param name="path">The path to the repository that can be used for clone it. (required).</param>
-        public RepositoryCreatedResponse(string id = default(string), string preferredName = default(string), string name = default(string), string path = default(string))
+        /// <param name="defaultBranchName">The name of the default git branch (required).</param>
+        public RepositoryCreatedResponse(string id = default(string), string preferredName = default(string), string name = default(string), string path = default(string), string defaultBranchName = default(string))
         {
             // to ensure "id" is required (not null)
             if (id == null)
@@ -69,6 +70,12 @@ namespace GitProviderApiClient.Model
                 throw new ArgumentNullException("path is a required property for RepositoryCreatedResponse and cannot be null");
             }
             this.Path = path;
+            // to ensure "defaultBranchName" is required (not null)
+            if (defaultBranchName == null)
+            {
+                throw new ArgumentNullException("defaultBranchName is a required property for RepositoryCreatedResponse and cannot be null");
+            }
+            this.DefaultBranchName = defaultBranchName;
         }
 
         /// <summary>
@@ -100,6 +107,13 @@ namespace GitProviderApiClient.Model
         public string Path { get; set; }
 
         /// <summary>
+        /// The name of the default git branch
+        /// </summary>
+        /// <value>The name of the default git branch</value>
+        [DataMember(Name = "defaultBranchName", IsRequired = true, EmitDefaultValue = true)]
+        public string DefaultBranchName { get; set; }
+
+        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -111,6 +125,7 @@ namespace GitProviderApiClient.Model
             sb.Append("  PreferredName: ").Append(PreferredName).Append("\n");
             sb.Append("  Name: ").Append(Name).Append("\n");
             sb.Append("  Path: ").Append(Path).Append("\n");
+            sb.Append("  DefaultBranchName: ").Append(DefaultBranchName).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -165,6 +180,11 @@ namespace GitProviderApiClient.Model
                     this.Path == input.Path ||
                     (this.Path != null &&
                     this.Path.Equals(input.Path))
+                ) && 
+                (
+                    this.DefaultBranchName == input.DefaultBranchName ||
+                    (this.DefaultBranchName != null &&
+                    this.DefaultBranchName.Equals(input.DefaultBranchName))
                 );
         }
 
@@ -192,6 +212,10 @@ namespace GitProviderApiClient.Model
                 if (this.Path != null)
                 {
                     hashCode = (hashCode * 59) + this.Path.GetHashCode();
+                }
+                if (this.DefaultBranchName != null)
+                {
+                    hashCode = (hashCode * 59) + this.DefaultBranchName.GetHashCode();
                 }
                 return hashCode;
             }

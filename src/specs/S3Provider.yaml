@@ -34,6 +34,25 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
+  /buckets/{bucketId}:
+    delete:
+      tags: 
+        - Bucket
+      operationId: DeleteBucket
+      description: Deletes a new Bucket      
+      parameters:
+        - name: bucketId
+          in: path
+          description: the name of the bucket
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success          
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
   /buckets/{bucketId}/folder:
     post:
       tags: 
@@ -61,6 +80,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/FolderCreatedResponse'
                  
+        '400':
+          $ref: '#/components/responses/ErrorResponse400'
+
+  /buckets/{bucketId}/folder/{folderName}:
+    delete:
+      tags: 
+        - Bucket
+      operationId: DeleteFolder
+      description: Deletes a new virtual folder in the bucket.
+      parameters:
+        - name: bucketId
+          in: path
+          description: the name of the bucket
+          required: true
+          schema:
+            type: string
+        - name: folderName
+          in: path
+          description: the name of the folder
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success                 
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 

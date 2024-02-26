@@ -8,8 +8,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Button, Chip, Divider } 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import WorkspacesSection, { NewWorkspaceCardKeyType } from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog, { NewWorkspaceDialogProperties } from '../NewWorkspaceDialog/NewWorkspaceDialog';
-
-
+import { AxiosResponse } from 'axios';
 
 export default function MyPage() {
 
@@ -24,70 +23,64 @@ export default function MyPage() {
     const loadProjects = () =>
     {
         setLoading(true);
-
-        const fetchData = async () => {
-            let promise = appContext.balsamApi.projectApi.listProjects(false);
-            promise.catch(() => {
-                
-                dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
-            })
-
-            let listProjectsResponse = await promise;
+        appContext.balsamApi.projectApi.listProjects(false)
+        .catch(() => {
             
-            setProjects(listProjectsResponse.data.projects);
+            dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
+        })
+        .then((response) => {
+            setProjects(response?.data.projects);
             setLoading(false);
-        }
-
-        fetchData()
-            .catch(console.error);
-        
-        
-
+        })
     }
 
     const loadWorkspaces = async () => {
 
-        let promise = appContext.balsamApi.workspaceApi.getWorkspace(undefined, undefined, false);
-        promise.catch(() => {
-            dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
+        appContext.balsamApi.workspaceApi.listWorkspaces(undefined, undefined, false)
+            .catch(() => {
+                dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
+            })
+            .then((response) => {
+                setWorkspaces(response?.data);
+            })
+    };
+
+    const loadTemplates = () => {
+        appContext.balsamApi.workspaceApi.listTemplates()
+        .catch(() => {
+            dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
         })
-        let response = await promise;
-        setWorkspaces(response.data);
+        .then((response) => {
+            let axResponse = response as AxiosResponse<Template[], any>
+            if (axResponse)
+            {
+                setTemplates(axResponse.data);
+            }
+        })
     };
 
     useEffect(() => {
-        (async () =>  {
-            loadProjects();
-            await loadTemplates();
-            loadWorkspaces();
-        })();
+        loadProjects();
+        loadTemplates();
+        loadWorkspaces();
     }, [])
 
    
-    const deleteWorkspace = (workspaceId: string) => 
+    const deleteWorkspace = (projectId: string, branchId: string, workspaceId: string) => 
     {
-        let promise = appContext.balsamApi.workspaceApi.deleteWorkspace(workspaceId);
-        promise.catch(() => {
-            dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
-        })
-        promise.then(() => {
-            dispatch(postSuccess("Bearbetningsmiljö borttagen.")); //TODO: Language
-            
-            //Faster than reloading all
-            if (workspaces){
-                setWorkspaces(workspaces.filter( w => w.id !== workspaceId));
-            }
-        })
+        appContext.balsamApi.workspaceApi.deleteWorkspace(projectId, branchId, workspaceId)
+            .catch(() => {
+                dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
+            })
+            .then(() => {
+                dispatch(postSuccess("Bearbetningsmiljö borttagen.")); //TODO: Language
+                
+                //Faster than reloading all
+                if (workspaces){
+                    setWorkspaces(workspaces.filter( w => w.id !== workspaceId));
+                }
+            });
     }
-    
-    const loadTemplates = async () => {
-        let promise = appContext.balsamApi.workspaceApi.listTemplates();
-        promise.catch(() => {
-            dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
-        })
-        let response = await promise;
-        setTemplates(response.data);
-    };
 
     const onNewWorkspaceDialogClosing = () => {
         
@@ -156,6 +149,7 @@ export default function MyPage() {
                     showNewCard={true} 
                     workspaces={branchWorkspaces} 
                     templates={templates}
+                    userName={appContext.getUserName()}
                     onNewClick={onNewWorkspaceClick} ></WorkspacesSection>
                 
             </div>
@@ -171,11 +165,16 @@ export default function MyPage() {
 
     }
 
-    function renderProjectsTable(projs: Array<Project>) {
+    function renderProjects() {
+        if (projects === undefined)
+        {
+            return "";
+        }
+
         return (
-            <div aria-labelledby="tabelLabel">
+            <div>
                 {
-                    projs.map((project) => {
+                    projects.map((project) => {
                         let openProjectUrl = `/project/${project.id}`
                         return (
                         <Accordion defaultExpanded key={project.id}>
@@ -185,18 +184,15 @@ export default function MyPage() {
                                 id="panel1a-header"
                                 >
                                      <Button sx={{ minWidth:"0px",  padding:0, textTransform:"none" }} onClick={(e) => onOpenProjectClick(e, openProjectUrl) }  >
-                                     <h3 className='projectHeader'>{project.name}</h3>
+                                        <h3 className='projectHeader'>{project.name}</h3>
                                      </Button>
-                                     {/* <div>
-                                     <p className="description"><em>{project.description}</em></p>
-                                     </div> */}
-                                     
                             </AccordionSummary>
                             <AccordionDetails>
-                                
+                                <div className='cards'>
                                 {project.branches.map((branch) => {
                                     return renderBranchContent(project.id, branch)
                                 })}
+                                </div>
                             </AccordionDetails>
                         </Accordion>
                        )
@@ -212,7 +208,7 @@ export default function MyPage() {
 
     let contents = loading
         ? <p><em>Laddar...</em></p>
-        : renderProjectsTable(projects as Array<Project>);
+        : renderProjects();
 
     return (
         <div>

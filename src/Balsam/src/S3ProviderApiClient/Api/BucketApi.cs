@@ -97,6 +97,54 @@ namespace S3ProviderApiClient.Api
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>ApiResponse of FolderCreatedResponse</returns>
         ApiResponse<FolderCreatedResponse> CreateFolderWithHttpInfo(string bucketId, CreateFolderRequest? createFolderRequest = default(CreateFolderRequest?), int operationIndex = 0);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a new Bucket
+        /// </remarks>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns></returns>
+        void DeleteBucket(string bucketId, int operationIndex = 0);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a new Bucket
+        /// </remarks>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns>ApiResponse of Object(void)</returns>
+        ApiResponse<Object> DeleteBucketWithHttpInfo(string bucketId, int operationIndex = 0);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a new virtual folder in the bucket.
+        /// </remarks>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="folderName">the name of the folder</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns></returns>
+        void DeleteFolder(string bucketId, string folderName, int operationIndex = 0);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a new virtual folder in the bucket.
+        /// </remarks>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="folderName">the name of the folder</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns>ApiResponse of Object(void)</returns>
+        ApiResponse<Object> DeleteFolderWithHttpInfo(string bucketId, string folderName, int operationIndex = 0);
         #endregion Synchronous Operations
     }
 
@@ -183,6 +231,58 @@ namespace S3ProviderApiClient.Api
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of ApiResponse (FolderCreatedResponse)</returns>
         System.Threading.Tasks.Task<ApiResponse<FolderCreatedResponse>> CreateFolderWithHttpInfoAsync(string bucketId, CreateFolderRequest? createFolderRequest = default(CreateFolderRequest?), int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a new Bucket
+        /// </remarks>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of void</returns>
+        System.Threading.Tasks.Task DeleteBucketAsync(string bucketId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a new Bucket
+        /// </remarks>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of ApiResponse</returns>
+        System.Threading.Tasks.Task<ApiResponse<Object>> DeleteBucketWithHttpInfoAsync(string bucketId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a new virtual folder in the bucket.
+        /// </remarks>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="folderName">the name of the folder</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of void</returns>
+        System.Threading.Tasks.Task DeleteFolderAsync(string bucketId, string folderName, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// Deletes a new virtual folder in the bucket.
+        /// </remarks>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="folderName">the name of the folder</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of ApiResponse</returns>
+        System.Threading.Tasks.Task<ApiResponse<Object>> DeleteFolderWithHttpInfoAsync(string bucketId, string folderName, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
         #endregion Asynchronous Operations
     }
 
@@ -730,6 +830,308 @@ namespace S3ProviderApiClient.Api
             if (this.ExceptionFactory != null)
             {
                 Exception _exception = this.ExceptionFactory("CreateFolder", localVarResponse);
+                if (_exception != null)
+                {
+                    throw _exception;
+                }
+            }
+
+            return localVarResponse;
+        }
+
+        /// <summary>
+        ///  Deletes a new Bucket
+        /// </summary>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns></returns>
+        public void DeleteBucket(string bucketId, int operationIndex = 0)
+        {
+            DeleteBucketWithHttpInfo(bucketId);
+        }
+
+        /// <summary>
+        ///  Deletes a new Bucket
+        /// </summary>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns>ApiResponse of Object(void)</returns>
+        public S3ProviderApiClient.Client.ApiResponse<Object> DeleteBucketWithHttpInfo(string bucketId, int operationIndex = 0)
+        {
+            // verify the required parameter 'bucketId' is set
+            if (bucketId == null)
+            {
+                throw new S3ProviderApiClient.Client.ApiException(400, "Missing required parameter 'bucketId' when calling BucketApi->DeleteBucket");
+            }
+
+            S3ProviderApiClient.Client.RequestOptions localVarRequestOptions = new S3ProviderApiClient.Client.RequestOptions();
+
+            string[] _contentTypes = new string[] {
+            };
+
+            // to determine the Accept header
+            string[] _accepts = new string[] {
+                "application/problem+json"
+            };
+
+            var localVarContentType = S3ProviderApiClient.Client.ClientUtils.SelectHeaderContentType(_contentTypes);
+            if (localVarContentType != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Content-Type", localVarContentType);
+            }
+
+            var localVarAccept = S3ProviderApiClient.Client.ClientUtils.SelectHeaderAccept(_accepts);
+            if (localVarAccept != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
+            }
+
+            localVarRequestOptions.PathParameters.Add("bucketId", S3ProviderApiClient.Client.ClientUtils.ParameterToString(bucketId)); // path parameter
+
+            localVarRequestOptions.Operation = "BucketApi.DeleteBucket";
+            localVarRequestOptions.OperationIndex = operationIndex;
+
+
+            // make the HTTP request
+            var localVarResponse = this.Client.Delete<Object>("/buckets/{bucketId}", localVarRequestOptions, this.Configuration);
+            if (this.ExceptionFactory != null)
+            {
+                Exception _exception = this.ExceptionFactory("DeleteBucket", localVarResponse);
+                if (_exception != null)
+                {
+                    throw _exception;
+                }
+            }
+
+            return localVarResponse;
+        }
+
+        /// <summary>
+        ///  Deletes a new Bucket
+        /// </summary>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of void</returns>
+        public async System.Threading.Tasks.Task DeleteBucketAsync(string bucketId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            await DeleteBucketWithHttpInfoAsync(bucketId, operationIndex, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        ///  Deletes a new Bucket
+        /// </summary>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of ApiResponse</returns>
+        public async System.Threading.Tasks.Task<S3ProviderApiClient.Client.ApiResponse<Object>> DeleteBucketWithHttpInfoAsync(string bucketId, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            // verify the required parameter 'bucketId' is set
+            if (bucketId == null)
+            {
+                throw new S3ProviderApiClient.Client.ApiException(400, "Missing required parameter 'bucketId' when calling BucketApi->DeleteBucket");
+            }
+
+
+            S3ProviderApiClient.Client.RequestOptions localVarRequestOptions = new S3ProviderApiClient.Client.RequestOptions();
+
+            string[] _contentTypes = new string[] {
+            };
+
+            // to determine the Accept header
+            string[] _accepts = new string[] {
+                "application/problem+json"
+            };
+
+            var localVarContentType = S3ProviderApiClient.Client.ClientUtils.SelectHeaderContentType(_contentTypes);
+            if (localVarContentType != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Content-Type", localVarContentType);
+            }
+
+            var localVarAccept = S3ProviderApiClient.Client.ClientUtils.SelectHeaderAccept(_accepts);
+            if (localVarAccept != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
+            }
+
+            localVarRequestOptions.PathParameters.Add("bucketId", S3ProviderApiClient.Client.ClientUtils.ParameterToString(bucketId)); // path parameter
+
+            localVarRequestOptions.Operation = "BucketApi.DeleteBucket";
+            localVarRequestOptions.OperationIndex = operationIndex;
+
+
+            // make the HTTP request
+            var localVarResponse = await this.AsynchronousClient.DeleteAsync<Object>("/buckets/{bucketId}", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
+
+            if (this.ExceptionFactory != null)
+            {
+                Exception _exception = this.ExceptionFactory("DeleteBucket", localVarResponse);
+                if (_exception != null)
+                {
+                    throw _exception;
+                }
+            }
+
+            return localVarResponse;
+        }
+
+        /// <summary>
+        ///  Deletes a new virtual folder in the bucket.
+        /// </summary>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="folderName">the name of the folder</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns></returns>
+        public void DeleteFolder(string bucketId, string folderName, int operationIndex = 0)
+        {
+            DeleteFolderWithHttpInfo(bucketId, folderName);
+        }
+
+        /// <summary>
+        ///  Deletes a new virtual folder in the bucket.
+        /// </summary>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="folderName">the name of the folder</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <returns>ApiResponse of Object(void)</returns>
+        public S3ProviderApiClient.Client.ApiResponse<Object> DeleteFolderWithHttpInfo(string bucketId, string folderName, int operationIndex = 0)
+        {
+            // verify the required parameter 'bucketId' is set
+            if (bucketId == null)
+            {
+                throw new S3ProviderApiClient.Client.ApiException(400, "Missing required parameter 'bucketId' when calling BucketApi->DeleteFolder");
+            }
+
+            // verify the required parameter 'folderName' is set
+            if (folderName == null)
+            {
+                throw new S3ProviderApiClient.Client.ApiException(400, "Missing required parameter 'folderName' when calling BucketApi->DeleteFolder");
+            }
+
+            S3ProviderApiClient.Client.RequestOptions localVarRequestOptions = new S3ProviderApiClient.Client.RequestOptions();
+
+            string[] _contentTypes = new string[] {
+            };
+
+            // to determine the Accept header
+            string[] _accepts = new string[] {
+                "application/problem+json"
+            };
+
+            var localVarContentType = S3ProviderApiClient.Client.ClientUtils.SelectHeaderContentType(_contentTypes);
+            if (localVarContentType != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Content-Type", localVarContentType);
+            }
+
+            var localVarAccept = S3ProviderApiClient.Client.ClientUtils.SelectHeaderAccept(_accepts);
+            if (localVarAccept != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
+            }
+
+            localVarRequestOptions.PathParameters.Add("bucketId", S3ProviderApiClient.Client.ClientUtils.ParameterToString(bucketId)); // path parameter
+            localVarRequestOptions.PathParameters.Add("folderName", S3ProviderApiClient.Client.ClientUtils.ParameterToString(folderName)); // path parameter
+
+            localVarRequestOptions.Operation = "BucketApi.DeleteFolder";
+            localVarRequestOptions.OperationIndex = operationIndex;
+
+
+            // make the HTTP request
+            var localVarResponse = this.Client.Delete<Object>("/buckets/{bucketId}/folder/{folderName}", localVarRequestOptions, this.Configuration);
+            if (this.ExceptionFactory != null)
+            {
+                Exception _exception = this.ExceptionFactory("DeleteFolder", localVarResponse);
+                if (_exception != null)
+                {
+                    throw _exception;
+                }
+            }
+
+            return localVarResponse;
+        }
+
+        /// <summary>
+        ///  Deletes a new virtual folder in the bucket.
+        /// </summary>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="folderName">the name of the folder</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of void</returns>
+        public async System.Threading.Tasks.Task DeleteFolderAsync(string bucketId, string folderName, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            await DeleteFolderWithHttpInfoAsync(bucketId, folderName, operationIndex, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        ///  Deletes a new virtual folder in the bucket.
+        /// </summary>
+        /// <exception cref="S3ProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
+        /// <param name="bucketId">the name of the bucket</param>
+        /// <param name="folderName">the name of the folder</param>
+        /// <param name="operationIndex">Index associated with the operation.</param>
+        /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
+        /// <returns>Task of ApiResponse</returns>
+        public async System.Threading.Tasks.Task<S3ProviderApiClient.Client.ApiResponse<Object>> DeleteFolderWithHttpInfoAsync(string bucketId, string folderName, int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        {
+            // verify the required parameter 'bucketId' is set
+            if (bucketId == null)
+            {
+                throw new S3ProviderApiClient.Client.ApiException(400, "Missing required parameter 'bucketId' when calling BucketApi->DeleteFolder");
+            }
+
+            // verify the required parameter 'folderName' is set
+            if (folderName == null)
+            {
+                throw new S3ProviderApiClient.Client.ApiException(400, "Missing required parameter 'folderName' when calling BucketApi->DeleteFolder");
+            }
+
+
+            S3ProviderApiClient.Client.RequestOptions localVarRequestOptions = new S3ProviderApiClient.Client.RequestOptions();
+
+            string[] _contentTypes = new string[] {
+            };
+
+            // to determine the Accept header
+            string[] _accepts = new string[] {
+                "application/problem+json"
+            };
+
+            var localVarContentType = S3ProviderApiClient.Client.ClientUtils.SelectHeaderContentType(_contentTypes);
+            if (localVarContentType != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Content-Type", localVarContentType);
+            }
+
+            var localVarAccept = S3ProviderApiClient.Client.ClientUtils.SelectHeaderAccept(_accepts);
+            if (localVarAccept != null)
+            {
+                localVarRequestOptions.HeaderParameters.Add("Accept", localVarAccept);
+            }
+
+            localVarRequestOptions.PathParameters.Add("bucketId", S3ProviderApiClient.Client.ClientUtils.ParameterToString(bucketId)); // path parameter
+            localVarRequestOptions.PathParameters.Add("folderName", S3ProviderApiClient.Client.ClientUtils.ParameterToString(folderName)); // path parameter
+
+            localVarRequestOptions.Operation = "BucketApi.DeleteFolder";
+            localVarRequestOptions.OperationIndex = operationIndex;
+
+
+            // make the HTTP request
+            var localVarResponse = await this.AsynchronousClient.DeleteAsync<Object>("/buckets/{bucketId}/folder/{folderName}", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
+
+            if (this.ExceptionFactory != null)
+            {
+                Exception _exception = this.ExceptionFactory("DeleteFolder", localVarResponse);
                 if (_exception != null)
                 {
                     throw _exception;

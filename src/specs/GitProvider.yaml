@@ -41,6 +41,25 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
+  /repos/{repositoryId}:
+    delete:
+      tags: 
+        - Repository
+      operationId: DeleteRepository
+      description: Deletes a repository      
+      parameters:
+        - name: repositoryId
+          in: path
+          description: The name of the repository where the branch should be created.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success          
+        '400':
+          $ref: '#/components/responses/ErrorResponse400' 
+
   /repos/{repositoryId}/branches:
     post:
       tags: 
@@ -75,6 +94,31 @@ paths:
                   name: demo-repot
         '400':
           $ref: '#/components/responses/ErrorResponse400NoRepo'    
+
+  /repos/{repositoryId}/branches/{branchId}:
+    delete:
+      tags: 
+        - Repository
+      operationId: DeleteRepositoryBranch
+      description: Deletes git branch for specified repository
+      parameters:
+        - name: repositoryId
+          in: path
+          description: The id of the repository.
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: path
+          description: The id of the branch.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/ErrorResponse400NoRepo'  
 
   /repos/{repositoryId}/branches/{branchId}/files:
     get:
@@ -150,6 +194,43 @@ paths:
         '400':
           $ref: '#/components/responses/ErrorResponse400'
 
+
+  /repos/{repositoryId}/branches/{branchId}/resources:
+    put:
+      tags: 
+        - Repository
+      operationId: AddResourceFiles
+      description: Adds resource files to a branch in a repository in the resource folder
+   
+      parameters:
+        - name: repositoryId
+          in: path
+          description: The id of the repository.
+          required: true
+          schema:
+            type: string
+        - name: branchId
+          in: path
+          description: The id of the branch.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: zip file with resource files
+        content:
+          multipart/form-data:
+            schema:
+              type: object      
+              properties:
+                UploadFile:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Success
+        '400':
+          $ref: '#/components/responses/ErrorResponse400NoRepo' 
+
   /users/{id}/PAT:
     post:
       tags: 
@@ -189,11 +270,15 @@ components:
       type: object
       description: File information
       required:
+        - "id"
         - "path"
         - "name"
         - "type"
         - "contentUrl"
       properties:
+        id:
+          type: string
+          description: identifier for the file
         path:
           type: string
           description: The full relative path 
@@ -248,6 +333,7 @@ components:
         - "preferredName"
         - "name"
         - "path"
+        - "defaultBranchName"
       properties:
         id:
           type: string
@@ -261,6 +347,10 @@ components:
         path:
           type: string
           description: The path to the repository that can be used for clone it.
+        defaultBranchName:
+          type: string
+          description: The name of the default git branch
+
 
     BranchCreatedResponse:
       type: object

@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using ChatProvider.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -10,6 +11,7 @@ namespace RocketChatChatProvider.Client;
 public interface IRocketChatClient
 {
     Task<AreaCreatedResponse?> CreateArea(string channelName);
+    Task DeleteArea(string areaId);
 }
 
 public class RocketChatClient : IRocketChatClient
@@ -75,6 +77,38 @@ public class RocketChatClient : IRocketChatClient
         {
             _logger.LogError(e, "An error occurred when creating channel {channel}", channelName);
             return null;
+        }
+    }
+    public async Task DeleteArea(string channelId)
+    {
+        _logger.LogDebug("Starting deletion of channel with id: ",channelId);
+
+        var requestUri = $"{_api.BaseUrl}api/v1/channels.delete";
+
+        var channel = new RocketChatChannelDelete(channelId);
+
+        var request = new HttpRequestMessage(HttpMethod.Post, requestUri)
+        {
+            Content = new StringContent(JsonConvert.SerializeObject(channel), Encoding.UTF8, "application/json")
+        };
+
+        _httpClient.DefaultRequestHeaders.Add("X-Auth-Token", _api.Token);
+        _httpClient.DefaultRequestHeaders.Add("X-User-Id", _api.UserId);
+
+        try
+        {
+            var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            response.EnsureSuccessStatusCode();
+
+            _logger.LogInformation("Channel deleted with id: ",channelId);
+        }
+        catch (DeserializeException e)
+        {
+            _logger.LogError(e, "Could not interpret the response object from Rocket.Chat-api.");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "An error occurred when deleting channel with id: ",channelId);
         }
     }
 }

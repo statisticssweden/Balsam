@@ -1,7 +1,7 @@
 import NewCard from "../NewCard/NewCard";
 import WorkspaceCard from "../WorkspaceCard/WorkspaceCard";
 import { Template, Workspace } from "../services/BalsamAPIServices";
-import workspaceImage from '../assets/workspace.jpg'
+import workspaceImage from '../assets/workspace.png'
 
 export interface NewWorkspaceCardKeyType
 {
@@ -15,9 +15,10 @@ export interface WorkspaceSectionProperties
     branch: string,
     workspaces?: Array<Workspace>,
     templates?: Array<Template>,
-    deleteWorkspaceCallback: (workspaceId: string) => void,
+    deleteWorkspaceCallback: (projectId: string, branchId: string, workspaceId: string) => void,
     showNewCard?: boolean,
-    onNewClick?: (itemKey: any) => void
+    onNewClick?: (itemKey: any) => void,
+    userName: string
 }
 
 export default function WorkspacesSection(props: WorkspaceSectionProperties)
@@ -33,23 +34,22 @@ export default function WorkspacesSection(props: WorkspaceSectionProperties)
             <div className='cards' aria-labelledby="tabelLabel">
                 {workspaces.map((workspace: Workspace) => {
                     let templateName = workspace.templateId;
-
+                    let isOwner = workspace.owner === null || workspace.owner === props.userName;
                     if(props.templates !== undefined)
                     {
                         templateName = props.templates.find(t => t.id === workspace.templateId)?.name || templateName;
                     }
 
-                    return (<WorkspaceCard templateName={templateName} workspace={workspace} deleteWorkspaceCallback={props.deleteWorkspaceCallback} key={workspace.id} />);
+                    return (<WorkspaceCard templateName={templateName} canOpen={isOwner} canDelete={isOwner} workspace={workspace} deleteWorkspaceCallback={props.deleteWorkspaceCallback} key={workspace.id} />);
                 }
                 )}
                 {newCardContent}
             </div>
         )
-
     }
     
     let contents = props.workspaces === undefined
-        ? <p><em>Laddar resurser...</em></p>
+        ? <p><em>Laddar bearbetningsmiljöer...</em></p>
         : renderWorkspaces(props.workspaces!);
 
     return (<div>

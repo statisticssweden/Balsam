@@ -44,5 +44,11 @@ export interface WorkspaceCreatedResponse {
      * @memberof WorkspaceCreatedResponse
      */
     'name': string;
+    /**
+     * Url to the workspace
+     * @type {string}
+     * @memberof WorkspaceCreatedResponse
+     */
+    'url': string;
 }
 

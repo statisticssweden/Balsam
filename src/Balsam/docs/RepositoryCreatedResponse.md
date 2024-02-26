@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **PreferredName** | **string** | The preferred name for the repository | 
 **Name** | **string** | The name of the repository | 
 **Path** | **string** | The path to the repository that can be used for clone it. | 
+**DefaultBranchName** | **string** | The name of the default git branch | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

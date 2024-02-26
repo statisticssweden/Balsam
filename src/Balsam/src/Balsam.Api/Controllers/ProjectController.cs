@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
+using LibGit2Sharp;
+using GitProviderApiClient.Api;
 
 namespace Balsam.Api.Controllers
 {
@@ -15,19 +17,50 @@ namespace Balsam.Api.Controllers
     {
         private readonly HubClient _hubClient;
         private readonly ILogger<ProjectController> _logger;
+        private readonly KnowledgeLibraryClient _knowledgeLibraryClient;
+        private readonly IRepositoryApi _repositoryApi;
 
 
-        public ProjectController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, ILogger<ProjectController> logger, HubClient hubClient)
+        public ProjectController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, ILogger<ProjectController> logger, HubClient hubClient, KnowledgeLibraryClient knowledgeLibraryClient, IRepositoryApi reposiotryApi)
         {
             _hubClient = hubClient;
             _logger = logger;
             capabilityOptions.Get(Capabilities.Git);
             capabilityOptions.Get(Capabilities.Authentication);
+            _knowledgeLibraryClient = knowledgeLibraryClient;
+            _repositoryApi = reposiotryApi;
         }
 
-        public override Task<IActionResult> CreateBranch([FromRoute(Name = "projectId"), Required] string projectId, [FromBody] CreateBranchRequest? createBranchRequest)
+        public async override Task<IActionResult> CreateBranch([FromRoute(Name = "projectId"), Required] string projectId, [FromBody] CreateBranchRequest? createBranchRequest)
         {
-            throw new NotImplementedException();
+            if (createBranchRequest is null)
+            {
+                return BadRequest(new Problem() { Status = 400, Title = "Parameter error", Detail = "Missing parameters" });
+            }
+
+            BranchCreatedResponse branchCreatedResponse;
+            try
+            {
+                var branch = await _hubClient.CreateBranch(projectId, createBranchRequest.FromBranch, createBranchRequest.Name, createBranchRequest.Description);
+                if (branch == null)
+                {
+                    return BadRequest(new Problem() { Status = 400, Title = "Could not create branch", Detail = "Branch could not be created" });
+                }
+
+                branchCreatedResponse = new BranchCreatedResponse
+                {
+                    Id = branch.Id,
+                    Name = branch.Name,
+                    ProjectId = projectId
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not create branch");
+                return BadRequest(new Problem() { Status = 400, Title = "Could not create branch", Detail = "Branch could not be created" });
+            }
+
+            return Ok(branchCreatedResponse);
         }
 
 
@@ -42,7 +75,7 @@ namespace Balsam.Api.Controllers
             _logger.LogInformation($"The user is {username}");
             try
             {
-                BalsamProject? project = await _hubClient.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName, username);
+                BalsamProject? project = await _hubClient.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName, username, createProjectRequest.SourceLocation);
 
                 if (project == null)
                 {
@@ -68,13 +101,21 @@ namespace Balsam.Api.Controllers
             try
             {
                 var files = await _hubClient.GetGitBranchFiles(projectId, branchId);
-                if (files is null )
+                if (files is null)
                 {
                     return BadRequest(new Problem() { Status = 400, Type = "Fetch problem", Title = "Could not fetch files for repository branch" });
                 }
-                return Ok(files.Select(f => new BalsamApi.Server.Models.File() { Name  = f.Name, Path = f.Path, Type = f.Type == GitProviderApiClient.Model.File.TypeEnum.File?BalsamApi.Server.Models.File.TypeEnum.FileEnum: BalsamApi.Server.Models.File.TypeEnum.FolderEnum, ContentUrl = f.ContentUrl }).ToArray());
+                return Ok(files.Select(f => new BalsamApi.Server.Models.RepoFile()
+                {
+                    Name = f.Name,
+                    Path = f.Path,
+                    Type = f.Type == GitProviderApiClient.Model.RepoFile.TypeEnum.File ? BalsamApi.Server.Models.RepoFile.TypeEnum.FileEnum : BalsamApi.Server.Models.RepoFile.TypeEnum.FolderEnum,
+                    ContentUrl = f.ContentUrl,
+                    Id = f.Id
+                }).ToArray());
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Could not fetch files");
             }
@@ -98,7 +139,8 @@ namespace Balsam.Api.Controllers
                 evt.Name = balsamProject.Name;
                 evt.Description = balsamProject.Description;
                 evt.GitUrl = balsamProject.Git is null ? "" : balsamProject.Git.Path;
-                evt.Branches = balsamProject.Branches.Select(b => new Branch() { Id = b.Id, Description = b.Description, Name = b.Name, IsDefault = b.IsDefault }).ToList();
+                evt.Branches = balsamProject.Branches.Select(b => new BalsamApi.Server.Models.Branch() { Id = b.Id, Description = b.Description, Name = b.Name, IsDefault = b.IsDefault }).ToList();
+                evt.AuthGroup = balsamProject.Oidc.GroupName;
 
                 return Ok(evt);
             }
@@ -138,13 +180,15 @@ namespace Balsam.Api.Controllers
                 Id = project.Id,
                 Name = project.Name,
                 Description = project.Description,
-                Branches = MapBranches(project.Branches)
-            }).ToList();
+                Branches = MapBranches(project.Branches),
+                AuthGroup = project.Oidc.GroupName,
+                GitUrl = project.Git?.Path
+            }).OrderBy(p => p.Name).ToList();
         }
 
-        private List<Branch> MapBranches(List<BalsamBranch> branches)
+        private List<BalsamApi.Server.Models.Branch> MapBranches(List<BalsamBranch> branches)
         {
-            return branches.Select(branch => new Branch()
+            return branches.Select(branch => new BalsamApi.Server.Models.Branch()
             {
                 Id = branch.Id,
                 Description = branch.Description,
@@ -153,5 +197,107 @@ namespace Balsam.Api.Controllers
             }).ToList();
         }
 
+        public async override Task<IActionResult> GetFile([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId, [FromRoute(Name = "fileId"), Required] string fileId)
+        {
+            var file = await _hubClient.GetFile(projectId, branchId, fileId);
+
+            if (file != null)
+            {
+                Response.Headers.Add("content-disposition", "inline");
+                return file;
+            }
+
+            return BadRequest(new Problem() { Status = 404, Type = "file not found", Detail = "Can not find the file" });
+
+        }
+
+        public async override Task<IActionResult> DeleteBranch([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId)
+        {
+            try
+            {
+                var project = await _hubClient.GetProject(projectId);
+                var branch = await _hubClient.GetBranch(projectId, branchId);
+
+                if (project is null || branch is null)
+                {
+                    return BadRequest(new Problem() { Status = 404, Type = "Project/branch not found", Detail = "Can not find the project/branch" });
+
+                }
+                else if (User.Claims.FirstOrDefault(x => x.Type == "groups" && x.Value == project.Oidc?.GroupName) is null)
+                {
+                    return Unauthorized(new Problem() { Status = 401, Type = "Unauthorized", Detail = "User is not authorized to delete the branch" });
+                }
+
+                await _hubClient.DeleteBranch(projectId, branchId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not delete branch");
+                return BadRequest(new Problem() { Status = 400, Type = "Could not delete branch", Detail = "Could not delete branch, internal error" });
+            }
+
+            return Ok();
+        }
+
+        public async override Task<IActionResult> DeleteProject([FromRoute(Name = "projectId"), Required] string projectId)
+        {
+            try
+            {
+                var project = await _hubClient.GetProject(projectId);
+
+                if (project is null )
+                {
+                    return BadRequest(new Problem() { Status = 404, Type = "Project not found", Detail = "Can not find the project" });
+                    
+                } else if (User.Claims.FirstOrDefault(x => x.Type == "groups" && x.Value == project.Oidc?.GroupName) is null)
+                {
+                    return Unauthorized(new Problem() { Status = 401, Type = "Unauthorized", Detail = "User is not authorized to delete the project" });
+                }
+
+                await _hubClient.DeleteProject(projectId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not delete project");
+                return BadRequest(new Problem() { Status = 400, Type = "Could not delete project", Detail = "Could not delete project, internal error" });
+            }
+
+            return Ok();
+        }
+
+        public async override Task<IActionResult> CopyFromKnowleadgeLibrary([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId, [FromQuery(Name = "libraryId"), Required] string libraryId, [FromQuery(Name = "fileId"), Required] string fileId)
+        {
+            try
+            {
+                var project = await _hubClient.GetProject(projectId);
+                var branch = await _hubClient.GetBranch(projectId, branchId);
+                if (project is null || branch is null)
+                {
+                    return BadRequest(new Problem() { Status = 404, Type = "Project/branch not found", Detail = "Can not find the project/branch" });
+                }
+
+                var knowledgeLibrary = (await _hubClient.ListKnowledgeLibraries()).FirstOrDefault(kb => kb.Id == libraryId);
+
+                if (knowledgeLibrary is null)
+                {
+                    return BadRequest(new Problem() { Status = 404, Title = "Knowledge library not found", Detail = "Knowledge library not found" });
+                }
+
+                var zipFile = _knowledgeLibraryClient.GetZippedResource(libraryId, knowledgeLibrary.RepositoryUrl, fileId);
+            
+                var stream = System.IO.File.OpenRead(zipFile);
+                await _repositoryApi.AddResourceFilesAsync(project.Git?.Id??"", branch.GitBranch, stream);
+                stream.Close();
+                System.IO.File.Delete(zipFile);
+                
+                _logger.LogInformation("File/directory copied from knowledge library");
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not copy file/directory");
+                return BadRequest(new Problem() { Status = 400, Title = "Could not copy file/directory", Detail = "Could not copy file/directory" });
+            }
+        }
     }
 }

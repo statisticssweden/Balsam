@@ -32,22 +32,6 @@ namespace BalsamApi.Server.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <remarks>Create a new connection to a knowledge library</remarks>
-        /// <param name="createKnowledgeLibraryRequest">Definition of a new Knowledge library connection</param>
-        /// <response code="200">Success</response>
-        /// <response code="400">Error respsone for 400</response>
-        [HttpPost]
-        [Route("/api/v1/knowledge-libraries")]
-        [Consumes("application/json")]
-        [ValidateModelState]
-        [SwaggerOperation("CreateKnowledgeLibrary")]
-        [SwaggerResponse(statusCode: 200, type: typeof(KnowledgeLibraryCreatedResponse), description: "Success")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> CreateKnowledgeLibrary([FromBody]CreateKnowledgeLibraryRequest? createKnowledgeLibraryRequest);
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <remarks>Create a new workspace</remarks>
         /// <param name="createWorkspaceRequest">Definition of a new workspace</param>
         /// <response code="200">Success</response>
@@ -65,6 +49,8 @@ namespace BalsamApi.Server.Controllers
         /// 
         /// </summary>
         /// <remarks>Delete workspace</remarks>
+        /// <param name="projectId">id for the project</param>
+        /// <param name="branchId">id for the branch</param>
         /// <param name="workspaceId">id id for the workspace</param>
         /// <response code="200">Success</response>
         /// <response code="400">Error respsone for 400</response>
@@ -73,7 +59,19 @@ namespace BalsamApi.Server.Controllers
         [ValidateModelState]
         [SwaggerOperation("DeleteWorkspace")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> DeleteWorkspace([FromRoute (Name = "workspaceId")][Required]string workspaceId);
+        public abstract Task<IActionResult> DeleteWorkspace([FromQuery (Name = "projectId")][Required()]string projectId, [FromQuery (Name = "branchId")][Required()]string branchId, [FromRoute (Name = "workspaceId")][Required]string workspaceId);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>List available workspace templates</remarks>
+        /// <response code="200">Success</response>
+        [HttpGet]
+        [Route("/api/v1/templates")]
+        [ValidateModelState]
+        [SwaggerOperation("ListTemplates")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<Template>), description: "Success")]
+        public abstract Task<IActionResult> ListTemplates();
 
         /// <summary>
         /// 
@@ -87,21 +85,9 @@ namespace BalsamApi.Server.Controllers
         [HttpGet]
         [Route("/api/v1/workspaces")]
         [ValidateModelState]
-        [SwaggerOperation("GetWorkspace")]
+        [SwaggerOperation("ListWorkspaces")]
         [SwaggerResponse(statusCode: 200, type: typeof(List<Workspace>), description: "Success")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> GetWorkspace([FromQuery (Name = "projectId")]string? projectId, [FromQuery (Name = "branchId")]string? branchId, [FromQuery (Name = "all")]bool? all);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>List available workspace templates</remarks>
-        /// <response code="200">Success</response>
-        [HttpGet]
-        [Route("/api/v1/templates")]
-        [ValidateModelState]
-        [SwaggerOperation("ListTemplates")]
-        [SwaggerResponse(statusCode: 200, type: typeof(List<Template>), description: "Success")]
-        public abstract Task<IActionResult> ListTemplates();
+        public abstract Task<IActionResult> ListWorkspaces([FromQuery (Name = "projectId")]string? projectId, [FromQuery (Name = "branchId")]string? branchId, [FromQuery (Name = "all")]bool? all);
     }
 }
