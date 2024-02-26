@@ -149,7 +149,6 @@ components:
       required:
         - "accessKey"
         - "secretKey"
-        - "apiUrl"
       properties:
         accessKey:
           type: string
@@ -157,9 +156,6 @@ components:
         secretKey:
           type: string
           description: The secret key
-        apiUrl:
-          type: string
-          description: URL to the API.
 
     Problem:
       type: object
