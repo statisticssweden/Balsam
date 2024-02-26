@@ -727,6 +727,19 @@ namespace Balsam.Api
                 }
             }
 
+            if (_git.Enabled)
+            {
+                try
+                {
+                    await _repositoryApi.DeleteRepositoryBranchAsync(project.Git?.Id ?? "", branch.GitBranch);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete git branch");
+                }
+            }
+
+
             _hubRepositoryClient.PullChanges();
 
             if (Directory.Exists(branchPath))
