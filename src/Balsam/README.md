@@ -115,6 +115,8 @@ Class | Method | HTTP request | Description
 *BucketApi* | [**CreateAccessKey**](docs/BucketApi.md#createaccesskey) | **POST** /buckets/{bucketId}/acceskey | 
 *BucketApi* | [**CreateBucket**](docs/BucketApi.md#createbucket) | **POST** /buckets | 
 *BucketApi* | [**CreateFolder**](docs/BucketApi.md#createfolder) | **POST** /buckets/{bucketId}/folder | 
+*BucketApi* | [**DeleteBucket**](docs/BucketApi.md#deletebucket) | **DELETE** /buckets/{bucketId} | 
+*BucketApi* | [**DeleteFolder**](docs/BucketApi.md#deletefolder) | **DELETE** /buckets/{bucketId}/folder/{folderName} | 
 
 
 <a id="documentation-for-models"></a>
