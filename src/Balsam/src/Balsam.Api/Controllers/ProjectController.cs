@@ -286,7 +286,7 @@ namespace Balsam.Api.Controllers
                 var zipFile = _knowledgeLibraryClient.GetZippedResource(libraryId, knowledgeLibrary.RepositoryUrl, fileId);
             
                 var stream = System.IO.File.OpenRead(zipFile);
-                await _repositoryApi.AddResourceFilesAsync(project.Git?.Id??"", branch.Id, stream);
+                await _repositoryApi.AddResourceFilesAsync(project.Git?.Id??"", branch.GitBranch, stream);
                 stream.Close();
                 System.IO.File.Delete(zipFile);
                 

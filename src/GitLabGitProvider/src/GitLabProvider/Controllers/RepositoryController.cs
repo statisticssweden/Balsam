@@ -144,10 +144,10 @@ namespace GitLabProvider.Controllers
             return BadRequest(new Problem { Type = "Could not delete repository brach ", Detail = "Could not delete repository branch internal error" });
         }
 
-        public async override Task<IActionResult> AddResourceFiles([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromRoute(Name = "branchId"), Required] string branchId, [FromBody] Stream? body)
-        {
 
-            if (body is null)
+        public async override Task<IActionResult> AddResourceFiles([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromRoute(Name = "branchId"), Required] string branchId, IFormFile uploadFile)
+        {
+            if (uploadFile is null)
             {
                 return BadRequest(new Problem { Type = "Could not add resource files", Detail = "Could not add resource files internal error" });
             }
@@ -157,8 +157,8 @@ namespace GitLabProvider.Controllers
             try
             {
                 using (var fileStream = new FileStream(zipPath, FileMode.Create, FileAccess.Write))
-                {
-                    await body.CopyToAsync(fileStream);
+                {                    
+                    await uploadFile.CopyToAsync(fileStream);
                 }
 
                 string workPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());

@@ -11,7 +11,7 @@
     <OutputType>Library</OutputType>
     <AssemblyName>GitProvider</AssemblyName>
     <PackageId>GitProvider</PackageId>
-    <UserSecretsId>5e1d87b7-79a6-44f5-9cf1-3a5f94525433</UserSecretsId>
+    <UserSecretsId>39d69920-8958-4ab3-b400-731948389056</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
