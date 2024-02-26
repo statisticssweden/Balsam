@@ -35,10 +35,10 @@ namespace GitProviderApiClient.Api
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
-        /// <param name="body">zip file with resource files (optional)</param>
+        /// <param name="uploadFile"> (optional)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns></returns>
-        void AddResourceFiles(string repositoryId, string branchId, System.IO.Stream? body = default(System.IO.Stream?), int operationIndex = 0);
+        void AddResourceFiles(string repositoryId, string branchId, System.IO.Stream? uploadFile = default(System.IO.Stream?), int operationIndex = 0);
 
         /// <summary>
         /// 
@@ -49,10 +49,10 @@ namespace GitProviderApiClient.Api
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
-        /// <param name="body">zip file with resource files (optional)</param>
+        /// <param name="uploadFile"> (optional)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>ApiResponse of Object(void)</returns>
-        ApiResponse<Object> AddResourceFilesWithHttpInfo(string repositoryId, string branchId, System.IO.Stream? body = default(System.IO.Stream?), int operationIndex = 0);
+        ApiResponse<Object> AddResourceFilesWithHttpInfo(string repositoryId, string branchId, System.IO.Stream? uploadFile = default(System.IO.Stream?), int operationIndex = 0);
         /// <summary>
         /// 
         /// </summary>
@@ -219,11 +219,11 @@ namespace GitProviderApiClient.Api
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
-        /// <param name="body">zip file with resource files (optional)</param>
+        /// <param name="uploadFile"> (optional)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of void</returns>
-        System.Threading.Tasks.Task AddResourceFilesAsync(string repositoryId, string branchId, System.IO.Stream? body = default(System.IO.Stream?), int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task AddResourceFilesAsync(string repositoryId, string branchId, System.IO.Stream? uploadFile = default(System.IO.Stream?), int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <summary>
         /// 
@@ -234,11 +234,11 @@ namespace GitProviderApiClient.Api
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
-        /// <param name="body">zip file with resource files (optional)</param>
+        /// <param name="uploadFile"> (optional)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of ApiResponse</returns>
-        System.Threading.Tasks.Task<ApiResponse<Object>> AddResourceFilesWithHttpInfoAsync(string repositoryId, string branchId, System.IO.Stream? body = default(System.IO.Stream?), int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<ApiResponse<Object>> AddResourceFilesWithHttpInfoAsync(string repositoryId, string branchId, System.IO.Stream? uploadFile = default(System.IO.Stream?), int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
         /// <summary>
         /// 
         /// </summary>
@@ -525,12 +525,12 @@ namespace GitProviderApiClient.Api
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
-        /// <param name="body">zip file with resource files (optional)</param>
+        /// <param name="uploadFile"> (optional)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns></returns>
-        public void AddResourceFiles(string repositoryId, string branchId, System.IO.Stream? body = default(System.IO.Stream?), int operationIndex = 0)
+        public void AddResourceFiles(string repositoryId, string branchId, System.IO.Stream? uploadFile = default(System.IO.Stream?), int operationIndex = 0)
         {
-            AddResourceFilesWithHttpInfo(repositoryId, branchId, body);
+            AddResourceFilesWithHttpInfo(repositoryId, branchId, uploadFile);
         }
 
         /// <summary>
@@ -539,10 +539,10 @@ namespace GitProviderApiClient.Api
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
-        /// <param name="body">zip file with resource files (optional)</param>
+        /// <param name="uploadFile"> (optional)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <returns>ApiResponse of Object(void)</returns>
-        public GitProviderApiClient.Client.ApiResponse<Object> AddResourceFilesWithHttpInfo(string repositoryId, string branchId, System.IO.Stream? body = default(System.IO.Stream?), int operationIndex = 0)
+        public GitProviderApiClient.Client.ApiResponse<Object> AddResourceFilesWithHttpInfo(string repositoryId, string branchId, System.IO.Stream? uploadFile = default(System.IO.Stream?), int operationIndex = 0)
         {
             // verify the required parameter 'repositoryId' is set
             if (repositoryId == null)
@@ -559,7 +559,7 @@ namespace GitProviderApiClient.Api
             GitProviderApiClient.Client.RequestOptions localVarRequestOptions = new GitProviderApiClient.Client.RequestOptions();
 
             string[] _contentTypes = new string[] {
-                "application/zip"
+                "multipart/form-data"
             };
 
             // to determine the Accept header
@@ -581,7 +581,10 @@ namespace GitProviderApiClient.Api
 
             localVarRequestOptions.PathParameters.Add("repositoryId", GitProviderApiClient.Client.ClientUtils.ParameterToString(repositoryId)); // path parameter
             localVarRequestOptions.PathParameters.Add("branchId", GitProviderApiClient.Client.ClientUtils.ParameterToString(branchId)); // path parameter
-            localVarRequestOptions.Data = body;
+            if (uploadFile != null)
+            {
+                localVarRequestOptions.FileParameters.Add("UploadFile", uploadFile);
+            }
 
             localVarRequestOptions.Operation = "RepositoryApi.AddResourceFiles";
             localVarRequestOptions.OperationIndex = operationIndex;
@@ -607,13 +610,13 @@ namespace GitProviderApiClient.Api
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
-        /// <param name="body">zip file with resource files (optional)</param>
+        /// <param name="uploadFile"> (optional)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of void</returns>
-        public async System.Threading.Tasks.Task AddResourceFilesAsync(string repositoryId, string branchId, System.IO.Stream? body = default(System.IO.Stream?), int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public async System.Threading.Tasks.Task AddResourceFilesAsync(string repositoryId, string branchId, System.IO.Stream? uploadFile = default(System.IO.Stream?), int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            await AddResourceFilesWithHttpInfoAsync(repositoryId, branchId, body, operationIndex, cancellationToken).ConfigureAwait(false);
+            await AddResourceFilesWithHttpInfoAsync(repositoryId, branchId, uploadFile, operationIndex, cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -622,11 +625,11 @@ namespace GitProviderApiClient.Api
         /// <exception cref="GitProviderApiClient.Client.ApiException">Thrown when fails to make API call</exception>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
-        /// <param name="body">zip file with resource files (optional)</param>
+        /// <param name="uploadFile"> (optional)</param>
         /// <param name="operationIndex">Index associated with the operation.</param>
         /// <param name="cancellationToken">Cancellation Token to cancel the request.</param>
         /// <returns>Task of ApiResponse</returns>
-        public async System.Threading.Tasks.Task<GitProviderApiClient.Client.ApiResponse<Object>> AddResourceFilesWithHttpInfoAsync(string repositoryId, string branchId, System.IO.Stream? body = default(System.IO.Stream?), int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public async System.Threading.Tasks.Task<GitProviderApiClient.Client.ApiResponse<Object>> AddResourceFilesWithHttpInfoAsync(string repositoryId, string branchId, System.IO.Stream? uploadFile = default(System.IO.Stream?), int operationIndex = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             // verify the required parameter 'repositoryId' is set
             if (repositoryId == null)
@@ -644,7 +647,7 @@ namespace GitProviderApiClient.Api
             GitProviderApiClient.Client.RequestOptions localVarRequestOptions = new GitProviderApiClient.Client.RequestOptions();
 
             string[] _contentTypes = new string[] {
-                "application/zip"
+                "multipart/form-data"
             };
 
             // to determine the Accept header
@@ -666,7 +669,10 @@ namespace GitProviderApiClient.Api
 
             localVarRequestOptions.PathParameters.Add("repositoryId", GitProviderApiClient.Client.ClientUtils.ParameterToString(repositoryId)); // path parameter
             localVarRequestOptions.PathParameters.Add("branchId", GitProviderApiClient.Client.ClientUtils.ParameterToString(branchId)); // path parameter
-            localVarRequestOptions.Data = body;
+            if (uploadFile != null)
+            {
+                localVarRequestOptions.FileParameters.Add("UploadFile", uploadFile);
+            }
 
             localVarRequestOptions.Operation = "RepositoryApi.AddResourceFiles";
             localVarRequestOptions.OperationIndex = operationIndex;

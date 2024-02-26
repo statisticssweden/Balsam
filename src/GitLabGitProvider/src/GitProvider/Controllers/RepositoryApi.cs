@@ -35,16 +35,16 @@ namespace GitProvider.Controllers
         /// <remarks>Adds resource files to a branch in a repository in the resource folder</remarks>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The id of the branch.</param>
-        /// <param name="body">zip file with resource files</param>
+        /// <param name="uploadFile"></param>
         /// <response code="200">Success</response>
         /// <response code="400">Error respsone for 400</response>
         [HttpPut]
         [Route("/api/v1/repos/{repositoryId}/branches/{branchId}/resources")]
-        [Consumes("application/zip")]
+        [Consumes("multipart/form-data")]
         [ValidateModelState]
         [SwaggerOperation("AddResourceFiles")]
         [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> AddResourceFiles([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromRoute (Name = "branchId")][Required]string branchId, [FromBody]System.IO.Stream? body);
+        public abstract Task<IActionResult> AddResourceFiles([FromRoute (Name = "repositoryId")][Required]string repositoryId, [FromRoute (Name = "branchId")][Required]string branchId, IFormFile uploadFile);
 
         /// <summary>
         /// 

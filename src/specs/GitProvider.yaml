@@ -218,10 +218,13 @@ paths:
       requestBody:
         description: zip file with resource files
         content:
-          application/zip:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary  
+              type: object      
+              properties:
+                UploadFile:
+                  type: string
+                  format: binary
       responses:
         '200':
           description: Success
