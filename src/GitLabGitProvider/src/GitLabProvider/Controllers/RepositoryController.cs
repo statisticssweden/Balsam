@@ -153,7 +153,7 @@ namespace GitLabProvider.Controllers
             }
 
             string zipPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".zip");
-
+            string workPath = "";
             try
             {
                 using (var fileStream = new FileStream(zipPath, FileMode.Create, FileAccess.Write))
@@ -161,7 +161,7 @@ namespace GitLabProvider.Controllers
                     await uploadFile.CopyToAsync(fileStream);
                 }
 
-                string workPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+                workPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
                 ZipFile.ExtractToDirectory(zipPath, workPath);
 
@@ -179,7 +179,9 @@ namespace GitLabProvider.Controllers
                 {
                     System.IO.File.Delete(zipPath);
                 }
-                //TODO: Delete workPath directory
+                if (Directory.Exists(workPath)) { 
+                    Directory.Delete(workPath, true);
+                }
             }
 
             return Ok();
