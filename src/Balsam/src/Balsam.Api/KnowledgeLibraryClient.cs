@@ -140,6 +140,9 @@ namespace Balsam.Api
         {
             foreach (var directory in Directory.GetDirectories(path))
             {
+                //Ignore .git folder
+                if (directory.Substring(relativePathPosition).StartsWith(".git") ) { continue; }  
+
                 contents.Add(CreateRepoFileFromDirectory(directory, relativePathPosition));
                 AddContents(directory, relativePathPosition, contents);
             }
