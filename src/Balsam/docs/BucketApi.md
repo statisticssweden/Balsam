@@ -7,6 +7,8 @@ All URIs are relative to *http://s3-provider.balsam-system.svc.cluster.local/api
 | [**CreateAccessKey**](BucketApi.md#createaccesskey) | **POST** /buckets/{bucketId}/acceskey |  |
 | [**CreateBucket**](BucketApi.md#createbucket) | **POST** /buckets |  |
 | [**CreateFolder**](BucketApi.md#createfolder) | **POST** /buckets/{bucketId}/folder |  |
+| [**DeleteBucket**](BucketApi.md#deletebucket) | **DELETE** /buckets/{bucketId} |  |
+| [**DeleteFolder**](BucketApi.md#deletefolder) | **DELETE** /buckets/{bucketId}/folder/{folderName} |  |
 
 <a id="createaccesskey"></a>
 # **CreateAccessKey**
@@ -270,6 +272,180 @@ No authorization required
 
  - **Content-Type**: application/json
  - **Accept**: application/json, application/problem+json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Success |  -  |
+| **400** | Error respsone for 400 |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a id="deletebucket"></a>
+# **DeleteBucket**
+> void DeleteBucket (string bucketId)
+
+
+
+Deletes a new Bucket
+
+### Example
+```csharp
+using System.Collections.Generic;
+using System.Diagnostics;
+using S3ProviderApiClient.Api;
+using S3ProviderApiClient.Client;
+using S3ProviderApiClient.Model;
+
+namespace Example
+{
+    public class DeleteBucketExample
+    {
+        public static void Main()
+        {
+            Configuration config = new Configuration();
+            config.BasePath = "http://s3-provider.balsam-system.svc.cluster.local/api/v1";
+            var apiInstance = new BucketApi(config);
+            var bucketId = "bucketId_example";  // string | the name of the bucket
+
+            try
+            {
+                apiInstance.DeleteBucket(bucketId);
+            }
+            catch (ApiException  e)
+            {
+                Debug.Print("Exception when calling BucketApi.DeleteBucket: " + e.Message);
+                Debug.Print("Status Code: " + e.ErrorCode);
+                Debug.Print(e.StackTrace);
+            }
+        }
+    }
+}
+```
+
+#### Using the DeleteBucketWithHttpInfo variant
+This returns an ApiResponse object which contains the response data, status code and headers.
+
+```csharp
+try
+{
+    apiInstance.DeleteBucketWithHttpInfo(bucketId);
+}
+catch (ApiException e)
+{
+    Debug.Print("Exception when calling BucketApi.DeleteBucketWithHttpInfo: " + e.Message);
+    Debug.Print("Status Code: " + e.ErrorCode);
+    Debug.Print(e.StackTrace);
+}
+```
+
+### Parameters
+
+| Name | Type | Description | Notes |
+|------|------|-------------|-------|
+| **bucketId** | **string** | the name of the bucket |  |
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/problem+json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Success |  -  |
+| **400** | Error respsone for 400 |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a id="deletefolder"></a>
+# **DeleteFolder**
+> void DeleteFolder (string bucketId, string folderName)
+
+
+
+Deletes a new virtual folder in the bucket.
+
+### Example
+```csharp
+using System.Collections.Generic;
+using System.Diagnostics;
+using S3ProviderApiClient.Api;
+using S3ProviderApiClient.Client;
+using S3ProviderApiClient.Model;
+
+namespace Example
+{
+    public class DeleteFolderExample
+    {
+        public static void Main()
+        {
+            Configuration config = new Configuration();
+            config.BasePath = "http://s3-provider.balsam-system.svc.cluster.local/api/v1";
+            var apiInstance = new BucketApi(config);
+            var bucketId = "bucketId_example";  // string | the name of the bucket
+            var folderName = "folderName_example";  // string | the name of the folder
+
+            try
+            {
+                apiInstance.DeleteFolder(bucketId, folderName);
+            }
+            catch (ApiException  e)
+            {
+                Debug.Print("Exception when calling BucketApi.DeleteFolder: " + e.Message);
+                Debug.Print("Status Code: " + e.ErrorCode);
+                Debug.Print(e.StackTrace);
+            }
+        }
+    }
+}
+```
+
+#### Using the DeleteFolderWithHttpInfo variant
+This returns an ApiResponse object which contains the response data, status code and headers.
+
+```csharp
+try
+{
+    apiInstance.DeleteFolderWithHttpInfo(bucketId, folderName);
+}
+catch (ApiException e)
+{
+    Debug.Print("Exception when calling BucketApi.DeleteFolderWithHttpInfo: " + e.Message);
+    Debug.Print("Status Code: " + e.ErrorCode);
+    Debug.Print(e.StackTrace);
+}
+```
+
+### Parameters
+
+| Name | Type | Description | Notes |
+|------|------|-------------|-------|
+| **bucketId** | **string** | the name of the bucket |  |
+| **folderName** | **string** | the name of the folder |  |
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/problem+json
 
 
 ### HTTP response details
