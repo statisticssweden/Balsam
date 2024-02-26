@@ -59,6 +59,8 @@ namespace Balsam.Api
 
             string workPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
+            Directory.CreateDirectory(workPath);
+
 
             if (File.Exists(filePath))
             {
