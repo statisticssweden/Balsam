@@ -78,7 +78,6 @@ builder.Services.AddAuthentication(options =>
     {
         OnTokenValidated = c =>
         {
-            Console.WriteLine("User successfully authenticated");
             return Task.CompletedTask;
         },
         OnForbidden = c =>
