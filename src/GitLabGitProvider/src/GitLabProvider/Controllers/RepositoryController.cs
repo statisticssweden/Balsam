@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
+using System.IO.Compression;
 using System.Runtime.Intrinsics.Arm;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -141,6 +142,49 @@ namespace GitLabProvider.Controllers
             }
 
             return BadRequest(new Problem { Type = "Could not delete repository brach ", Detail = "Could not delete repository branch internal error" });
+        }
+
+
+        public async override Task<IActionResult> AddResourceFiles([FromRoute(Name = "repositoryId"), Required] string repositoryId, [FromRoute(Name = "branchId"), Required] string branchId, IFormFile uploadFile)
+        {
+            if (uploadFile is null)
+            {
+                return BadRequest(new Problem { Type = "Could not add resource files", Detail = "Could not add resource files internal error" });
+            }
+
+            string zipPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".zip");
+            string workPath = "";
+            try
+            {
+                using (var fileStream = new FileStream(zipPath, FileMode.Create, FileAccess.Write))
+                {                    
+                    await uploadFile.CopyToAsync(fileStream);
+                }
+
+                workPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+
+                ZipFile.ExtractToDirectory(zipPath, workPath);
+
+                await _gitLabClient.AddResourceFiles(repositoryId, branchId, workPath);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not add resource files");
+                return BadRequest(new Problem { Type = "Could not add resource files", Detail = "Could not add resource files internal error" });
+            }
+            finally
+            {
+                if (System.IO.File.Exists(zipPath))
+                {
+                    System.IO.File.Delete(zipPath);
+                }
+                if (Directory.Exists(workPath)) { 
+                    Directory.Delete(workPath, true);
+                }
+            }
+
+            return Ok();
         }
     }
 }

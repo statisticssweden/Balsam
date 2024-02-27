@@ -41,8 +41,7 @@ namespace S3ProviderApiClient.Model
         /// </summary>
         /// <param name="accessKey">The access key (required).</param>
         /// <param name="secretKey">The secret key (required).</param>
-        /// <param name="apiUrl">URL to the API. (required).</param>
-        public AccessKeyCreatedResponse(string accessKey = default(string), string secretKey = default(string), string apiUrl = default(string))
+        public AccessKeyCreatedResponse(string accessKey = default(string), string secretKey = default(string))
         {
             // to ensure "accessKey" is required (not null)
             if (accessKey == null)
@@ -56,12 +55,6 @@ namespace S3ProviderApiClient.Model
                 throw new ArgumentNullException("secretKey is a required property for AccessKeyCreatedResponse and cannot be null");
             }
             this.SecretKey = secretKey;
-            // to ensure "apiUrl" is required (not null)
-            if (apiUrl == null)
-            {
-                throw new ArgumentNullException("apiUrl is a required property for AccessKeyCreatedResponse and cannot be null");
-            }
-            this.ApiUrl = apiUrl;
         }
 
         /// <summary>
@@ -79,13 +72,6 @@ namespace S3ProviderApiClient.Model
         public string SecretKey { get; set; }
 
         /// <summary>
-        /// URL to the API.
-        /// </summary>
-        /// <value>URL to the API.</value>
-        [DataMember(Name = "apiUrl", IsRequired = true, EmitDefaultValue = true)]
-        public string ApiUrl { get; set; }
-
-        /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
         /// <returns>String presentation of the object</returns>
@@ -95,7 +81,6 @@ namespace S3ProviderApiClient.Model
             sb.Append("class AccessKeyCreatedResponse {\n");
             sb.Append("  AccessKey: ").Append(AccessKey).Append("\n");
             sb.Append("  SecretKey: ").Append(SecretKey).Append("\n");
-            sb.Append("  ApiUrl: ").Append(ApiUrl).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -140,11 +125,6 @@ namespace S3ProviderApiClient.Model
                     this.SecretKey == input.SecretKey ||
                     (this.SecretKey != null &&
                     this.SecretKey.Equals(input.SecretKey))
-                ) && 
-                (
-                    this.ApiUrl == input.ApiUrl ||
-                    (this.ApiUrl != null &&
-                    this.ApiUrl.Equals(input.ApiUrl))
                 );
         }
 
@@ -164,10 +144,6 @@ namespace S3ProviderApiClient.Model
                 if (this.SecretKey != null)
                 {
                     hashCode = (hashCode * 59) + this.SecretKey.GetHashCode();
-                }
-                if (this.ApiUrl != null)
-                {
-                    hashCode = (hashCode * 59) + this.ApiUrl.GetHashCode();
                 }
                 return hashCode;
             }

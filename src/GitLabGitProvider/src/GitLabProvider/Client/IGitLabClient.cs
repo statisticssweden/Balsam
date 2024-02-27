@@ -15,5 +15,7 @@ namespace GitLabProvider.Client
 
         Task<FileContentResult> GetFile(string repositoryId, string branchName, string fileId);
         Task<bool> DeleteRepository(string repositoryId);
+
+        Task AddResourceFiles(string repositoryId, string branchId, string workPath);
     }
 }

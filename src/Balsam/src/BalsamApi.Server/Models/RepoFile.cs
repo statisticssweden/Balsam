@@ -85,8 +85,8 @@ namespace BalsamApi.Server.Models
         /// Url to the raw content of the file
         /// </summary>
         /// <value>Url to the raw content of the file</value>
-        [DataMember(Name="contentUrl", EmitDefaultValue=false)]
-        public string ContentUrl { get; set; }
+        [DataMember(Name="contentUrl", EmitDefaultValue=true)]
+        public string? ContentUrl { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object

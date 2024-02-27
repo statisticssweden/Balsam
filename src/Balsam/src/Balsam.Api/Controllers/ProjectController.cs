@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using LibGit2Sharp;
+using GitProviderApiClient.Api;
 
 namespace Balsam.Api.Controllers
 {
@@ -16,14 +17,18 @@ namespace Balsam.Api.Controllers
     {
         private readonly HubClient _hubClient;
         private readonly ILogger<ProjectController> _logger;
+        private readonly KnowledgeLibraryClient _knowledgeLibraryClient;
+        private readonly IRepositoryApi _repositoryApi;
 
 
-        public ProjectController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, ILogger<ProjectController> logger, HubClient hubClient)
+        public ProjectController(IOptionsSnapshot<CapabilityOptions> capabilityOptions, ILogger<ProjectController> logger, HubClient hubClient, KnowledgeLibraryClient knowledgeLibraryClient, IRepositoryApi reposiotryApi)
         {
             _hubClient = hubClient;
             _logger = logger;
             capabilityOptions.Get(Capabilities.Git);
             capabilityOptions.Get(Capabilities.Authentication);
+            _knowledgeLibraryClient = knowledgeLibraryClient;
+            _repositoryApi = reposiotryApi;
         }
 
         public async override Task<IActionResult> CreateBranch([FromRoute(Name = "projectId"), Required] string projectId, [FromBody] CreateBranchRequest? createBranchRequest)
@@ -258,6 +263,41 @@ namespace Balsam.Api.Controllers
             }
 
             return Ok();
+        }
+
+        public async override Task<IActionResult> CopyFromKnowleadgeLibrary([FromRoute(Name = "projectId"), Required] string projectId, [FromRoute(Name = "branchId"), Required] string branchId, [FromQuery(Name = "libraryId"), Required] string libraryId, [FromQuery(Name = "fileId"), Required] string fileId)
+        {
+            try
+            {
+                var project = await _hubClient.GetProject(projectId);
+                var branch = await _hubClient.GetBranch(projectId, branchId);
+                if (project is null || branch is null)
+                {
+                    return BadRequest(new Problem() { Status = 404, Type = "Project/branch not found", Detail = "Can not find the project/branch" });
+                }
+
+                var knowledgeLibrary = (await _hubClient.ListKnowledgeLibraries()).FirstOrDefault(kb => kb.Id == libraryId);
+
+                if (knowledgeLibrary is null)
+                {
+                    return BadRequest(new Problem() { Status = 404, Title = "Knowledge library not found", Detail = "Knowledge library not found" });
+                }
+
+                var zipFile = _knowledgeLibraryClient.GetZippedResource(libraryId, knowledgeLibrary.RepositoryUrl, fileId);
+            
+                var stream = System.IO.File.OpenRead(zipFile);
+                await _repositoryApi.AddResourceFilesAsync(project.Git?.Id??"", branch.GitBranch, stream);
+                stream.Close();
+                System.IO.File.Delete(zipFile);
+                
+                _logger.LogInformation("File/directory copied from knowledge library");
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Could not copy file/directory");
+                return BadRequest(new Problem() { Status = 400, Title = "Could not copy file/directory", Detail = "Could not copy file/directory" });
+            }
         }
     }
 }

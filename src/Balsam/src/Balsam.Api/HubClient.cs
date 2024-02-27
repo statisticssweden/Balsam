@@ -727,6 +727,19 @@ namespace Balsam.Api
                 }
             }
 
+            if (_git.Enabled)
+            {
+                try
+                {
+                    await _repositoryApi.DeleteRepositoryBranchAsync(project.Git?.Id ?? "", branch.GitBranch);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Could not delete git branch");
+                }
+            }
+
+
             _hubRepositoryClient.PullChanges();
 
             if (Directory.Exists(branchPath))
@@ -739,6 +752,31 @@ namespace Balsam.Api
 
         }
 
+        public async Task<List<KnowledgeLibrary>> ListKnowledgeLibraries()
+        {
+            var knowledgeLibraries = new List<KnowledgeLibrary>();
+            var kbPath = Path.Combine(_hubRepositoryClient.Path, "kb");
+            foreach (var knowledgelibraryFile in Directory.GetFiles(kbPath))
+            {
+                try
+                {
+                    var knowledgeLibrary = JsonConvert.DeserializeObject<KnowledgeLibrary>(await File.ReadAllTextAsync(knowledgelibraryFile));
+                    if (knowledgeLibrary != null)
+                    {
+                        knowledgeLibraries.Add(knowledgeLibrary);
+                    }
+                    else
+                    {
+                        _logger.LogWarning($"Could not parse properties file for knowledgelibrary {knowledgelibraryFile}");
+                    }
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex, "Error with deserialization of file");
+                }
+            }
+            return knowledgeLibraries;
+        }
         internal async Task DeleteProject(string projectId)
         {
             var project = await GetProject(projectId);
