@@ -24,38 +24,38 @@ export default function MyPage() {
     {
         setLoading(true);
         appContext.balsamApi.projectApi.listProjects(false)
-        .catch(() => {
-            
-            dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
-        })
         .then((response) => {
             setProjects(response?.data.projects);
             setLoading(false);
+        })
+        .catch(() => {
+            
+            dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
         })
     }
 
     const loadWorkspaces = async () => {
 
         appContext.balsamApi.workspaceApi.listWorkspaces(undefined, undefined, false)
-            .catch(() => {
-                dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
-            })
             .then((response) => {
                 setWorkspaces(response?.data);
+            })
+            .catch(() => {
+                dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
             })
     };
 
     const loadTemplates = () => {
         appContext.balsamApi.workspaceApi.listTemplates()
-        .catch(() => {
-            dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
-        })
         .then((response) => {
             let axResponse = response as AxiosResponse<Template[], any>
             if (axResponse)
             {
                 setTemplates(axResponse.data);
             }
+        })
+        .catch(() => {
+            dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
         })
     };
 
@@ -69,9 +69,6 @@ export default function MyPage() {
     const deleteWorkspace = (projectId: string, branchId: string, workspaceId: string) => 
     {
         appContext.balsamApi.workspaceApi.deleteWorkspace(projectId, branchId, workspaceId)
-            .catch(() => {
-                dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
-            })
             .then(() => {
                 dispatch(postSuccess("Bearbetningsmiljö borttagen.")); //TODO: Language
                 
@@ -79,6 +76,9 @@ export default function MyPage() {
                 if (workspaces){
                     setWorkspaces(workspaces.filter( w => w.id !== workspaceId));
                 }
+            })
+            .catch(() => {
+                dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
             });
     }
 

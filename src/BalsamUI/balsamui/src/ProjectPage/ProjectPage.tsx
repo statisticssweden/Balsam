@@ -13,17 +13,18 @@ import ResourcesSection from '../ResourceSection/ResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, IconButton, Tab, Tabs } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Tab, Tabs } from '@mui/material';
 import { AxiosResponse } from 'axios';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInNew from '@mui/icons-material/OpenInNew';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import CustomTabPanel from '../CustomTabPanel/CustomTabPanel';
 import FileTree, { convertToFileTreeNodes, getAllIds } from '../FileTree/FileTree';
 import Resources from '../Resources/Resources';
 import { Link } from 'react-router-dom';
 import NewBranchDialog from '../NewBranchDialog/NewBranchDialog';
+import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
+import ButtonMenu from '../ButtonMenu/ButtonMenu';
 
 export default function ProjectPage() {
     const [project, setProject] = useState<Project>();
@@ -43,7 +44,8 @@ export default function ProjectPage() {
     const [selectedTab, setSelectedTab] = useState(0);
     const [files, setFiles] = useState<Array<RepoFile>>();
     const [searchParams, setSearchParams] = useSearchParams();
-    
+    const [showDeleteBranchConfirmation, setShowDeleteBranchConfirmation] = useState(false);
+
     const dispatch = useDispatch();
 
     function loadReadmeContent(projectId: string, branchId: string, fileId: string)
@@ -58,16 +60,13 @@ export default function ProjectPage() {
         });
     }
 
-    const loadFiles = (projectId: string, branchId: string) => {
+    const loadFiles = (projectId: string, branchId?: string) => {
 
-        if (branchId === null || typeof branchId === 'undefined') {
+        if (branchId == undefined) {
             return;
         }
 
         appContext.balsamApi.projectApi.getFiles(projectId, branchId)
-        .catch(() => {
-            dispatch(postError("Det gick inte att ladda filer")); //TODO: Language
-        })
         .then(async (response) => {
             
             let axResponse = response as AxiosResponse<RepoFile[], any>;
@@ -90,32 +89,35 @@ export default function ProjectPage() {
             });
 
             setResources(resourcesArray);
+        })
+        .catch(() => {
+            dispatch(postError("Det gick inte att ladda filer")); //TODO: Language
         });
 
     };
 
     const loadTemplates = () => {
         appContext.balsamApi.workspaceApi.listTemplates()
-        .catch(() => {
-            dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
-        })
         .then((response) => {
             setTemplates(response?.data);
+        })
+        .catch(() => {
+            dispatch(postError("Det gick inte att ladda mallar")); //TODO: Language
         })
     };
 
 
-    const loadWorkspaces = (projectId: string, branchId: string) => {
-        if (branchId === null || typeof branchId === 'undefined') {
-            return;
+    const loadWorkspaces = (projectId: string, branchId?: string) => {
+        if (projectId == undefined || branchId == undefined) {
+            setWorkspaces(undefined);
         }
 
         appContext.balsamApi.workspaceApi.listWorkspaces(projectId, branchId, true)
-            .catch(() => {
-                dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
-            })
             .then((response) => {
                 setWorkspaces(response?.data);
+            })
+            .catch(() => {
+                dispatch(postError("Det gick inte att ladda bearbetningsmiljöer")); //TODO: Language
             });
     };
 
@@ -125,10 +127,6 @@ export default function ProjectPage() {
         setLoading(true);
         
         appContext.balsamApi.projectApi.getProject(id as string)
-        .catch(() => {
-            
-            dispatch(postError("Det gick inte att ladda projektet")); //TODO: Language
-        })
         .then((response) => {
             if (response && response.data)
             {
@@ -139,32 +137,17 @@ export default function ProjectPage() {
                 setBranches(project.branches);
 
                 let branchId = searchParams.get("branchId");
-                //let branchId = null;
                 
-                if (project.branches.findIndex((b) => b.id === branchId) < 0 )
-                {
-                    branchId = null;
-                }
-
-                if(branchId === null || branchId.length === 0)
-                {
-                    let defaultBranch = project.branches.find((b) => b.isDefault)?.id;
-                    if(defaultBranch)
-                    {
-                        branchId = defaultBranch
-                    }
-                    else 
-                    {
-                        branchId = project.branches[0].id
-                    }
-                }
-
-                setSelectedBranch(branchId);
+                updateSelectedBranch(project.branches, branchId ?? undefined)
                 setCanCreateBranch(isProjectGroupMember);
                 setCanCreateWorkspace(isProjectGroupMember);
                 setLoading(false);
             }
 
+        })
+        .catch(() => {
+            
+            dispatch(postError("Det gick inte att ladda projektet")); //TODO: Language
         });
 
     }, [id]);
@@ -186,11 +169,11 @@ export default function ProjectPage() {
         
         updateBranchIdSearchParam(selectedBranch);
         
-        if (project !== undefined && selectedBranch !== undefined)
+        loadTemplates();
+        if (id)
         {
-            loadFiles(id!, selectedBranch!);
-            loadTemplates();
-            loadWorkspaces(id!, selectedBranch!)
+            loadFiles(id, selectedBranch!);
+            loadWorkspaces(id, selectedBranch!)
         }
 
     }, [selectedBranch]);
@@ -209,13 +192,13 @@ export default function ProjectPage() {
 
     const deleteWorkspace = (projectId: string, branchId: string, workspaceId: string) => 
     {
-        let promise = appContext.balsamApi.workspaceApi.deleteWorkspace(projectId, branchId, workspaceId);
-        promise.catch(() => {
-            dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
-        })
-        promise.then(() => {
+        appContext.balsamApi.workspaceApi.deleteWorkspace(projectId, branchId, workspaceId)
+        .then(() => {
             dispatch(postSuccess("Bearbetningsmiljö borttagen.")); //TODO: Language
             loadWorkspaces(id!, selectedBranch!);
+        })
+        .catch(() => {
+            dispatch(postError("Det gick inte att ta bort bearbetningsmiljö")); //TODO: Language
         })
     }
 
@@ -236,6 +219,116 @@ export default function ProjectPage() {
     function handleNewBranchClick()
     {
         setNewBranchDialogOpen(true);
+    }
+
+    function handleDeleteBranchClick()
+    {
+        if(project && branches && selectedBranch)
+        {
+            let branch = branches.find(b => b.id === selectedBranch);
+            if(branch)
+            {
+                if(branch.isDefault)
+                {
+                    alert("Det går inte att ta bort defaultbranchen.");
+                }
+                else 
+                {
+                    setShowDeleteBranchConfirmation(true);    
+                }
+            }
+        }
+    }
+    function updateSelectedBranch(branches: Branch[], desieredBranchId?: string)
+    {
+        if (branches.length > 0)
+        {
+            if (desieredBranchId && branches.findIndex((b) => b.id === desieredBranchId) >= 0)
+            {
+                setSelectedBranch(desieredBranchId);
+            
+            }
+            else 
+            {
+                let defaultBarnch = branches.find(b => b.isDefault);
+                if (defaultBarnch)
+                {
+                    setSelectedBranch(defaultBarnch.id);
+                }
+                else 
+                {
+                    setSelectedBranch(branches[0].id);
+                }
+            }
+        }
+        else 
+        {
+            setSelectedBranch(undefined);
+        }
+    }
+
+    function updateBranches(selectBranchId?: string)
+    {
+        appContext.balsamApi.projectApi.getProject(id as string)
+        .then((response) => {
+            if (response && response.data)
+            {
+                let project = response.data;
+                
+                setBranches(project.branches);
+                updateSelectedBranch(project.branches, selectBranchId);
+                
+            }
+        })
+        .catch(() => {
+            dispatch(postError("Det gick inte att ladda branchinformation")); //TODO: Language
+        });                            
+    }
+
+    function onDeleteBranchConfirm()
+    {
+        if(project && branches && selectedBranch)
+        {
+            let branch = branches.find(b => b.id == selectedBranch);
+            
+            appContext.balsamApi.projectApi.deleteBranch(project.id, selectedBranch)
+            .then(() => {
+                updateBranches();
+                if (branch)
+                {
+                    dispatch(postSuccess(`Branchen ${branch.name} är borttagen.`)) //TODO: Language
+                }
+
+            });
+        
+            setShowDeleteBranchConfirmation(false);
+        }
+        
+    }
+
+    function onDeleteBranchAbort()
+    {
+        setShowDeleteBranchConfirmation(false);
+    }
+
+    function renderDeleteBranchDialog()
+    {
+        //TODO: Language
+        let branch = branches?.find( (b) => b.id == selectedBranch )
+        if (branch === undefined)
+        {
+            return;
+        }
+
+        return (
+            <ConfirmDialog title='Ta bort branch' open={showDeleteBranchConfirmation} key={selectedBranch} onConfirm={onDeleteBranchConfirm} onAbort={onDeleteBranchAbort}> 
+                Vill du ta bort branch <i>{branch?.name}</i>? <br/> 
+                <strong>All kod i branchen kommer att tas bort från git och all data i den mapp i S3-bucketen som har samma namn som branchen kommer att tas bort</strong>
+                <ul>
+                    <li>Om du inte vill att data som ligger i mappen med samma namn som branchen i S3-bucketen skall försvinna så flytta filerna till en annan plats.</li>
+                </ul>
+            </ConfirmDialog>
+        );
     }
 
     function renderBranchSelect() {
@@ -262,27 +355,7 @@ export default function ProjectPage() {
     }
 
     function handleBranchCreated(branchId: string): void {
-        appContext.balsamApi.projectApi.getProject(id as string)
-        .catch(() => {
-            
-            dispatch(postError("Det gick inte att uppdatera brancher")); //TODO: Language
-        })
-        .then((response) => {
-            if (response && response.data)
-            {
-                let project = response.data;
-                
-                setBranches(project.branches);
-                if (project.branches.findIndex((b) => b.id === branchId) >= 0 )
-                {
-                    setSelectedBranch(branchId);
-                }
-                else
-                {
-                    dispatch(postError("Det gick inte välja nyskapad branch")); //TODO: Language
-                }
-            }
-        });
+        updateBranches(branchId);
     }
 
     const handleNewWorkspaceClick = () => {
@@ -293,14 +366,11 @@ export default function ProjectPage() {
     {
         if (project && canCreateBranch)
         {
-            
-
             return (
             <Fragment>
                 <NewBranchDialog project={project!} open={newBranchDialogOpen} onBranchCreated={handleBranchCreated} onClosing={onNewBranchDialogClosing}></NewBranchDialog>
-                <IconButton aria-label="Lägg till branch" sx={{padding:"4px"}} color="primary" onClick={handleNewBranchClick}>
-                    <AddCircleIcon />
-                </IconButton>
+                
+                <ButtonMenu options={[ { onClick: handleNewBranchClick, buttonContent:"Ny branch" , itemKey:"add"  },{ onClick: handleDeleteBranchClick, buttonContent:"Ta bort branch", itemKey:"delete"  }  ]}   ></ButtonMenu>
             </Fragment>);
         }
     
@@ -354,6 +424,7 @@ export default function ProjectPage() {
         let newBranchDialog = renderNewBranchDialog();
         let filesElement = renderFilesTree();
         let newWorkspaceButton = renderNewWorkspaceButton();
+        let deleteBranchDialog = renderDeleteBranchDialog();
 
         function tabProps(index: number) {
             return {
@@ -370,6 +441,7 @@ export default function ProjectPage() {
                         <div className="git-box-content">
                             {branchSelect}
                             {newBranchDialog}
+                            {deleteBranchDialog}
                             <Button component={Link as any} target="_blank" underline="hover" to={project.gitUrl}>Git<OpenInNew fontSize="inherit" /></Button>
                         </div>
                     </div>

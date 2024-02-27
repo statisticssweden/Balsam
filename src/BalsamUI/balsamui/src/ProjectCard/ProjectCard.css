@@ -1,0 +1,7 @@
+.buttons-container {
+    width:100%;
+    display: flex;
+}
+.buttons-container :last-child{
+    margin-left:auto;
+}
