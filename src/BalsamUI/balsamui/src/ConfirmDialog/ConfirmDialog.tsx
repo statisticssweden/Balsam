@@ -1,15 +1,25 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-import { PropsWithChildren } from 'react'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, TextField } from "@mui/material";
+import { PropsWithChildren, useState } from 'react'
+
+export interface ConfirmInputSettings{
+    errorMessage: string,
+    requieredValue: string,
+    label: string,
+}
 
 export interface ConfirmDialogProperties{
     onConfirm?: (itemKey: any) => void,
     onAbort?: (itemKey: any) => void,
     title: string,
     itemKey?: any
-    open: boolean
+    open: boolean,
+    confirmInput?: ConfirmInputSettings
 }
 
 export default function ConfirmDialog(props: PropsWithChildren<ConfirmDialogProperties>){
+    const [confirmInputValue, setConfirmInputValue] = useState("");
+    const [confirmIntpuError, setConfirmIntpuError] = useState(false);
+    const [confirmInputHelperText, setConfirmInputHelperText] = useState("");
 
     function handleAbort()
     {
@@ -20,19 +30,53 @@ export default function ConfirmDialog(props: PropsWithChildren<ConfirmDialogProp
 
     function handleConfirm()
     {
+        if (props.confirmInput)
+        {
+            if(confirmInputValue.trim() !== props.confirmInput.requieredValue.trim())
+            {
+                setConfirmIntpuError(true);
+                setConfirmInputHelperText(props.confirmInput.errorMessage);
+                return;
+            }
+            else 
+            {
+                setConfirmInputHelperText("");
+            }
+        }
+
         if(props.onConfirm) {
             props.onConfirm(props.itemKey);
         }
     }
 
+    function confrimInputChanged(inputValue: string)
+    {
+        setConfirmInputValue(inputValue);
+        setConfirmIntpuError(false);
+        setConfirmInputHelperText("");
+    }
+
     function renderChildrenContent()
     {
         return (
-            props.children ? 
-                <DialogContent>
-                    {props.children}
-                </DialogContent>
-                : ""
+            <DialogContent>
+                
+                {props.children ? 
+                    (props.children)
+                    : ("")}
+                {props.confirmInput ? 
+                    (<FormControl sx={{ mt: 4}}>
+                        <TextField id="branch-input" 
+                            error={confirmIntpuError} 
+                            helperText={confirmInputHelperText} 
+                            variant='standard' 
+                            onChange={e => confrimInputChanged(e.target.value)} 
+                            label={props.confirmInput.label} 
+                            required 
+                            value={confirmInputValue}/>
+                    </FormControl>) : ("")
+                }
+            </DialogContent>
         );
     }
 

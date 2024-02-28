@@ -7,7 +7,6 @@ import { postError } from '../Alerts/alertsSlice';
 import { Project} from '../services/BalsamAPIServices'
 import AppContext, { AppContextState } from '../configuration/AppContext';
 
-
 export default function ProjectsPage() {
 
     const [projects, setProjects] = useState<Array<Project>>();
@@ -20,13 +19,12 @@ export default function ProjectsPage() {
         setLoading(true);
         
         appContext.balsamApi.projectApi.listProjects(true)
-        .catch(() => {
-            
-            dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
-        })
         .then((response) => {
             setProjects(response?.data.projects);
             setLoading(false);
+        })
+        .catch(() => {
+            dispatch(postError("Det gick inte att ladda projekt")); //TODO: Language
         });
     }
 
@@ -40,16 +38,18 @@ export default function ProjectsPage() {
 
     function renderProjects(projs: Array<Project>) {
         return (
-
             <div className='cards' aria-labelledby="tabelLabel">         
                 {
                     projs.map((project) => {
-                       return <ProjectCard project={project} key={project.id} />
+                    return <ProjectCard project={project} key={project.id} />
                     })
                 }
             </div>
         );
     }
+
+    
+    
 
     let contents = loading
         ? <p><em>Laddar...</em></p>

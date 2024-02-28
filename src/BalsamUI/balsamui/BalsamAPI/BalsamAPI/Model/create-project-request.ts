@@ -38,5 +38,11 @@ export interface CreateProjectRequest {
      * @memberof CreateProjectRequest
      */
     'branchName': string;
+    /**
+     * the location to a git-repository containing files that the repository will be initiated with
+     * @type {string}
+     * @memberof CreateProjectRequest
+     */
+    'sourceLocation'?: string | null;
 }
 

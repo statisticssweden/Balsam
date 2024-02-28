@@ -232,7 +232,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                     
                 </DialogContent>
                 
-                    <DialogActions>
+                <DialogActions>
                     
                     <Button onClick={handleCancel} >Avbryt</Button>
                     <Button onClick={handleCreate} disabled={!okEnabled}>Skapa</Button>
