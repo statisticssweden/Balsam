@@ -48,9 +48,6 @@ export default function ProjectsPage() {
         );
     }
 
-    
-    
-
     let contents = loading
         ? <p><em>Laddar...</em></p>
         : renderProjects(projects as Array<Project>);

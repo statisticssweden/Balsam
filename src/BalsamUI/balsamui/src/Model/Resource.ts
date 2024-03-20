@@ -10,8 +10,6 @@ export enum ResourceType {
 
 export interface Resource
 {
-    projectId: string,
-    branchId: string,
     name: string,
     description: string,
     type: ResourceType,
@@ -19,6 +17,19 @@ export interface Resource
     fileId?: string,
     fileName?: string,
     filePath: string,
+}
+
+export interface ProjectResource
+{
+    projectId: string,
+    branchId: string,
+    resource: Resource
+}
+
+export interface KnowledgeLibraryResource
+{
+    knowledgeLibraryId: string,
+    resource: Resource
 }
 
 export const getResourceType = (file: RepoFile): ResourceType => 

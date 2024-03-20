@@ -9,7 +9,7 @@ import ProjectPage from './ProjectPage/ProjectPage';
 import { useDispatch } from 'react-redux';
 import './App.css'
 import Alerter  from './Alerter/Alerter';
-import ResoruceMarkdownPage from './ResourceMarkdownPage/ResoruceMarkdownPage';
+import ResoruceMarkdownPage from './ProjectResourceMarkdownPage/ProjectResoruceMarkdownPage.tsx';
 import AppContext, { AppContextState } from './configuration/AppContext';
 import { getConfig } from './configuration/configuration';
 import { getBalsamAPI } from './services/BalsamAPIServices';
@@ -19,6 +19,9 @@ import ResoruceFolderPage from './ResourceFolderPage/ResourceFolderPage';
 import KeyCloakService from './security/KeyCloakService.ts';
 import KnowledgeLibrariesPage from './KnowledgeLibrariesPage/KnowledgeLibrariesPage.tsx';
 import KnowledgeLibraryPage from './KnowledgeLibraryPage/KnowledgeLibraryPage.tsx';
+import KnowledgeLibraryFilePage from './KnowledgeLibraryFilePage/KnowledgeLibraryFilePage.tsx';
+import KnowledgeLibraryResourceFolderPage from './KnowledgeLibraryResourceFolderPage/KnowledgeLibraryResourceFolderPage.tsx';
+import TemplatePage from './TemplatePage/TemplatePage.tsx';
 
 
 function App() {
@@ -66,7 +69,10 @@ function App() {
                         <Route path="/project/:id" element={<ProjectPage />} />
                         <Route path="/knowledgelibraries/" element={<KnowledgeLibrariesPage />} />
                         <Route path="/knowledgelibrary/:id" element={<KnowledgeLibraryPage />} />
-                        <Route path="resorucemarkdown/:projectId/:branchId/:fileId" element={<ResoruceMarkdownPage />} />
+                        <Route path="/knowledgelibrary/:knowledgeLibraryId/file/:fileId/" element={<KnowledgeLibraryFilePage />} />
+                        <Route path="/knowledgelibrary/:knowledgeLibraryId/resourceFolder/" element={<KnowledgeLibraryResourceFolderPage />} />
+                        <Route path="/knowledgelibrary/:knowledgeLibraryId/template/:fileId" element={<TemplatePage />} />
+                        <Route path="/resorucemarkdown/:projectId/:branchId/:fileId" element={<ResoruceMarkdownPage />} />
                         <Route path="resourcefolder/:projectId/:branchId/" element={<ResoruceFolderPage />} />
                     </Routes>
                 </div>

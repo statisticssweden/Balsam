@@ -5,7 +5,6 @@ export * from './create-knowledge-library-request';
 export * from './create-project-request';
 export * from './create-workspace-request';
 export * from './knowledge-library';
-export * from './knowledge-library-created-response';
 export * from './problem';
 export * from './project';
 export * from './project-created-response';

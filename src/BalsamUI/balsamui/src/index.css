@@ -25,18 +25,12 @@ code {
 
 
 .git-box {
-    /*margin-top: 20px;*/
-    /*background-color:#dbdbdb;*/
-    /*margin-top:-5px;*/
-    /*display:inline-block;*/
     margin-left:1px;
     float:left;
 
 }
 
-.git-box-content {
-    /*margin-top: 20px;*/
-    
+.git-box-content {   
     display: flex;
     flex-direction: row;
     align-items: center;

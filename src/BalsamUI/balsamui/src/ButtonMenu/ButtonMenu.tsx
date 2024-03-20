@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import Settings from '@mui/icons-material/Settings';
 import { PropsWithChildren } from 'react';
 
@@ -31,7 +30,6 @@ export default function ButtonMenu(props: PropsWithChildren<ButonMenuProperties>
   };
 
   const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
     index: number,
   ) => {
 
@@ -98,7 +96,7 @@ export default function ButtonMenu(props: PropsWithChildren<ButonMenuProperties>
         {props.options.map((option, index) => (
                     <MenuItem
                       key={option.itemKey}
-                      onClick={(event) => handleMenuItemClick(event, index)}
+                      onClick={() => handleMenuItemClick(index)}
                     >
                       {option.buttonContent}
                     </MenuItem>

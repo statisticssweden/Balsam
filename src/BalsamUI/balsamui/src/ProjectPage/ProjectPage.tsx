@@ -8,8 +8,8 @@ import { useState, useEffect, useContext, Fragment } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom'
 import { postError, postSuccess } from '../Alerts/alertsSlice';
 import './ProjectPage.css'
-import { Resource } from '../Model/Resource';
-import ResourcesSection from '../ResourceSection/ResourcesSection';
+import { ProjectResource } from '../Model/Resource';
+import ProjectResourcesSection from '../ProjectResourcesSection/ProjectResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
@@ -35,7 +35,7 @@ export default function ProjectPage() {
     const [canCreateBranch, setCanCreateBranch] = useState<boolean>(false);
     const [canCreateWorkspace, setCanCreateWorkspace] = useState<boolean>(false);
     const [readmeMarkdown, setReadmeMarkdown] = useState<string>();
-    const [resources, setResources] = useState<Array<Resource>>();
+    const [resources, setResources] = useState<Array<ProjectResource>>();
     const [workspaces, setWorkspaces] = useState<Array<Workspace>>();
     const [templates, setTemplates] = useState<Array<Template>>();
     const [newWorkspaceDialogOpen, setNewWorkspaceDialogOpen] = useState(false);
@@ -83,12 +83,17 @@ export default function ProjectPage() {
                 loadReadmeContent(projectId, branchId, readmeFile.id);
             }
 
-            let resourcesArray = await Resources.convertToResources(resourceFiles, projectId, branchId, async (fileId): Promise<string> => {
+            let resourcesArray = await Resources.convertToResources(resourceFiles, async (fileId): Promise<string> => {
                 let promise = appContext.balsamApi.projectApi.getFile(projectId, branchId, fileId);
                 return (await promise).data;
             });
-
-            setResources(resourcesArray);
+            let projectResources = resourcesArray.map( r => { 
+                    return { projectId : projectId,
+                             branchId: branchId, 
+                             resource: r
+                            } as ProjectResource;
+                        })
+            setResources(projectResources);
         })
         .catch(() => {
             dispatch(postError("Det gick inte att ladda filer")); //TODO: Language
@@ -459,7 +464,7 @@ export default function ProjectPage() {
                             {readmeElement}
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={1}>
-                            <ResourcesSection projectid={project.id} branchId={selectedBranch!} resources={resources} />
+                            <ProjectResourcesSection resources={resources} />
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={2}>
                             {filesElement}

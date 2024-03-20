@@ -44,6 +44,57 @@ import { RepoFile } from '../../BalsamAPI/Model';
 export const ProjectApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
+         * Copy files from a knowledge library to a branch
+         * @param {string} projectId the identity of the project.
+         * @param {string} branchId The identity of the branch.
+         * @param {string} libraryId id for the knowledge library
+         * @param {string} fileId id for the file/drectory
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        copyFromKnowleadgeLibrary: async (projectId: string, branchId: string, libraryId: string, fileId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'projectId' is not null or undefined
+            assertParamExists('copyFromKnowleadgeLibrary', 'projectId', projectId)
+            // verify required parameter 'branchId' is not null or undefined
+            assertParamExists('copyFromKnowleadgeLibrary', 'branchId', branchId)
+            // verify required parameter 'libraryId' is not null or undefined
+            assertParamExists('copyFromKnowleadgeLibrary', 'libraryId', libraryId)
+            // verify required parameter 'fileId' is not null or undefined
+            assertParamExists('copyFromKnowleadgeLibrary', 'fileId', fileId)
+            const localVarPath = `/projects/{projectId}/branches/{branchId}/files`
+                .replace(`{${"projectId"}}`, encodeURIComponent(String(projectId)))
+                .replace(`{${"branchId"}}`, encodeURIComponent(String(branchId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (libraryId !== undefined) {
+                localVarQueryParameter['libraryId'] = libraryId;
+            }
+
+            if (fileId !== undefined) {
+                localVarQueryParameter['fileId'] = fileId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Create a new branch for a project
          * @param {string} projectId the identity of the project.
          * @param {CreateBranchRequest} [createBranchRequest] Definition of a new branch
@@ -339,6 +390,19 @@ export const ProjectApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = ProjectApiAxiosParamCreator(configuration)
     return {
         /**
+         * Copy files from a knowledge library to a branch
+         * @param {string} projectId the identity of the project.
+         * @param {string} branchId The identity of the branch.
+         * @param {string} libraryId id for the knowledge library
+         * @param {string} fileId id for the file/drectory
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async copyFromKnowleadgeLibrary(projectId: string, branchId: string, libraryId: string, fileId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.copyFromKnowleadgeLibrary(projectId, branchId, libraryId, fileId, options);
+            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+        },
+        /**
          * Create a new branch for a project
          * @param {string} projectId the identity of the project.
          * @param {CreateBranchRequest} [createBranchRequest] Definition of a new branch
@@ -434,6 +498,18 @@ export const ProjectApiFactory = function (configuration?: Configuration, basePa
     const localVarFp = ProjectApiFp(configuration)
     return {
         /**
+         * Copy files from a knowledge library to a branch
+         * @param {string} projectId the identity of the project.
+         * @param {string} branchId The identity of the branch.
+         * @param {string} libraryId id for the knowledge library
+         * @param {string} fileId id for the file/drectory
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        copyFromKnowleadgeLibrary(projectId: string, branchId: string, libraryId: string, fileId: string, options?: any): AxiosPromise<void> {
+            return localVarFp.copyFromKnowleadgeLibrary(projectId, branchId, libraryId, fileId, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Create a new branch for a project
          * @param {string} projectId the identity of the project.
          * @param {CreateBranchRequest} [createBranchRequest] Definition of a new branch
@@ -520,6 +596,20 @@ export const ProjectApiFactory = function (configuration?: Configuration, basePa
  * @extends {BaseAPI}
  */
 export class ProjectApi extends BaseAPI {
+    /**
+     * Copy files from a knowledge library to a branch
+     * @param {string} projectId the identity of the project.
+     * @param {string} branchId The identity of the branch.
+     * @param {string} libraryId id for the knowledge library
+     * @param {string} fileId id for the file/drectory
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProjectApi
+     */
+    public copyFromKnowleadgeLibrary(projectId: string, branchId: string, libraryId: string, fileId: string, options?: AxiosRequestConfig) {
+        return ProjectApiFp(this.configuration).copyFromKnowleadgeLibrary(projectId, branchId, libraryId, fileId, options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * Create a new branch for a project
      * @param {string} projectId the identity of the project.
