@@ -14,6 +14,7 @@ import Templates from "../Templates/templates";
 import { Template } from "../Model/Template";
 import KnowledgeLibraryResourcesSection from "../KnowledgeLibraryResourcesSection/KnowledgeLibraryResourcesSection";
 import TemplatesSection from "../TemplatesSection/TemplatesSection";
+import KnowLedgeLibraries from "../KnowledgeLibraries/KnowledgeLibraries";
 
 export default function KnowledgeLibraryPage()
 {
@@ -44,7 +45,7 @@ export default function KnowledgeLibraryPage()
             if (library)
             {
                 setLibrary(library);
-                loadFiles(id);
+                loadFiles(library);
                 setLoading(false);
             }
             else 
@@ -71,52 +72,38 @@ export default function KnowledgeLibraryPage()
         });
     }
 
-    const loadFiles = (knowledgeLibraryId: string) => {
+    const loadFiles = (knowledgeLibrary: KnowledgeLibrary) => {
 
 
-        appContext.balsamApi.knowledgeLibraryApi.listKnowledgeLibraryFiles(knowledgeLibraryId)
+        appContext.balsamApi.knowledgeLibraryApi.listKnowledgeLibraryFiles(knowledgeLibrary.id)
         .then(async (response) => {
             
             let axResponse = response as AxiosResponse<RepoFile[], any>;
 
             let files = axResponse.data;
 
-            //setFiles(files);
-
             let resourceFiles = Resources.getResourceFiles(files);
             let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md");
 
             if (readmeFile && readmeFile.id)
             {
-                loadReadmeContent(knowledgeLibraryId, readmeFile.id);
+                loadReadmeContent(knowledgeLibrary.id, readmeFile.id);
             }
 
             let resourcesArray = await Resources.convertToResources(resourceFiles, async (fileId): Promise<string> => {
-                let promise = appContext.balsamApi.knowledgeLibraryApi.getKnowledgeLibraryFileContent(knowledgeLibraryId, fileId);
+                let promise = appContext.balsamApi.knowledgeLibraryApi.getKnowledgeLibraryFileContent(knowledgeLibrary.id, fileId);
                 return (await promise).data;
             });
 
             let knowledgeLibraryResources = resourcesArray.map( r => { 
-                return { knowledgeLibraryId : knowledgeLibraryId,
+                return { knowledgeLibraryId : knowledgeLibrary.id,
                          resource: r
                         } as KnowledgeLibraryResource;
                     })
 
             setResources(knowledgeLibraryResources);
 
-
-            let templateFiles = Templates.getTemplateFiles(files);
-            let templatesArray = await Templates.convertToTemplates(templateFiles, async (fileId): Promise<Template> => {
-                let promise = appContext.balsamApi.knowledgeLibraryApi.getKnowledgeLibraryFileContent(knowledgeLibraryId, fileId);
-                let data = (await promise).data;
-
-                if (typeof data === "string")
-                {
-                    return JSON.parse(data);
-                }
-
-                return data;
-            });
+            let templatesArray = await KnowLedgeLibraries.getTemplatesFromFiles(appContext.balsamApi.knowledgeLibraryApi, files, knowledgeLibrary);
             
             setTemplates(templatesArray)
 
@@ -169,10 +156,10 @@ export default function KnowledgeLibraryPage()
                         <CustomTabPanel value={selectedTab} index={0}>
                             {readmeElement}
                         </CustomTabPanel>
-                        <CustomTabPanel value={selectedTab} index={1}>
+                        <CustomTabPanel className="cards-tab" value={selectedTab} index={1}>
                             <KnowledgeLibraryResourcesSection resources={resources} />
                         </CustomTabPanel>
-                        <CustomTabPanel value={selectedTab} index={2}>
+                        <CustomTabPanel className="cards-tab" value={selectedTab} index={2}>
                             <TemplatesSection knowledgeLibraryId={library.id} templates={templates} />
                         </CustomTabPanel>
                         </Box>

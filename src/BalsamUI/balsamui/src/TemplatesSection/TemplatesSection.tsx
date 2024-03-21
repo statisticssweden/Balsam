@@ -11,11 +11,13 @@ export default function ProjectResourcesSection(props: TemplatesSectionPropertie
     function renderResources(resources: Array<Template>) {
         return (
             
-            <div className='cards' aria-labelledby="tabelLabel">
+            <div className='cards'>
                 {resources.map((template: Template) =>
-                    <TemplateCard knowledgeLibraryId={props.knowledgeLibraryId} template={template} key={template.fileId} />
+                        <TemplateCard knowledgeLibraryId={props.knowledgeLibraryId} template={template} key={template.fileId} />
                 )}
             </div>
+
+
         );
     }
 

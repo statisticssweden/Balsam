@@ -9,12 +9,16 @@ import FormControl from '@mui/material/FormControl';
 import { Box, CircularProgress, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { postSuccess, postError} from '../Alerts/alertsSlice';
-import { CreateProjectRequest } from '../services/BalsamAPIServices'
+import { CreateProjectRequest, ProjectCreatedResponse } from '../services/BalsamAPIServices'
 import AppContext, { AppContextState } from '../configuration/AppContext';
+import { Template } from '../Model/Template';
+import TemplateAsyncAutocomplete from '../TemplatesAsyncAutocomplete/TemplatesAsyncAutocomplete';
+import KnowledgeLibraries from '../KnowledgeLibraries/KnowledgeLibraries';
 
 export interface NewProjectDialogProperties
 {
     onClosing: () => void,
+    getTemplatesCallback:  Promise<Array<Template>>
 }
 
 export default function NewProjectDialog(props: NewProjectDialogProperties ) {
@@ -27,6 +31,8 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const [projectNameHelperText, setProjectNameHelperText] = useState("")
     const [branchNameError, setBranchNameError] = useState(false);
     const [branchNameHelperText, setBranchNameHelperText] = useState("");
+    const [template, setTemplate] = useState<Template | null>(null);
+    
     const [busy, setBusy] = useState(false);
     const [okEnabled, setOkEnabled] = useState(false);
     
@@ -163,32 +169,50 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         }
     }
 
+    const onCreated = (response: ProjectCreatedResponse) => 
+    {
+        appContext.refreshToken(); //Update the users user groups
+        setOpen(false);
+        props.onClosing();
+        resetDialog();
+        showNewItemCreatedAlert(`Projekt "${response.name}" är skapat`, response.id); //TODO: Language
+    }
+
     const handleCreate = () => {
+        let sourceLocation = template !== null ? template.git : null;
 
         let project : CreateProjectRequest = {
             name: projectName,
             description: projectDescription,
-            branchName: branchName
+            branchName: branchName,
+            sourceLocation: sourceLocation
         }
         setBusy(true);
         updateOkEnabled(projectName, branchName, true);
+       
         appContext.balsamApi.projectApi.createProject(project).then((response => {
-            appContext.refreshToken(); //Update the users user groups
-            setOpen(false);
-            props.onClosing();
-            resetDialog();
-            showNewItemCreatedAlert(`Projekt "${response.data.name}" är skapat`, response.data.id); //TODO: Language
+            onCreated(response.data);
         }), () => {
                 
             dispatch(postError("Det gick inte att skapa projektet")); //TODO: Language
             setBusy(false);
-
-        });
-
-        
+        });    
+           
     };
 
+    function onTemplateChanged(template: Template | null)
+    {
+        setTemplate(template);
+    }
+
+    async function getTemplates() : Promise<Array<Template>>
+    {
+        return KnowledgeLibraries.getAllTemplates(appContext.balsamApi.knowledgeLibraryApi);
+    }
+
     const progress = renderProgress();
+
+
 
     return (
         <Fragment>
@@ -227,6 +251,14 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                         </FormControl>
                         <FormControl sx={{ mt: 4}}>
                             <TextField id="branch-input" error={branchNameError} helperText={branchNameHelperText} variant='standard' label="Branchnamn" required value={branchName} onChange={e => branchNameChanged(e.target.value)} aria-describedby="Namn på defaultbranch" />
+                        </FormControl>
+                        <FormControl sx={{ mt: 4}}>
+                            <TemplateAsyncAutocomplete 
+                                getTemplates={getTemplates}
+                                label="Skapa från Mall eller Exempel"
+                                onChange={onTemplateChanged}
+                            />
+                        
                         </FormControl>
                     </Box>
                     
