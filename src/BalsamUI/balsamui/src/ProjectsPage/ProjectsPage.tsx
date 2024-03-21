@@ -6,11 +6,14 @@ import { useDispatch } from 'react-redux';
 import { postError } from '../Alerts/alertsSlice';
 import { Project} from '../services/BalsamAPIServices'
 import AppContext, { AppContextState } from '../configuration/AppContext';
+import { Button } from '@mui/material';
 
 export default function ProjectsPage() {
 
     const [projects, setProjects] = useState<Array<Project>>();
     const [loading, setLoading] = useState(true);
+    const [newDialogOpen, setNewDialogOpen] = useState(false);
+    
     const dispatch = useDispatch();
     const appContext = useContext(AppContext) as AppContextState;
 
@@ -33,7 +36,12 @@ export default function ProjectsPage() {
     }, [])
 
     const onNewProjectDialogClosing = () => {
+        setNewDialogOpen(false);
         loadData();
+    };
+
+    const handleClickOpen = () => {
+        setNewDialogOpen(true);
     };
 
     function renderProjects(projs: Array<Project>) {
@@ -56,7 +64,10 @@ export default function ProjectsPage() {
         <div>
             <h2 id="tabelLabel">Projekt och Undersökningar</h2>
             <div className='buttonrow'>
-                <NewProjectDialog onClosing={onNewProjectDialogClosing} ></NewProjectDialog>
+                <Button variant="contained" onClick={handleClickOpen}>
+                    +
+                </Button>
+                <NewProjectDialog open={newDialogOpen} onClosing={onNewProjectDialogClosing} ></NewProjectDialog>
             </div>
             {contents}
         </div>

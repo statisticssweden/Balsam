@@ -8,12 +8,13 @@ import { Link } from 'react-router-dom';
 import { OpenInNew } from '@mui/icons-material';
 import './TemplateCard.css';
 import { Template } from '../Model/Template';
-import { Box, ButtonGroup, Chip, Divider, Stack } from '@mui/material';
+import { Box, Chip, Stack } from '@mui/material';
 
 
 export interface TemplateCardProperties {
     knowledgeLibraryId: string,
-    template: Template
+    template: Template,
+    newProjectClick(template: Template): void 
 }
 
 export default function TemplateCard( props : TemplateCardProperties) {
@@ -52,7 +53,7 @@ export default function TemplateCard( props : TemplateCardProperties) {
                     <CardActions sx={{position:"absolute", bgcolor: 'background.paper', bottom:0, width:"100%"}} >
                         <div className='buttons'>
                         <Button component={Link as any} target="_blank" underline="hover" to={gitUrl}>Git<OpenInNew fontSize="inherit" /></Button>
-                            <Button size="small">Skapa projekt</Button>
+                            <Button size="small" onClick={() => props.newProjectClick(props.template)} >Skapa projekt</Button>
                         </div>
                     </CardActions>
                 </Box>

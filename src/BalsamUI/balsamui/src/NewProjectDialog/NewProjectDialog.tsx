@@ -18,12 +18,13 @@ import KnowledgeLibraries from '../KnowledgeLibraries/KnowledgeLibraries';
 export interface NewProjectDialogProperties
 {
     onClosing: () => void,
-    getTemplatesCallback:  Promise<Array<Template>>
+    open: boolean,
+    defaultTemplate?: Template
 }
 
 export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const appContext = useContext(AppContext) as AppContextState;
-    const [open, setOpen] = useState(false);
+
     const [projectName, setProjectName] = useState("");
     const [projectDescription, setProjectDescription] = useState("");
     const [branchName, setBranchName] = useState(appContext.config.defaultGitBranchName);
@@ -43,7 +44,9 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
 
     }, [branchName, projectName, busy]);
 
-    
+    useEffect(() => {
+        setTemplate(props.defaultTemplate ?? null);
+    }, [props.defaultTemplate])
 
     const updateOkEnabled = (projectName: string, branchName: string, busy: boolean) => 
     {
@@ -58,9 +61,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         dispatch(postSuccess(message, {caption: "Öppna", href: `/project/${id}`} )); //TODO: Language
     }
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+
 
     const resetDialog = () => {
         setProjectName("");
@@ -74,13 +75,13 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     };
 
     const handleCancel = () => {
-        setOpen(false);
+        //setOpen(false);
         props.onClosing();
         resetDialog();
     };
 
     const handleClose = () => {
-        setOpen(false);
+        //setOpen(false);
         props.onClosing();
         resetDialog();
     };
@@ -172,7 +173,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const onCreated = (response: ProjectCreatedResponse) => 
     {
         appContext.refreshToken(); //Update the users user groups
-        setOpen(false);
+        //setOpen(false);
         props.onClosing();
         resetDialog();
         showNewItemCreatedAlert(`Projekt "${response.name}" är skapat`, response.id); //TODO: Language
@@ -217,12 +218,10 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     return (
         <Fragment>
             {/* TODO: seperate button from dialog */}
-            <Button variant="contained" onClick={handleClickOpen}>
-                +
-            </Button>
+            
             
             <Dialog
-                open={open}
+                open={props.open}
                 onClose={handleClose}
                 fullWidth={true}
             >
@@ -257,6 +256,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                                 getTemplates={getTemplates}
                                 label="Skapa från Mall eller Exempel"
                                 onChange={onTemplateChanged}
+                                defaultTemplate={props.defaultTemplate}
                             />
                         
                         </FormControl>

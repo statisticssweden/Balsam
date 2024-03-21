@@ -9,7 +9,8 @@ export interface AsyncAutoCompleteProperties
 {
     getTemplates(): Promise<Array<Template>>,
     label: string,
-    onChange?(template: Template | null) : void
+    onChange?(template: Template | null) : void,
+    defaultTemplate?: Template
 }
 
 export default function TemplateAsyncAutocomplete(props : AsyncAutoCompleteProperties) {
@@ -54,6 +55,7 @@ export default function TemplateAsyncAutocomplete(props : AsyncAutoCompletePrope
       size="small"
       sx={{ width: "100%" }}
       open={open}
+      defaultValue={props.defaultTemplate}
       onChange={(_event, value) => {
           props.onChange?.(value);
       }}
