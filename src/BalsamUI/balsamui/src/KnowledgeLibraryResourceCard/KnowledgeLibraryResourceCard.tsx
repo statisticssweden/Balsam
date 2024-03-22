@@ -23,7 +23,7 @@ export default function KnowledgeLibraryResourceCard({ resource } : KnowledgeLib
     if(resource.resource.type === ResourceType.Folder)
     {
         let mediaContent = <div className='icon-container'> <FolderIcon sx={{fontSize:"134px", color:"lightgray"}}></FolderIcon></div>;
-        let cardActionAreaTo = `/knowledgeLibrary/${resource.knowledgeLibraryId}/resourceFolder?folder=${resource.resource.fileName}`;
+        let cardActionAreaTo = `/knowledgeLibrary/${resource.knowledgeLibrary.id}/resourceFolder?folder=${resource.resource.fileName}`;
         card = renderLinkCard(resource.resource.name, resource.resource.description, cardActionAreaTo, undefined, mediaContent);
     }
     else if (resource.resource.type === ResourceType.Url) {
@@ -31,7 +31,7 @@ export default function KnowledgeLibraryResourceCard({ resource } : KnowledgeLib
         card = renderLinkCard(resource.resource.name, resource.resource.description, cardActionAreaTo, resourceImage);
     }
     else if (resource.resource.type === ResourceType.Md) {
-        let cardActionAreaTo = `/knowledgelibrary/${resource.knowledgeLibraryId}/file/${resource.resource.fileId}`;
+        let cardActionAreaTo = `/knowledgelibrary/${resource.knowledgeLibrary.id}/file/${resource.resource.fileId}`;
         card = renderLinkCard(resource.resource.name, resource.resource.description, cardActionAreaTo, markdownImage);
     }
     

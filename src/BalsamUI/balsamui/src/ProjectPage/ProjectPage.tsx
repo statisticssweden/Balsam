@@ -25,6 +25,7 @@ import { Link } from 'react-router-dom';
 import NewBranchDialog from '../NewBranchDialog/NewBranchDialog';
 import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
 import ButtonMenu from '../ButtonMenu/ButtonMenu';
+import AddResourceDialog from '../AddResourceDialog/AddResourceDialog';
 
 export default function ProjectPage() {
     const [project, setProject] = useState<Project>();
@@ -45,6 +46,8 @@ export default function ProjectPage() {
     const [files, setFiles] = useState<Array<RepoFile>>();
     const [searchParams, setSearchParams] = useSearchParams();
     const [showDeleteBranchConfirmation, setShowDeleteBranchConfirmation] = useState(false);
+    const [showResourceDialog, setShowResourceDialog] = useState(false);
+    
 
     const dispatch = useDispatch();
 
@@ -396,6 +399,24 @@ export default function ProjectPage() {
         setSelectedTab(newTab);
     };
 
+    function onAddResourceClick() {
+        setShowResourceDialog(true);
+        
+    }
+
+    function onAddResourceClosing()
+    {
+        setShowResourceDialog(false);
+    }
+
+    function onResourceAdded() 
+    {
+        if (project)
+        {
+            loadFiles(project.id, selectedBranch)
+        }
+    }
+
     function renderFilesTree()
     {
         if (files === undefined)
@@ -421,6 +442,16 @@ export default function ProjectPage() {
         }
     }
     
+    function renderAddResourceDialog()
+    {
+        if (project && selectedBranch)
+        {
+            return (<AddResourceDialog open={showResourceDialog} project={project} branch={selectedBranch!} onClosing={onAddResourceClosing} onResourceAdded={onResourceAdded} />)
+        }
+
+        return undefined;
+    }
+
     function renderProject(project: Project)
     {
         let readmeElement = renderReadme();
@@ -430,6 +461,7 @@ export default function ProjectPage() {
         let filesElement = renderFilesTree();
         let newWorkspaceButton = renderNewWorkspaceButton();
         let deleteBranchDialog = renderDeleteBranchDialog();
+        let addResourceDialog = renderAddResourceDialog();
 
         function tabProps(index: number) {
             return {
@@ -464,7 +496,8 @@ export default function ProjectPage() {
                             {readmeElement}
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={1}>
-                            <ProjectResourcesSection projectid={project.id} branch={selectedBranch!} resources={resources} />
+                            <ProjectResourcesSection projectid={project.id} showNewCard branch={selectedBranch!} resources={resources} onNewClick={onAddResourceClick} />
+                            {addResourceDialog}
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={2}>
                             {filesElement}

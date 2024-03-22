@@ -1,10 +1,11 @@
 import { KnowledgeLibraryApi } from "../../BalsamAPI/api";
-import { Template } from "../Model/RepositoryTemplate";
+import { RepositoryTemplate } from "../Model/RepositoryTemplate";
+import { KnowledgeLibraryResource } from "../Model/Resource";
 import RepositoryTemplates from "../RepositoryTemplates/repositoryTemplates";
-import { KnowledgeLibrary, RepoFile } from "../services/BalsamAPIServices";
+import Resources from "../Resources/Resources";
+import { KnowledgeLibrary, RepoFile } from "../services/BalsamAPIServices"; 
 
-
-async function getTemplates(api: KnowledgeLibraryApi, knowledgeLibrary: KnowledgeLibrary) : Promise<Array<Template>>
+async function getTemplates(api: KnowledgeLibraryApi, knowledgeLibrary: KnowledgeLibrary) : Promise<Array<RepositoryTemplate>>
 {
     let promise = api.listKnowledgeLibraryFiles(knowledgeLibrary.id);
     let files = (await promise).data;
@@ -12,11 +13,11 @@ async function getTemplates(api: KnowledgeLibraryApi, knowledgeLibrary: Knowledg
     return getTemplatesFromFiles(api, files, knowledgeLibrary);
 }
 
-async function getTemplatesFromFiles(api: KnowledgeLibraryApi, files: Array<RepoFile>, knowledgeLibrary: KnowledgeLibrary) : Promise<Array<Template>>
+async function getTemplatesFromFiles(api: KnowledgeLibraryApi, files: Array<RepoFile>, knowledgeLibrary: KnowledgeLibrary) : Promise<Array<RepositoryTemplate>>
 {
     
     let templateFiles = RepositoryTemplates.getTemplateFiles(files);
-    let templatesArray = await RepositoryTemplates.convertToTemplates(templateFiles, async (fileId): Promise<Template> => {
+    let templatesArray = await RepositoryTemplates.convertToTemplates(templateFiles, async (fileId): Promise<RepositoryTemplate> => {
         let promise = api.getKnowledgeLibraryFileContent(knowledgeLibrary.id, fileId);
         let data = (await promise).data;
 
@@ -31,7 +32,7 @@ async function getTemplatesFromFiles(api: KnowledgeLibraryApi, files: Array<Repo
     return templatesArray;
 }
 
-async function getAllTemplates(api: KnowledgeLibraryApi) : Promise<Array<Template>>
+async function getAllTemplates(api: KnowledgeLibraryApi) : Promise<Array<RepositoryTemplate>>
 {
     let promise = api.listKnowledgeLibaries();
     let knowledgeLibraries = (await promise).data;
@@ -48,12 +49,59 @@ async function getAllTemplates(api: KnowledgeLibraryApi) : Promise<Array<Templat
     return templates;
 }
 
+async function getResources(api: KnowledgeLibraryApi, knowledgeLibrary: KnowledgeLibrary) : Promise<Array<KnowledgeLibraryResource>>
+{
+    let promise = api.listKnowledgeLibraryFiles(knowledgeLibrary.id);
+    let files = (await promise).data;
+    
+    return getResourcesFromFiles(api, files, knowledgeLibrary);
+}
+
+async function getResourcesFromFiles(api: KnowledgeLibraryApi, files: Array<RepoFile>, knowledgeLibrary: KnowledgeLibrary) : Promise<Array<KnowledgeLibraryResource>>
+{
+    
+    let resourceFiles = Resources.getResourceFiles(files);
+    let resourcesArray = await Resources.convertToResources(resourceFiles, async (fileId): Promise<string> => {
+        let promise = api.getKnowledgeLibraryFileContent(knowledgeLibrary.id, fileId);
+        return (await promise).data;
+    });
+
+    let knowledgeLibraryResources = resourcesArray.map( r => { 
+        return { knowledgeLibrary : knowledgeLibrary,
+                 resource: r
+                } as KnowledgeLibraryResource;
+            })
+
+    return knowledgeLibraryResources;
+}
+
+async function getAllResources(api: KnowledgeLibraryApi) : Promise<Array<KnowledgeLibraryResource>>
+{
+    let promise = api.listKnowledgeLibaries();
+    let knowledgeLibraries = (await promise).data;
+
+    let promises = knowledgeLibraries.map(knowledgeLibrary  => 
+        {
+            return getResources(api, knowledgeLibrary);
+        });
+
+    let reduced = Promise.all(promises);
+
+    let resources = (await reduced).flatMap(arr => arr);
+    
+    return resources;
+}
+
 
 
 const KnowLedgeLibraries = {
     getAllTemplates,
     getTemplates,
-    getTemplatesFromFiles
+    getTemplatesFromFiles,
+    getAllResources,
+    getResources,
+    getResourcesFromFiles,
+
 }
 
 export default KnowLedgeLibraries;

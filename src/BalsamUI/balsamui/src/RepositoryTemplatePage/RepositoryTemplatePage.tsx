@@ -4,7 +4,7 @@ import AppContext, { AppContextState } from '../configuration/AppContext';
 
 import { useDispatch } from 'react-redux';
 import { postError } from '../Alerts/alertsSlice';
-import TemplateView from '../TemplateView/TemplateView';
+import RepositoryTemplateView from '../RepositoryTemplateView/RepositoryTemplateView';
 import { RepositoryTemplate } from '../Model/RepositoryTemplate';
 
 export default function RepositoryTemplatePage() {
@@ -41,7 +41,7 @@ export default function RepositoryTemplatePage() {
     }, [knowledgeLibraryId, fileId])
 
 
-    let content = template ?  <TemplateView knowledgeLibraryId={knowledgeLibraryId!} template={template} /> : "Laddar..."
+    let content = template ?  <RepositoryTemplateView knowledgeLibraryId={knowledgeLibraryId!} template={template} /> : "Laddar..."
 
     return (
         content

@@ -1,8 +1,9 @@
 import ProjectResourceCard from '../ProjectResourceCard/ProjectResourceCard';
 import { ProjectResource } from "../Model/Resource";
 import NewCard from '../NewCard/NewCard';
+import workspaceImage from '../assets/resource.png'
 
-export interface NewResourceCardKeyType
+export interface AddResourceCardKeyType
 {
     projectId: string,
     branchId: string
@@ -19,7 +20,7 @@ export interface ProjectResourcesSectionProperties{
 export default function ProjectResourcesSection(props: ProjectResourcesSectionProperties) {
  
     const newCardContent = props.showNewCard 
-                ? <NewCard<NewResourceCardKeyType> itemKey={{projectId: props.projectid, branchId: props.branch }} buttonContent={"Ny bearbetningsmiljö"} image={workspaceImage} onClick={props.onNewClick} />
+                ? <NewCard<AddResourceCardKeyType> itemKey={{projectId: props.projectid, branchId: props.branch }} buttonContent={"Lägg till resurs"} image={workspaceImage} onClick={props.onNewClick} />
                 : ""
                 
     function renderResources(resources: Array<ProjectResource>) {
@@ -29,6 +30,7 @@ export default function ProjectResourcesSection(props: ProjectResourcesSectionPr
                 {resources.map((resource: ProjectResource) =>
                     <ProjectResourceCard resource={resource} key={resource.resource.filePath} />
                 )}
+                {newCardContent}
             </div>
         );
     }

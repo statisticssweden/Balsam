@@ -4,9 +4,8 @@ import { useDispatch } from "react-redux";
 import { postError } from "../Alerts/alertsSlice";
 import { KnowledgeLibrary, RepoFile } from "../services/BalsamAPIServices";
 import AppContext, { AppContextState } from "../configuration/AppContext";
-import { Accordion, Box, Tab, Tabs } from "@mui/material";
+import { Accordion, Box, Button, Tab, Tabs } from "@mui/material";
 import MarkdownViewer from "../MarkdownViewer/MarkdownViewer";
-import Resources from '../Resources/Resources';
 import { AxiosResponse } from "axios";
 import { KnowledgeLibraryResource } from "../Model/Resource";
 import CustomTabPanel from "../CustomTabPanel/CustomTabPanel";
@@ -14,6 +13,9 @@ import { RepositoryTemplate } from "../Model/RepositoryTemplate";
 import KnowledgeLibraryResourcesSection from "../KnowledgeLibraryResourcesSection/KnowledgeLibraryResourcesSection";
 import RepositoryTemplatesSection from "../RepositoryTemplatesSection/RepositoryTemplatesSection";
 import KnowLedgeLibraries from "../KnowledgeLibraries/KnowledgeLibraries";
+import { Link } from 'react-router-dom';
+import { OpenInNew } from "@mui/icons-material";
+import KnowledgeLibraries from "../KnowledgeLibraries/KnowledgeLibraries";
 
 export default function KnowledgeLibraryPage()
 {
@@ -81,7 +83,7 @@ export default function KnowledgeLibraryPage()
 
             let files = axResponse.data;
 
-            let resourceFiles = Resources.getResourceFiles(files);
+            //let resourceFiles = Resources.getResourceFiles(files);
             let readmeFile = files.find((file) => file.path.toLowerCase() === "readme.md");
 
             if (readmeFile && readmeFile.id)
@@ -89,21 +91,21 @@ export default function KnowledgeLibraryPage()
                 loadReadmeContent(knowledgeLibrary.id, readmeFile.id);
             }
 
-            let resourcesArray = await Resources.convertToResources(resourceFiles, async (fileId): Promise<string> => {
-                let promise = appContext.balsamApi.knowledgeLibraryApi.getKnowledgeLibraryFileContent(knowledgeLibrary.id, fileId);
-                return (await promise).data;
-            });
+            // let resourcesArray = await Resources.convertToResources(resourceFiles, async (fileId): Promise<string> => {
+            //     let promise = appContext.balsamApi.knowledgeLibraryApi.getKnowledgeLibraryFileContent(knowledgeLibrary.id, fileId);
+            //     return (await promise).data;
+            // });
 
-            let knowledgeLibraryResources = resourcesArray.map( r => { 
-                return { knowledgeLibraryId : knowledgeLibrary.id,
-                         resource: r
-                        } as KnowledgeLibraryResource;
-                    })
+            // let knowledgeLibraryResources = resourcesArray.map( r => { 
+            //     return { knowledgeLibrary : knowledgeLibrary,
+            //              resource: r
+            //             } as KnowledgeLibraryResource;
+            //         })
 
+            let knowledgeLibraryResources = await KnowledgeLibraries.getResources(appContext.balsamApi.knowledgeLibraryApi, knowledgeLibrary)
             setResources(knowledgeLibraryResources);
 
             let templatesArray = await KnowLedgeLibraries.getTemplatesFromFiles(appContext.balsamApi.knowledgeLibraryApi, files, knowledgeLibrary);
-            
             setTemplates(templatesArray)
 
         })
@@ -141,7 +143,7 @@ export default function KnowledgeLibraryPage()
         return (            
             <div>
                 <div className="project-header">
-                    <div><h2>{library.name}</h2></div>
+                    <div><h2>{library.name}<Button component={Link as any} target="_blank" underline="hover" to={library.repositoryFriendlyUrl}>Git<OpenInNew fontSize="inherit" /></Button></h2></div>
                     <Accordion defaultExpanded >
                         
                         <Box sx={{ width: '100%' }}>

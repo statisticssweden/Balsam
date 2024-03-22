@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { postSuccess, postError} from '../Alerts/alertsSlice';
 import { CreateProjectRequest, ProjectCreatedResponse } from '../services/BalsamAPIServices'
 import AppContext, { AppContextState } from '../configuration/AppContext';
-import { Template } from '../Model/RepositoryTemplate';
+import { RepositoryTemplate } from '../Model/RepositoryTemplate';
 import RepositoryTemplateAsyncAutocomplete from '../RepositoryTemplatesAsyncAutocomplete/RepositoryTemplatesAsyncAutocomplete';
 import KnowledgeLibraries from '../KnowledgeLibraries/KnowledgeLibraries';
 
@@ -19,7 +19,7 @@ export interface NewProjectDialogProperties
 {
     onClosing: () => void,
     open: boolean,
-    defaultTemplate?: Template
+    defaultTemplate?: RepositoryTemplate
 }
 
 export default function NewProjectDialog(props: NewProjectDialogProperties ) {
@@ -32,7 +32,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const [projectNameHelperText, setProjectNameHelperText] = useState("")
     const [branchNameError, setBranchNameError] = useState(false);
     const [branchNameHelperText, setBranchNameHelperText] = useState("");
-    const [template, setTemplate] = useState<Template | null>(null);
+    const [template, setTemplate] = useState<RepositoryTemplate | null>(null);
     
     const [busy, setBusy] = useState(false);
     const [okEnabled, setOkEnabled] = useState(false);
@@ -201,12 +201,12 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
            
     };
 
-    function onTemplateChanged(template: Template | null)
+    function onTemplateChanged(template: RepositoryTemplate | null)
     {
         setTemplate(template);
     }
 
-    async function getTemplates() : Promise<Array<Template>>
+    async function getTemplates() : Promise<Array<RepositoryTemplate>>
     {
         return KnowledgeLibraries.getAllTemplates(appContext.balsamApi.knowledgeLibraryApi);
     }

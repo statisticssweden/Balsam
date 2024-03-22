@@ -1,15 +1,15 @@
 import { Button, Paper } from '@mui/material';
-import { Template } from '../Model/RepositoryTemplate';
+import { RepositoryTemplate } from '../Model/RepositoryTemplate';
 import { Link } from 'react-router-dom';
 import { OpenInNew } from '@mui/icons-material';
 
-export interface TemplateViewProperties
+export interface RepositoryTemplateViewProperties
 {
     knowledgeLibraryId: string,
-    template: Template,
+    template: RepositoryTemplate,
 }
 
-export default function TemplateView( props: TemplateViewProperties) {
+export default function RepositoryTemplateView( props: RepositoryTemplateViewProperties) {
     return (
         <div>
             <div className="project-header">
