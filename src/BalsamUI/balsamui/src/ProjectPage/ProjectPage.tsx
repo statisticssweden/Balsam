@@ -464,7 +464,7 @@ export default function ProjectPage() {
                             {readmeElement}
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={1}>
-                            <ProjectResourcesSection resources={resources} />
+                            <ProjectResourcesSection projectid={project.id} branch={selectedBranch!} resources={resources} />
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={2}>
                             {filesElement}

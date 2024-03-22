@@ -1,4 +1,4 @@
-export interface Template
+export interface RepositoryTemplate
 {
     fileId: string,
     name: string,

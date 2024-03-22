@@ -1,6 +1,6 @@
 import { KnowledgeLibraryApi } from "../../BalsamAPI/api";
-import { Template } from "../Model/Template";
-import Templates from "../Templates/templates";
+import { Template } from "../Model/RepositoryTemplate";
+import RepositoryTemplates from "../RepositoryTemplates/repositoryTemplates";
 import { KnowledgeLibrary, RepoFile } from "../services/BalsamAPIServices";
 
 
@@ -15,8 +15,8 @@ async function getTemplates(api: KnowledgeLibraryApi, knowledgeLibrary: Knowledg
 async function getTemplatesFromFiles(api: KnowledgeLibraryApi, files: Array<RepoFile>, knowledgeLibrary: KnowledgeLibrary) : Promise<Array<Template>>
 {
     
-    let templateFiles = Templates.getTemplateFiles(files);
-    let templatesArray = await Templates.convertToTemplates(templateFiles, async (fileId): Promise<Template> => {
+    let templateFiles = RepositoryTemplates.getTemplateFiles(files);
+    let templatesArray = await RepositoryTemplates.convertToTemplates(templateFiles, async (fileId): Promise<Template> => {
         let promise = api.getKnowledgeLibraryFileContent(knowledgeLibrary.id, fileId);
         let data = (await promise).data;
 

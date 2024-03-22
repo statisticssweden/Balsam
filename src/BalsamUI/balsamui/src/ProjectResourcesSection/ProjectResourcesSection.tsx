@@ -1,13 +1,27 @@
 import ProjectResourceCard from '../ProjectResourceCard/ProjectResourceCard';
 import { ProjectResource } from "../Model/Resource";
+import NewCard from '../NewCard/NewCard';
 
+export interface NewResourceCardKeyType
+{
+    projectId: string,
+    branchId: string
+}
 
 export interface ProjectResourcesSectionProperties{
+    projectid: string,
+    branch: string,
     resources?: Array<ProjectResource>,
+    showNewCard?: boolean,
+    onNewClick?: (itemKey: any) => void,
 }
 
 export default function ProjectResourcesSection(props: ProjectResourcesSectionProperties) {
  
+    const newCardContent = props.showNewCard 
+                ? <NewCard<NewResourceCardKeyType> itemKey={{projectId: props.projectid, branchId: props.branch }} buttonContent={"Ny bearbetningsmiljö"} image={workspaceImage} onClick={props.onNewClick} />
+                : ""
+                
     function renderResources(resources: Array<ProjectResource>) {
         return (
             

@@ -1,5 +1,5 @@
 import { Button, Paper } from '@mui/material';
-import { Template } from '../Model/Template';
+import { Template } from '../Model/RepositoryTemplate';
 import { Link } from 'react-router-dom';
 import { OpenInNew } from '@mui/icons-material';
 

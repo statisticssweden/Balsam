@@ -6,18 +6,18 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import { OpenInNew } from '@mui/icons-material';
-import './TemplateCard.css';
-import { Template } from '../Model/Template';
+import './RepositoryTemplateCard.css';
+import { Template } from '../Model/RepositoryTemplate';
 import { Box, Chip, Stack } from '@mui/material';
 
 
-export interface TemplateCardProperties {
+export interface RepositoryTemplateCardProperties {
     knowledgeLibraryId: string,
     template: Template,
     newProjectClick(template: Template): void 
 }
 
-export default function TemplateCard( props : TemplateCardProperties) {
+export default function RepositoryTemplateCard( props : RepositoryTemplateCardProperties) {
 
 
     function renderTags( tags: Array<string>)
@@ -27,7 +27,7 @@ export default function TemplateCard( props : TemplateCardProperties) {
         })
     }
 
-    function renderCard(name: string, description: string, gitUrl: string, cardActionAreaTo: string, tags: Array<string>)
+    function renderCard(name: string, description: string, gitUrl: string, tags: Array<string>)
     {
         let tagChips = renderTags(tags);
 
@@ -62,9 +62,7 @@ export default function TemplateCard( props : TemplateCardProperties) {
         );
     }
     
-    let navigateToUrl = `/knowledgeLibrary/${props.knowledgeLibraryId}/template/${props.template.fileId}`;
-
-    let card = renderCard(props.template.name, props.template.description, props.template.html, navigateToUrl, props.template.tags)
+    let card = renderCard(props.template.name, props.template.description, props.template.html, props.template.tags)
     
     return card;
 }

@@ -5,12 +5,12 @@ import AppContext, { AppContextState } from '../configuration/AppContext';
 import { useDispatch } from 'react-redux';
 import { postError } from '../Alerts/alertsSlice';
 import TemplateView from '../TemplateView/TemplateView';
-import { Template } from '../Model/Template';
+import { RepositoryTemplate } from '../Model/RepositoryTemplate';
 
-export default function TemplatePage() {
+export default function RepositoryTemplatePage() {
     const {knowledgeLibraryId, fileId } = useParams<string>();
     const appContext = useContext(AppContext) as AppContextState;
-    const [template, setTemplate] = useState<Template>()
+    const [template, setTemplate] = useState<RepositoryTemplate>()
     const dispatch = useDispatch();
 
     useEffect(() => {

@@ -10,10 +10,9 @@ import Resources from '../Resources/Resources';
 import { AxiosResponse } from "axios";
 import { KnowledgeLibraryResource } from "../Model/Resource";
 import CustomTabPanel from "../CustomTabPanel/CustomTabPanel";
-import Templates from "../Templates/templates";
-import { Template } from "../Model/Template";
+import { RepositoryTemplate } from "../Model/RepositoryTemplate";
 import KnowledgeLibraryResourcesSection from "../KnowledgeLibraryResourcesSection/KnowledgeLibraryResourcesSection";
-import TemplatesSection from "../TemplatesSection/TemplatesSection";
+import RepositoryTemplatesSection from "../RepositoryTemplatesSection/RepositoryTemplatesSection";
 import KnowLedgeLibraries from "../KnowledgeLibraries/KnowledgeLibraries";
 
 export default function KnowledgeLibraryPage()
@@ -25,7 +24,7 @@ export default function KnowledgeLibraryPage()
     const appContext = useContext(AppContext) as AppContextState;
     const [readmeMarkdown, setReadmeMarkdown] = useState<string>();
     const [resources, setResources] = useState<Array<KnowledgeLibraryResource>>();
-    const [templates, setTemplates] = useState<Array<Template>>();
+    const [templates, setTemplates] = useState<Array<RepositoryTemplate>>();
     const [selectedTab, setSelectedTab] = useState(0);
 
     useEffect(() => {
@@ -160,7 +159,7 @@ export default function KnowledgeLibraryPage()
                             <KnowledgeLibraryResourcesSection resources={resources} />
                         </CustomTabPanel>
                         <CustomTabPanel className="cards-tab" value={selectedTab} index={2}>
-                            <TemplatesSection knowledgeLibraryId={library.id} templates={templates} />
+                            <RepositoryTemplatesSection knowledgeLibraryId={library.id} templates={templates} />
                         </CustomTabPanel>
                         </Box>
                     </Accordion>

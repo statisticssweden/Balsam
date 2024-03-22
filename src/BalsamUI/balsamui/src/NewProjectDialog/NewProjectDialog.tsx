@@ -11,8 +11,8 @@ import { useDispatch } from 'react-redux';
 import { postSuccess, postError} from '../Alerts/alertsSlice';
 import { CreateProjectRequest, ProjectCreatedResponse } from '../services/BalsamAPIServices'
 import AppContext, { AppContextState } from '../configuration/AppContext';
-import { Template } from '../Model/Template';
-import TemplateAsyncAutocomplete from '../TemplatesAsyncAutocomplete/TemplatesAsyncAutocomplete';
+import { Template } from '../Model/RepositoryTemplate';
+import RepositoryTemplateAsyncAutocomplete from '../RepositoryTemplatesAsyncAutocomplete/RepositoryTemplatesAsyncAutocomplete';
 import KnowledgeLibraries from '../KnowledgeLibraries/KnowledgeLibraries';
 
 export interface NewProjectDialogProperties
@@ -252,7 +252,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                             <TextField id="branch-input" error={branchNameError} helperText={branchNameHelperText} variant='standard' label="Branchnamn" required value={branchName} onChange={e => branchNameChanged(e.target.value)} aria-describedby="Namn på defaultbranch" />
                         </FormControl>
                         <FormControl sx={{ mt: 4}}>
-                            <TemplateAsyncAutocomplete 
+                            <RepositoryTemplateAsyncAutocomplete 
                                 getTemplates={getTemplates}
                                 label="Skapa från Mall eller Exempel"
                                 onChange={onTemplateChanged}

@@ -21,7 +21,7 @@ import KnowledgeLibrariesPage from './KnowledgeLibrariesPage/KnowledgeLibrariesP
 import KnowledgeLibraryPage from './KnowledgeLibraryPage/KnowledgeLibraryPage.tsx';
 import KnowledgeLibraryFilePage from './KnowledgeLibraryFilePage/KnowledgeLibraryFilePage.tsx';
 import KnowledgeLibraryResourceFolderPage from './KnowledgeLibraryResourceFolderPage/KnowledgeLibraryResourceFolderPage.tsx';
-import TemplatePage from './TemplatePage/TemplatePage.tsx';
+import RepositoryTemplatePage from './RepositoryTemplatePage/RepositoryTemplatePage.tsx';
 
 
 function App() {
@@ -71,7 +71,7 @@ function App() {
                         <Route path="/knowledgelibrary/:id" element={<KnowledgeLibraryPage />} />
                         <Route path="/knowledgelibrary/:knowledgeLibraryId/file/:fileId/" element={<KnowledgeLibraryFilePage />} />
                         <Route path="/knowledgelibrary/:knowledgeLibraryId/resourceFolder/" element={<KnowledgeLibraryResourceFolderPage />} />
-                        <Route path="/knowledgelibrary/:knowledgeLibraryId/template/:fileId" element={<TemplatePage />} />
+                        <Route path="/knowledgelibrary/:knowledgeLibraryId/template/:fileId" element={<RepositoryTemplatePage />} />
                         <Route path="/resorucemarkdown/:projectId/:branchId/:fileId" element={<ResoruceMarkdownPage />} />
                         <Route path="resourcefolder/:projectId/:branchId/" element={<ResoruceFolderPage />} />
                     </Routes>

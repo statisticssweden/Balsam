@@ -1,4 +1,4 @@
-import { Template } from "../Model/Template";
+import { RepositoryTemplate } from "../Model/RepositoryTemplate";
 import { toRepoFileTypeEnum } from "../ReposFiles/RepoFiles";
 import { RepoFile, RepoFileTypeEnum } from "../services/BalsamAPIServices";
 
@@ -13,9 +13,9 @@ function getTemplateFiles(files: RepoFile[])
         return filteredFiles;
     }
 
-export async function convertToTemplates(files: RepoFile[], getContentCallback: (fileId: string) => Promise<Template>) : Promise<Array<Template>>
+export async function convertToTemplates(files: RepoFile[], getContentCallback: (fileId: string) => Promise<RepositoryTemplate>) : Promise<Array<RepositoryTemplate>>
 {
-    let resourcesArray = await Promise.all(files.map( async (file): Promise<Template> => {
+    let resourcesArray = await Promise.all(files.map( async (file): Promise<RepositoryTemplate> => {
         try{
             let template = await getContentCallback(file.id);
             
@@ -39,9 +39,9 @@ export async function convertToTemplates(files: RepoFile[], getContentCallback: 
     return resourcesArray;
 }
 
-const Templates = {
+const RepositoryTemplates = {
     getTemplateFiles,
     convertToTemplates
 }
 
-export default Templates;
+export default RepositoryTemplates;

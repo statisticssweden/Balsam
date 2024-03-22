@@ -1,33 +1,33 @@
 import { useState } from "react";
-import { Template } from "../Model/Template";
-import TemplateCard from "../TemplateCard/TemplateCard";
+import { RepositoryTemplate } from "../Model/RepositoryTemplate";
+import RepositoryTemplateCard from "../RepositoryTemplateCard/RepositoryTemplateCard";
 import NewProjectDialog from "../NewProjectDialog/NewProjectDialog";
 
-export interface TemplatesSectionProperties{
+export interface RepositoryTemplatesSectionProperties{
     knowledgeLibraryId: string,
-    templates?: Array<Template>,
+    templates?: Array<RepositoryTemplate>,
 }
 
-export default function ProjectResourcesSection(props: TemplatesSectionProperties) {
+export default function RepositoryTemplateSection(props: RepositoryTemplatesSectionProperties) {
     const [newDialogOpen, setNewDialogOpen] = useState(false);
-    const [defaultTemplate, setDefaultTemplate] = useState<Template>();
+    const [defaultTemplate, setDefaultTemplate] = useState<RepositoryTemplate>();
 
     const onNewProjectDialogClosing = () => {
         setNewDialogOpen(false);
     };
 
-    const onNewProjectClick = (template: Template) => {
+    const onNewProjectClick = (template: RepositoryTemplate) => {
         setDefaultTemplate(template);
         setNewDialogOpen(true);
         
     };
 
-    function renderResources(resources: Array<Template>) {
+    function renderResources(resources: Array<RepositoryTemplate>) {
         return (
             
             <div className='cards'>
-                {resources.map((template: Template) =>
-                        <TemplateCard knowledgeLibraryId={props.knowledgeLibraryId} template={template} newProjectClick={onNewProjectClick} key={template.fileId} />
+                {resources.map((template: RepositoryTemplate) =>
+                        <RepositoryTemplateCard knowledgeLibraryId={props.knowledgeLibraryId} template={template} newProjectClick={onNewProjectClick} key={template.fileId} />
                 )}
 
                 <NewProjectDialog open={newDialogOpen} defaultTemplate={defaultTemplate} onClosing={onNewProjectDialogClosing} ></NewProjectDialog>
