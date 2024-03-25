@@ -14,6 +14,7 @@ import AppContext, { AppContextState } from '../configuration/AppContext';
 import { RepositoryTemplate } from '../Model/RepositoryTemplate';
 import RepositoryTemplateAsyncAutocomplete from '../RepositoryTemplatesAsyncAutocomplete/RepositoryTemplatesAsyncAutocomplete';
 import KnowledgeLibraries from '../KnowledgeLibraries/KnowledgeLibraries';
+import './NewProjectDialog.css'
 
 export interface NewProjectDialogProperties
 {
@@ -176,7 +177,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         //setOpen(false);
         props.onClosing();
         resetDialog();
-        showNewItemCreatedAlert(`Projekt "${response.name}" är skapat`, response.id); //TODO: Language
+        showNewItemCreatedAlert(`Projekt "${response.name}" är skapat.`, response.id); //TODO: Language
     }
 
     const handleCreate = () => {
@@ -211,9 +212,24 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         return KnowledgeLibraries.getAllTemplates(appContext.balsamApi.knowledgeLibraryApi);
     }
 
+    function renderCopyProjectInformation()
+    {
+        if(template)
+        {
+            return <Box className='form-control-info-text'>
+                Det kan ta någon minut innan filerna har kopierats till projektet när det har skapats. Uppdatera i så fall projektsidan efter att har navigerat tills de dyker upp.
+            </Box>
+        }
+        else
+        {
+            return undefined;
+        }
+
+    }
+
     const progress = renderProgress();
 
-
+    const copyProjectInformation = renderCopyProjectInformation();
 
     return (
         <Fragment>
@@ -258,7 +274,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                                 onChange={onTemplateChanged}
                                 defaultTemplate={props.defaultTemplate}
                             />
-                        
+                            {copyProjectInformation}
                         </FormControl>
                     </Box>
                     
