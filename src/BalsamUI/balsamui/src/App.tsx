@@ -22,6 +22,7 @@ import KnowledgeLibraryPage from './KnowledgeLibraryPage/KnowledgeLibraryPage.ts
 import KnowledgeLibraryFilePage from './KnowledgeLibraryFilePage/KnowledgeLibraryFilePage.tsx';
 import KnowledgeLibraryResourceFolderPage from './KnowledgeLibraryResourceFolderPage/KnowledgeLibraryResourceFolderPage.tsx';
 import RepositoryTemplatePage from './RepositoryTemplatePage/RepositoryTemplatePage.tsx';
+import { Box, Typography } from '@mui/material';
 
 
 function App() {
@@ -50,18 +51,28 @@ function App() {
 
     }, []);
 
+    function onLogoutClick()
+    {
+        KeyCloakService.CallLogout();
+    }
+
     const renderApp =  () =>
     {
         return (
             <React.Fragment>
+                
                 <AppContext.Provider value={appContextState} >
-                <AppBar position="static">
-                    <Toolbar>
-                        <Button component={Link} color="inherit" to="/">Min sida</Button>
-                        <Button component={Link} color="inherit" to="/projects">Projekt</Button>
-                        <Button component={Link} color="inherit" to="/knowledgelibraries">Kunskapsbibliotek</Button>
-                    </Toolbar>
-                </AppBar>
+                <Box  sx={{ flexGrow: 1 }}>
+                    <AppBar position="static">
+                        <Toolbar>
+                            <Button component={Link} color="inherit" to="/">Min sida</Button>
+                            <Button component={Link} color="inherit" to="/projects">Projekt</Button>
+                            <Button component={Link} color="inherit" to="/knowledgelibraries">Kunskapsbibliotek</Button>
+                            <Typography sx={{ flexGrow: 1 }}></Typography>
+                            <Button  color="inherit" onClick={onLogoutClick} >Logga ut</Button>
+                        </Toolbar>
+                    </AppBar>
+                </Box>
                 <div className="app">
                     <Routes>
                         <Route path="/" element={<MyPage />} />
