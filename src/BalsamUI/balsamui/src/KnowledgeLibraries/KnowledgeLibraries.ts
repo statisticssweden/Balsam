@@ -1,10 +1,9 @@
 import { KnowledgeLibraryApi } from "../../BalsamAPI/api";
 import { RepositoryTemplate } from "../Model/RepositoryTemplate";
 import { KnowledgeLibraryResource } from "../Model/Resource";
-import { toRepoFileTypeEnum } from "../ReposFiles/RepoFiles";
 import RepositoryTemplates from "../RepositoryTemplates/repositoryTemplates";
 import Resources from "../Resources/Resources";
-import { KnowledgeLibrary, RepoFile, RepoFileTypeEnum } from "../services/BalsamAPIServices"; 
+import { KnowledgeLibrary, RepoFile } from "../services/BalsamAPIServices"; 
 
 async function getTemplates(api: KnowledgeLibraryApi, knowledgeLibrary: KnowledgeLibrary) : Promise<Array<RepositoryTemplate>>
 {
