@@ -150,11 +150,11 @@ export default function KnowledgeLibraryPage()
         
         if (isSelected)
         {
-            let file = articleFiles.find(x=> x.id === itemId);
+            let file = articleFiles.find(x=> x.path === itemId);
 
             if (file && toRepoFileTypeEnum(file.type) === RepoFileTypeEnum.File)
             {
-                KnowLedgeLibraries.getArticleContent(appContext.balsamApi.knowledgeLibraryApi, library.id, itemId)
+                KnowLedgeLibraries.getArticleContent(appContext.balsamApi.knowledgeLibraryApi, library.id, file.id)
                 .then(content => {
                     setArticleMarkdown(content);    
                 });
@@ -164,6 +164,7 @@ export default function KnowledgeLibraryPage()
 
     function getItemLabel(item: FileTreeNode)
     {
+        //Remove file extension
         let name = item.name.replace(/\.[^/.]+$/, "");
         return name;
     }
@@ -185,7 +186,7 @@ export default function KnowledgeLibraryPage()
                             minWidth:"200px"
                         }}
                         items={articlesTree || []}
-                        getItemId={ (item) => item.fileId}
+                        getItemId={ (item) => item.path}
                         getItemLabel={item => getItemLabel(item)}
                         onItemSelectionToggle={handleItemSelectionToggle}
                     />

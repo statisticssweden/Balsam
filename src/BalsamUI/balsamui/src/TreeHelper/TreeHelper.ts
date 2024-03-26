@@ -24,7 +24,7 @@ function toFileTree(tree: Array<TreeNode>, files: Array<RepoFile>, currentPath: 
         {
             path: path,
             name: node.name,
-            fileId: file?.id || "", //TODO: make safer
+            fileId: file?.path || "", //TODO: make safer
             children: toFileTree(node.children, files, path),
             isFolder: toRepoFileTypeEnum(type) === RepoFileTypeEnum.Folder
         }
@@ -44,7 +44,7 @@ export function convertToFileTreeNodes(files: RepoFile[])
 export function getAllIds(tree: FileTreeNode[]) : string[]
 {
     return tree.flatMap((node) => {
-        let array : string[] = [node.fileId]
+        let array : string[] = [node.path]
         return array.concat(getAllIds(node.children))
     });
 }

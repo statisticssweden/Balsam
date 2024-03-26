@@ -48,7 +48,7 @@ export default function FileTree(props: PropsWithChildren<FileTreeProperties>)
         
         return (tree.map((node) => {
             return (
-                <TreeItem key={node.fileId} itemId={node.fileId} label={renderFileTreeLabel(node)}>   
+                <TreeItem key={node.path} itemId={node.path} label={renderFileTreeLabel(node)}>   
                     {Array.isArray(node.children) 
                         ? renderTree(node.children) 
                         : null}
