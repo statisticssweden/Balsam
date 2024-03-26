@@ -1,9 +1,10 @@
 import { KnowledgeLibraryApi } from "../../BalsamAPI/api";
 import { RepositoryTemplate } from "../Model/RepositoryTemplate";
 import { KnowledgeLibraryResource } from "../Model/Resource";
+import { toRepoFileTypeEnum } from "../ReposFiles/RepoFiles";
 import RepositoryTemplates from "../RepositoryTemplates/repositoryTemplates";
 import Resources from "../Resources/Resources";
-import { KnowledgeLibrary, RepoFile } from "../services/BalsamAPIServices"; 
+import { KnowledgeLibrary, RepoFile, RepoFileTypeEnum } from "../services/BalsamAPIServices"; 
 
 async function getTemplates(api: KnowledgeLibraryApi, knowledgeLibrary: KnowledgeLibrary) : Promise<Array<RepositoryTemplate>>
 {
@@ -92,7 +93,21 @@ async function getAllResources(api: KnowledgeLibraryApi) : Promise<Array<Knowled
     return resources;
 }
 
+function getArticlesFromFiles(files: Array<RepoFile>) : Array<RepoFile>
+{
+    
+    let articleFiles = files.filter((file) => {
+        return file.path.startsWith("Articles/")
+    });
 
+    return articleFiles;
+}
+
+async function getArticleContent(api: KnowledgeLibraryApi, libraryId: string, fileId: string): Promise<string>
+{
+    let promise = api.getKnowledgeLibraryFileContent(libraryId, fileId);
+    return (await promise).data;
+}
 
 const KnowLedgeLibraries = {
     getAllTemplates,
@@ -101,6 +116,8 @@ const KnowLedgeLibraries = {
     getAllResources,
     getResources,
     getResourcesFromFiles,
+    getArticlesFromFiles,
+    getArticleContent
 
 }
 

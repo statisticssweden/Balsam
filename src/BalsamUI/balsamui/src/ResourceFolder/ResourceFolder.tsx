@@ -2,7 +2,8 @@ import { useState } from 'react';
 import MarkdownViewer from '../MarkdownViewer/MarkdownViewer'
 import { Accordion, Box, Tab, Tabs } from '@mui/material';
 import { RepoFile } from '../services/BalsamAPIServices';
-import FileTree, { convertToFileTreeNodes, getAllIds } from '../FileTree/FileTree';
+import FileTree from '../FileTree/FileTree';
+import { convertToFileTreeNodes, getAllIds } from '../TreeHelper/TreeHelper';
 import CustomTabPanel from '../CustomTabPanel/CustomTabPanel';
 
 export interface ResoruceFolderProperties
@@ -30,7 +31,7 @@ export default function ResoruceFolder(props: ResoruceFolderProperties) {
         let fileTree = convertToFileTreeNodes(props.files);
         let allIds = getAllIds(fileTree);
 
-        return (<FileTree fileTree={fileTree} defaultExpanded={allIds}></FileTree>);
+        return (<FileTree fileTree={fileTree} defaultExpandedItems={allIds}></FileTree>);
     }
 
     function renderResource(markdown: string) {

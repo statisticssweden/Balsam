@@ -32,7 +32,7 @@ export default function RepositoryTemplateCard( props : RepositoryTemplateCardPr
         let tagChips = renderTags(tags);
 
         return (
-            <Card sx={{ display: 'flex', flexDirection:"row", borderLeft:"3px solid", minWidth:"400px", maxWidth:"800px", borderColor:'primary.main', minHeight:"150px", maxHeight:"150px" }}>
+            <Card key={gitUrl} sx={{ display: 'flex', flexDirection:"row", borderLeft:"3px solid", minWidth:"400px", maxWidth:"800px", borderColor:'primary.main', minHeight:"150px", maxHeight:"150px" }}>
                 <CardMedia
                     component="img"
                     sx={{ flex:"0 1 0", objectFit: "contain", height:"100%" }}

@@ -1,66 +1,32 @@
-import { TreeItem, TreeView } from "@mui/x-tree-view";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { SimpleTreeView } from "@mui/x-tree-view";
+import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import FolderIcon from '@mui/icons-material/Folder';
 import DescriptionIcon from '@mui/icons-material/Description';
-import { PropsWithChildren } from "react";
-import { RepoFile, RepoFileTypeEnum } from "../services/BalsamAPIServices";
-import pathListToTree, { TreeNode } from 'path-list-to-tree';
-import { toRepoFileTypeEnum } from "../ReposFiles/RepoFiles";
+import { PropsWithChildren, useEffect, useState } from "react";
 
-export interface FileTreeNode 
-{
-    path: string,
-    name: string,
-    isFolder: boolean,
-    children: FileTreeNode[]
-}
 
-function toFileTree(tree: Array<TreeNode>, files: Array<RepoFile>, currentPath: string) : FileTreeNode[]
-{
-    //TODO: This is a fix because pathListToTree returns empty node
-    let cleanTree = tree.filter(f => f.name !== undefined);
+import { FileTreeNode } from "../TreeHelper/TreeHelper";
 
-    return cleanTree.map((node) => {
-        let path = currentPath.length > 0 ?  currentPath + "/" + node.name : node.name;
-        let type = files.find((f) => {return f.path === path} )?.type ?? RepoFileTypeEnum.Folder;
-        let fileNode: FileTreeNode = 
-        {
-            path: path,
-            name: node.name,
-            children: toFileTree(node.children, files, path),
-            isFolder: toRepoFileTypeEnum(type) === RepoFileTypeEnum.Folder
-        }
 
-        return fileNode;
-
-    });
-}
-export function convertToFileTreeNodes(files: RepoFile[])
-{
-    let filePaths = files.map((f) => f.path);
-    let tree = pathListToTree(filePaths);
-    let fileTree = toFileTree(tree, files, "");
-    return fileTree;
-}
-
-export function getAllIds(tree: FileTreeNode[]) : string[]
-{
-    return tree.flatMap((node) => {
-        let array : string[] = [node.path]
-        return array.concat(getAllIds(node.children))
-    });
-}
 
 export interface FileTreeProperties
 {
-    defaultExpanded?: string[],
+    defaultExpandedItems?: string[],
     fileTree: FileTreeNode[],
     
 }
 
 export default function FileTree(props: PropsWithChildren<FileTreeProperties>)
 {
+    const [expandedItems, setExpandedItems] = useState<string[]>([]);
+
+
+    useEffect(() => {
+        setExpandedItems(props.defaultExpandedItems || []);
+        
+    },[props.defaultExpandedItems]);
+
+
     function renderFileTreeLabel(node: FileTreeNode)
     {
         let style = {position:"relative", top:"3px", marginRight:"8px" };
@@ -73,12 +39,16 @@ export default function FileTree(props: PropsWithChildren<FileTreeProperties>)
             </div>);
     }
 
+    function onExpandedItemsChange(_event: React.SyntheticEvent<Element, Event>, itemIds: string[])
+    {
+        setExpandedItems(itemIds);
+    }
 
     const renderTree = (tree: FileTreeNode[]) => {
         
         return (tree.map((node) => {
             return (
-                <TreeItem key={node.path} nodeId={node.path} label={renderFileTreeLabel(node)}>   
+                <TreeItem key={node.fileId} itemId={node.fileId} label={renderFileTreeLabel(node)}>   
                     {Array.isArray(node.children) 
                         ? renderTree(node.children) 
                         : null}
@@ -88,14 +58,13 @@ export default function FileTree(props: PropsWithChildren<FileTreeProperties>)
         }));
     };
 
-    return (<TreeView
+    return (<SimpleTreeView
         aria-label="file navigator"
-        defaultCollapseIcon={<ExpandMoreIcon />}
-        defaultExpandIcon={<ChevronRightIcon />}
-        defaultExpanded={props.defaultExpanded}
+        expandedItems={expandedItems}
+        onExpandedItemsChange={onExpandedItemsChange}
         sx={{ height: 240, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
       >
         {renderTree(props.fileTree)}
         {props.children}
-      </TreeView>)
+      </SimpleTreeView>)
 }

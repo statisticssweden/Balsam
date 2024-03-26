@@ -19,7 +19,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInNew from '@mui/icons-material/OpenInNew';
 
 import CustomTabPanel from '../CustomTabPanel/CustomTabPanel';
-import FileTree, { convertToFileTreeNodes, getAllIds } from '../FileTree/FileTree';
+import FileTree from '../FileTree/FileTree';
+import { convertToFileTreeNodes, getAllIds } from '../TreeHelper/TreeHelper';
 import Resources from '../Resources/Resources';
 import { Link } from 'react-router-dom';
 import NewBranchDialog from '../NewBranchDialog/NewBranchDialog';
@@ -427,7 +428,7 @@ export default function ProjectPage() {
         let fileTree = convertToFileTreeNodes(files);
         let allIds = getAllIds(fileTree);
 
-        return (<FileTree fileTree={fileTree} defaultExpanded={allIds}></FileTree>);
+        return (<FileTree fileTree={fileTree} defaultExpandedItems={allIds}></FileTree>);
     }
 
     function renderNewWorkspaceButton()
