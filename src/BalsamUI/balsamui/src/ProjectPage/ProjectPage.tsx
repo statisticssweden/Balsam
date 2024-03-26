@@ -35,6 +35,7 @@ export default function ProjectPage() {
     const [branches, setBranches] = useState<Array<Branch>>();
     const [selectedBranch, setSelectedBranch] = useState<string>();
     const [canCreateBranch, setCanCreateBranch] = useState<boolean>(false);
+    const [canAddResource, setCanAddResource] = useState<boolean>(false);
     const [canCreateWorkspace, setCanCreateWorkspace] = useState<boolean>(false);
     const [readmeMarkdown, setReadmeMarkdown] = useState<string>();
     const [resources, setResources] = useState<Array<ProjectResource>>();
@@ -149,7 +150,9 @@ export default function ProjectPage() {
                 
                 updateSelectedBranch(project.branches, branchId ?? undefined)
                 setCanCreateBranch(isProjectGroupMember);
+                setCanAddResource(isProjectGroupMember);
                 setCanCreateWorkspace(isProjectGroupMember);
+                
                 setLoading(false);
             }
 
@@ -445,7 +448,7 @@ export default function ProjectPage() {
     
     function renderAddResourceDialog()
     {
-        if (project && selectedBranch)
+        if (project && selectedBranch && canAddResource)
         {
             return (<AddResourceDialog open={showResourceDialog} project={project} branch={selectedBranch!} onClosing={onAddResourceClosing} onResourceAdded={onResourceAdded} />)
         }
@@ -497,7 +500,7 @@ export default function ProjectPage() {
                             {readmeElement}
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={1}>
-                            <ProjectResourcesSection projectid={project.id} showNewCard branch={selectedBranch!} resources={resources} onNewClick={onAddResourceClick} />
+                            <ProjectResourcesSection projectid={project.id} showNewCard={canAddResource} branch={selectedBranch!} resources={resources} onNewClick={onAddResourceClick} />
                             {addResourceDialog}
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={2}>
