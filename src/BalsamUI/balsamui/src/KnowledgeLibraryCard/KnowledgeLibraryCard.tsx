@@ -8,17 +8,16 @@ import Typography from '@mui/material/Typography';
 import projectimage from '../assets/library.png'
 import { OpenInNew } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { Library } from '../Model/Library';
+import { KnowledgeLibrary } from '../services/BalsamAPIServices';
+
 
 type ProjectLibraryCardProperties = {
-    knowledgeLibrary: Library
+    knowledgeLibrary: KnowledgeLibrary
 }
 
 export default function KnowledgeLibraryCard(props : ProjectLibraryCardProperties) {
-    //TODO: Navigate to KnowledgeLibraryPage
-    //const toActionUrl = '/knowledgelibrary/' + props.knowledgeLibrary.id;
-    const toActionUrl = props.knowledgeLibrary.html;
 
+    const toActionUrl = "/knowledgelibrary/" + props.knowledgeLibrary.id;
     return (
         <Card sx={{ maxWidth: 300, minWidth: 300 }}>
             <CardActionArea component={Link} to={toActionUrl}>
@@ -36,7 +35,6 @@ export default function KnowledgeLibraryCard(props : ProjectLibraryCardPropertie
                 </CardContent>
             </CardActionArea>
             <CardActions>
-
                 <Button component={Link as any} 
                     target="_blank" 
                     underline="hover" 

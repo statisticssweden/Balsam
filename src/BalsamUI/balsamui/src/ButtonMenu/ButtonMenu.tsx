@@ -30,7 +30,6 @@ export default function ButtonMenu(props: PropsWithChildren<ButonMenuProperties>
   };
 
   const handleMenuItemClick = (
-    _event: React.MouseEvent<HTMLLIElement, MouseEvent>,
     index: number,
   ) => {
 
@@ -97,7 +96,7 @@ export default function ButtonMenu(props: PropsWithChildren<ButonMenuProperties>
         {props.options.map((option, index) => (
                     <MenuItem
                       key={option.itemKey}
-                      onClick={(event) => handleMenuItemClick(event, index)}
+                      onClick={() => handleMenuItemClick(index)}
                     >
                       {option.buttonContent}
                     </MenuItem>

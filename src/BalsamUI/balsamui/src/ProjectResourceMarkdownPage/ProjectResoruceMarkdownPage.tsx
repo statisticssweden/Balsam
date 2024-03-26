@@ -5,7 +5,7 @@ import { Paper } from '@mui/material';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 
 
-export default function ResoruceMarkdownPage() {
+export default function ProjectResoruceMarkdownPage() {
     const [markdown, setMarkdown] = useState<string>();
     const [loading, setLoading] = useState<boolean>();
     const [searchParams] = useSearchParams();
@@ -21,7 +21,6 @@ export default function ResoruceMarkdownPage() {
 
         setLoading(true);
 
-        // declare the async data fetching function
         const fetchData = async () => {
 
             if (fileId !== undefined && projectId !== undefined && branchId !== undefined)

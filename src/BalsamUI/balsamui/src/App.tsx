@@ -9,7 +9,7 @@ import ProjectPage from './ProjectPage/ProjectPage';
 import { useDispatch } from 'react-redux';
 import './App.css'
 import Alerter  from './Alerter/Alerter';
-import ResoruceMarkdownPage from './ResourceMarkdownPage/ResoruceMarkdownPage';
+import ResoruceMarkdownPage from './ProjectResourceMarkdownPage/ProjectResoruceMarkdownPage.tsx';
 import AppContext, { AppContextState } from './configuration/AppContext';
 import { getConfig } from './configuration/configuration';
 import { getBalsamAPI } from './services/BalsamAPIServices';
@@ -19,6 +19,10 @@ import ResoruceFolderPage from './ResourceFolderPage/ResourceFolderPage';
 import KeyCloakService from './security/KeyCloakService.ts';
 import KnowledgeLibrariesPage from './KnowledgeLibrariesPage/KnowledgeLibrariesPage.tsx';
 import KnowledgeLibraryPage from './KnowledgeLibraryPage/KnowledgeLibraryPage.tsx';
+import KnowledgeLibraryFilePage from './KnowledgeLibraryFilePage/KnowledgeLibraryFilePage.tsx';
+import KnowledgeLibraryResourceFolderPage from './KnowledgeLibraryResourceFolderPage/KnowledgeLibraryResourceFolderPage.tsx';
+import RepositoryTemplatePage from './RepositoryTemplatePage/RepositoryTemplatePage.tsx';
+import { Box, Typography } from '@mui/material';
 
 
 function App() {
@@ -47,18 +51,28 @@ function App() {
 
     }, []);
 
+    function onLogoutClick()
+    {
+        KeyCloakService.CallLogout();
+    }
+
     const renderApp =  () =>
     {
         return (
             <React.Fragment>
+                
                 <AppContext.Provider value={appContextState} >
-                <AppBar position="static">
-                    <Toolbar>
-                        <Button component={Link} color="inherit" to="/">Min sida</Button>
-                        <Button component={Link} color="inherit" to="/projects">Projekt</Button>
-                        <Button component={Link} color="inherit" to="/knowledgelibraries">Kunskapsbibliotek</Button>
-                    </Toolbar>
-                </AppBar>
+                <Box  sx={{ flexGrow: 1 }}>
+                    <AppBar position="static">
+                        <Toolbar>
+                            <Button component={Link} color="inherit" to="/">Min sida</Button>
+                            <Button component={Link} color="inherit" to="/projects">Projekt</Button>
+                            <Button component={Link} color="inherit" to="/knowledgelibraries">Kunskapsbibliotek</Button>
+                            <Typography sx={{ flexGrow: 1 }}></Typography>
+                            <Button  color="inherit" onClick={onLogoutClick} >Logga ut</Button>
+                        </Toolbar>
+                    </AppBar>
+                </Box>
                 <div className="app">
                     <Routes>
                         <Route path="/" element={<MyPage />} />
@@ -66,7 +80,10 @@ function App() {
                         <Route path="/project/:id" element={<ProjectPage />} />
                         <Route path="/knowledgelibraries/" element={<KnowledgeLibrariesPage />} />
                         <Route path="/knowledgelibrary/:id" element={<KnowledgeLibraryPage />} />
-                        <Route path="resorucemarkdown/:projectId/:branchId/:fileId" element={<ResoruceMarkdownPage />} />
+                        <Route path="/knowledgelibrary/:knowledgeLibraryId/file/:fileId/" element={<KnowledgeLibraryFilePage />} />
+                        <Route path="/knowledgelibrary/:knowledgeLibraryId/resourceFolder/" element={<KnowledgeLibraryResourceFolderPage />} />
+                        <Route path="/knowledgelibrary/:knowledgeLibraryId/template/:fileId" element={<RepositoryTemplatePage />} />
+                        <Route path="/resorucemarkdown/:projectId/:branchId/:fileId" element={<ResoruceMarkdownPage />} />
                         <Route path="resourcefolder/:projectId/:branchId/" element={<ResoruceFolderPage />} />
                     </Routes>
                 </div>

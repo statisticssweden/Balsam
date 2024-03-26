@@ -1,10 +1,11 @@
 import HttpService from './HttpServices';
 import { Configuration } from '../../BalsamAPI/configuration';
-import { ProjectApi, WorkspaceApi } from '../../BalsamAPI/api'
+import { KnowledgeLibraryApi, ProjectApi, WorkspaceApi } from '../../BalsamAPI/api'
 
 export interface BalsamAPI {
    projectApi: ProjectApi,
-   workspaceApi: WorkspaceApi
+   workspaceApi: WorkspaceApi,
+   knowledgeLibraryApi: KnowledgeLibraryApi
 }
 
 export const getBalsamAPI = (apiUrl: string): BalsamAPI => {
@@ -15,7 +16,8 @@ export const getBalsamAPI = (apiUrl: string): BalsamAPI => {
     return {
         //TODO: Should they use the same axios client?
         projectApi:  new ProjectApi(configuration, apiUrl, HttpService.getAxiosClient()),
-        workspaceApi:  new WorkspaceApi(configuration, apiUrl, HttpService.getAxiosClient())
+        workspaceApi:  new WorkspaceApi(configuration, apiUrl, HttpService.getAxiosClient()),
+        knowledgeLibraryApi:  new KnowledgeLibraryApi(configuration, apiUrl, HttpService.getAxiosClient()),
     };
 }
 

@@ -10,7 +10,6 @@ BalsamAPI/Model/create-knowledge-library-request.ts
 BalsamAPI/Model/create-project-request.ts
 BalsamAPI/Model/create-workspace-request.ts
 BalsamAPI/Model/index.ts
-BalsamAPI/Model/knowledge-library-created-response.ts
 BalsamAPI/Model/knowledge-library.ts
 BalsamAPI/Model/problem.ts
 BalsamAPI/Model/project-created-response.ts

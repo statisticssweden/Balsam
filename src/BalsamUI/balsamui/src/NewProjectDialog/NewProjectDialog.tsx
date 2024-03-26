@@ -9,17 +9,23 @@ import FormControl from '@mui/material/FormControl';
 import { Box, CircularProgress, TextField } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { postSuccess, postError} from '../Alerts/alertsSlice';
-import { CreateProjectRequest } from '../services/BalsamAPIServices'
+import { CreateProjectRequest, ProjectCreatedResponse } from '../services/BalsamAPIServices'
 import AppContext, { AppContextState } from '../configuration/AppContext';
+import { RepositoryTemplate } from '../Model/RepositoryTemplate';
+import RepositoryTemplateAsyncAutocomplete from '../RepositoryTemplatesAsyncAutocomplete/RepositoryTemplatesAsyncAutocomplete';
+import KnowledgeLibraries from '../KnowledgeLibraries/KnowledgeLibraries';
+import './NewProjectDialog.css'
 
 export interface NewProjectDialogProperties
 {
     onClosing: () => void,
+    open: boolean,
+    defaultTemplate?: RepositoryTemplate
 }
 
 export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const appContext = useContext(AppContext) as AppContextState;
-    const [open, setOpen] = useState(false);
+
     const [projectName, setProjectName] = useState("");
     const [projectDescription, setProjectDescription] = useState("");
     const [branchName, setBranchName] = useState(appContext.config.defaultGitBranchName);
@@ -27,6 +33,8 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     const [projectNameHelperText, setProjectNameHelperText] = useState("")
     const [branchNameError, setBranchNameError] = useState(false);
     const [branchNameHelperText, setBranchNameHelperText] = useState("");
+    const [template, setTemplate] = useState<RepositoryTemplate | null>(null);
+    
     const [busy, setBusy] = useState(false);
     const [okEnabled, setOkEnabled] = useState(false);
     
@@ -37,7 +45,9 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
 
     }, [branchName, projectName, busy]);
 
-    
+    useEffect(() => {
+        setTemplate(props.defaultTemplate ?? null);
+    }, [props.defaultTemplate])
 
     const updateOkEnabled = (projectName: string, branchName: string, busy: boolean) => 
     {
@@ -52,9 +62,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         dispatch(postSuccess(message, {caption: "Öppna", href: `/project/${id}`} )); //TODO: Language
     }
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+
 
     const resetDialog = () => {
         setProjectName("");
@@ -68,13 +76,13 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     };
 
     const handleCancel = () => {
-        setOpen(false);
+        //setOpen(false);
         props.onClosing();
         resetDialog();
     };
 
     const handleClose = () => {
-        setOpen(false);
+        //setOpen(false);
         props.onClosing();
         resetDialog();
     };
@@ -163,42 +171,73 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
         }
     }
 
+    const onCreated = (response: ProjectCreatedResponse) => 
+    {
+        appContext.refreshToken(); //Update the users user groups
+        //setOpen(false);
+        props.onClosing();
+        resetDialog();
+        showNewItemCreatedAlert(`Projekt "${response.name}" är skapat.`, response.id); //TODO: Language
+    }
+
     const handleCreate = () => {
+        let sourceLocation = template !== null ? template.git : null;
 
         let project : CreateProjectRequest = {
             name: projectName,
             description: projectDescription,
-            branchName: branchName
+            branchName: branchName,
+            sourceLocation: sourceLocation
         }
         setBusy(true);
         updateOkEnabled(projectName, branchName, true);
+       
         appContext.balsamApi.projectApi.createProject(project).then((response => {
-            appContext.refreshToken(); //Update the users user groups
-            setOpen(false);
-            props.onClosing();
-            resetDialog();
-            showNewItemCreatedAlert(`Projekt "${response.data.name}" är skapat`, response.data.id); //TODO: Language
+            onCreated(response.data);
         }), () => {
                 
             dispatch(postError("Det gick inte att skapa projektet")); //TODO: Language
             setBusy(false);
-
-        });
-
-        
+        });    
+           
     };
 
+    function onTemplateChanged(template: RepositoryTemplate | null)
+    {
+        setTemplate(template);
+    }
+
+    async function getTemplates() : Promise<Array<RepositoryTemplate>>
+    {
+        return KnowledgeLibraries.getAllTemplates(appContext.balsamApi.knowledgeLibraryApi);
+    }
+
+    function renderCopyProjectInformation()
+    {
+        if(template)
+        {
+            return <Box className='form-control-info-text'>
+                Det kan ta någon minut innan filerna har kopierats till projektet när det har skapats. Uppdatera i så fall projektsidan efter att har navigerat tills de dyker upp.
+            </Box>
+        }
+        else
+        {
+            return undefined;
+        }
+
+    }
+
     const progress = renderProgress();
+
+    const copyProjectInformation = renderCopyProjectInformation();
 
     return (
         <Fragment>
             {/* TODO: seperate button from dialog */}
-            <Button variant="contained" onClick={handleClickOpen}>
-                +
-            </Button>
+            
             
             <Dialog
-                open={open}
+                open={props.open}
                 onClose={handleClose}
                 fullWidth={true}
             >
@@ -227,6 +266,15 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
                         </FormControl>
                         <FormControl sx={{ mt: 4}}>
                             <TextField id="branch-input" error={branchNameError} helperText={branchNameHelperText} variant='standard' label="Branchnamn" required value={branchName} onChange={e => branchNameChanged(e.target.value)} aria-describedby="Namn på defaultbranch" />
+                        </FormControl>
+                        <FormControl sx={{ mt: 4}}>
+                            <RepositoryTemplateAsyncAutocomplete 
+                                getTemplates={getTemplates}
+                                label="Skapa från Mall eller Exempel"
+                                onChange={onTemplateChanged}
+                                defaultTemplate={props.defaultTemplate}
+                            />
+                            {copyProjectInformation}
                         </FormControl>
                     </Box>
                     
