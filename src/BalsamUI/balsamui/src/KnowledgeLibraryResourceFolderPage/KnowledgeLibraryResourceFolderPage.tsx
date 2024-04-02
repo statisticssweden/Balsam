@@ -19,7 +19,11 @@ export default function KnowLedgeLibraryResoruceFolderPage() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        setResourceFolderName(searchParams.get("folder") || "" );
+        let folder = searchParams.get("folder")
+        if (folder !== null && folder.length > 0)
+        {
+            setResourceFolderName(folder);
+        }
     }, [searchParams]);
 
     function loadReadmeFileContent(knowledgeLibraryId: string, readmeFile: RepoFile)
