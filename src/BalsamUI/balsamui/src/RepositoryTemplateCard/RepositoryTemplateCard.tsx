@@ -7,14 +7,14 @@ import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
 import { OpenInNew } from '@mui/icons-material';
 import './RepositoryTemplateCard.css';
-import { Template } from '../Model/RepositoryTemplate';
+import { RepositoryTemplate } from '../Model/RepositoryTemplate';
 import { Box, Chip, Stack } from '@mui/material';
 
 
 export interface RepositoryTemplateCardProperties {
     knowledgeLibraryId: string,
-    template: Template,
-    newProjectClick(template: Template): void 
+    template: RepositoryTemplate,
+    newProjectClick(template: RepositoryTemplate): void 
 }
 
 export default function RepositoryTemplateCard( props : RepositoryTemplateCardProperties) {

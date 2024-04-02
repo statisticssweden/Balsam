@@ -97,6 +97,7 @@ function getArticlesFromFiles(files: Array<RepoFile>) : Array<RepoFile>
     
     let articleFiles = files.filter((file) => {
         return file.path.startsWith("Articles/")
+        && file.path.toLowerCase().endsWith(".md")
     });
 
     return articleFiles;

@@ -2,20 +2,20 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Template } from '../Model/RepositoryTemplate';
+import { RepositoryTemplate } from '../Model/RepositoryTemplate';
 import { Box, Chip, Stack } from '@mui/material';
 
 export interface RepositoryTemplateAsyncAutocompleteProperties
 {
-    getTemplates(): Promise<Array<Template>>,
+    getTemplates(): Promise<Array<RepositoryTemplate>>,
     label: string,
-    onChange?(template: Template | null) : void,
-    defaultTemplate?: Template
+    onChange?(template: RepositoryTemplate | null) : void,
+    defaultTemplate?: RepositoryTemplate
 }
 
 export default function RepositoryTemplateAsyncAutocomplete(props : RepositoryTemplateAsyncAutocompleteProperties) {
   const [open, setOpen] = React.useState(false);
-  const [options, setOptions] = React.useState<readonly Template[]>([]);
+  const [options, setOptions] = React.useState<readonly RepositoryTemplate[]>([]);
   const loading = open && options.length === 0;
 
   function renderTags(tags: Array<string>)
