@@ -19,7 +19,11 @@ export default function ResoruceFolderPage() {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        setResourceFolderName(searchParams.get("folder") || "" );
+        let folder = searchParams.get("folder")
+        if (folder !== null && folder.length > 0)
+        {
+            setResourceFolderName(folder);
+        }
     }, [searchParams]);
 
     function loadReadmeFileContent(projectId: string, branchId: string, readmeFile: RepoFile)
@@ -45,7 +49,7 @@ export default function ResoruceFolderPage() {
     useEffect(() => {
 
 
-        if (projectId !== undefined && branchId !== undefined && resourceFolderName !== undefined)
+        if (projectId !== undefined && branchId !== undefined && resourceFolderName !== undefined && resourceFolderName.length > 0)
         {
             appContext.balsamApi.projectApi.getFiles(projectId, branchId)
             .then((response) => 
