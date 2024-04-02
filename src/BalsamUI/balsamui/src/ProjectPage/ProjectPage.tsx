@@ -8,8 +8,8 @@ import { useState, useEffect, useContext, Fragment } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom'
 import { postError, postSuccess } from '../Alerts/alertsSlice';
 import './ProjectPage.css'
-import { Resource } from '../Model/Resource';
-import ResourcesSection from '../ResourceSection/ResourcesSection';
+import { ProjectResource } from '../Model/Resource';
+import ProjectResourcesSection from '../ProjectResourcesSection/ProjectResourcesSection';
 import AppContext, { AppContextState } from '../configuration/AppContext';
 import WorkspacesSection from '../WorkspacesSection/WorkspacesSection';
 import NewWorkspaceDialog from '../NewWorkspaceDialog/NewWorkspaceDialog';
@@ -19,12 +19,14 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import OpenInNew from '@mui/icons-material/OpenInNew';
 
 import CustomTabPanel from '../CustomTabPanel/CustomTabPanel';
-import FileTree, { convertToFileTreeNodes, getAllIds } from '../FileTree/FileTree';
+import FileTree from '../FileTree/FileTree';
+import { convertToFileTreeNodes, getAllIds } from '../TreeHelper/TreeHelper';
 import Resources from '../Resources/Resources';
 import { Link } from 'react-router-dom';
 import NewBranchDialog from '../NewBranchDialog/NewBranchDialog';
 import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
 import ButtonMenu from '../ButtonMenu/ButtonMenu';
+import AddResourceDialog from '../AddResourceDialog/AddResourceDialog';
 
 export default function ProjectPage() {
     const [project, setProject] = useState<Project>();
@@ -33,9 +35,10 @@ export default function ProjectPage() {
     const [branches, setBranches] = useState<Array<Branch>>();
     const [selectedBranch, setSelectedBranch] = useState<string>();
     const [canCreateBranch, setCanCreateBranch] = useState<boolean>(false);
+    const [canAddResource, setCanAddResource] = useState<boolean>(false);
     const [canCreateWorkspace, setCanCreateWorkspace] = useState<boolean>(false);
     const [readmeMarkdown, setReadmeMarkdown] = useState<string>();
-    const [resources, setResources] = useState<Array<Resource>>();
+    const [resources, setResources] = useState<Array<ProjectResource>>();
     const [workspaces, setWorkspaces] = useState<Array<Workspace>>();
     const [templates, setTemplates] = useState<Array<Template>>();
     const [newWorkspaceDialogOpen, setNewWorkspaceDialogOpen] = useState(false);
@@ -45,6 +48,8 @@ export default function ProjectPage() {
     const [files, setFiles] = useState<Array<RepoFile>>();
     const [searchParams, setSearchParams] = useSearchParams();
     const [showDeleteBranchConfirmation, setShowDeleteBranchConfirmation] = useState(false);
+    const [showResourceDialog, setShowResourceDialog] = useState(false);
+    
 
     const dispatch = useDispatch();
 
@@ -83,12 +88,17 @@ export default function ProjectPage() {
                 loadReadmeContent(projectId, branchId, readmeFile.id);
             }
 
-            let resourcesArray = await Resources.convertToResources(resourceFiles, projectId, branchId, async (fileId): Promise<string> => {
+            let resourcesArray = await Resources.convertToResources(resourceFiles, async (fileId): Promise<string> => {
                 let promise = appContext.balsamApi.projectApi.getFile(projectId, branchId, fileId);
                 return (await promise).data;
             });
-
-            setResources(resourcesArray);
+            let projectResources = resourcesArray.map( r => { 
+                    return { projectId : projectId,
+                             branchId: branchId, 
+                             resource: r
+                            } as ProjectResource;
+                        })
+            setResources(projectResources);
         })
         .catch(() => {
             dispatch(postError("Det gick inte att ladda filer")); //TODO: Language
@@ -140,7 +150,9 @@ export default function ProjectPage() {
                 
                 updateSelectedBranch(project.branches, branchId ?? undefined)
                 setCanCreateBranch(isProjectGroupMember);
+                setCanAddResource(isProjectGroupMember);
                 setCanCreateWorkspace(isProjectGroupMember);
+                
                 setLoading(false);
             }
 
@@ -391,6 +403,24 @@ export default function ProjectPage() {
         setSelectedTab(newTab);
     };
 
+    function onAddResourceClick() {
+        setShowResourceDialog(true);
+        
+    }
+
+    function onAddResourceClosing()
+    {
+        setShowResourceDialog(false);
+    }
+
+    function onResourceAdded() 
+    {
+        if (project)
+        {
+            loadFiles(project.id, selectedBranch)
+        }
+    }
+
     function renderFilesTree()
     {
         if (files === undefined)
@@ -401,7 +431,7 @@ export default function ProjectPage() {
         let fileTree = convertToFileTreeNodes(files);
         let allIds = getAllIds(fileTree);
 
-        return (<FileTree fileTree={fileTree} defaultExpanded={allIds}></FileTree>);
+        return (<FileTree fileTree={fileTree} defaultExpandedItems={allIds}></FileTree>);
     }
 
     function renderNewWorkspaceButton()
@@ -416,6 +446,16 @@ export default function ProjectPage() {
         }
     }
     
+    function renderAddResourceDialog()
+    {
+        if (project && selectedBranch && canAddResource)
+        {
+            return (<AddResourceDialog open={showResourceDialog} project={project} branch={selectedBranch!} onClosing={onAddResourceClosing} onResourceAdded={onResourceAdded} />)
+        }
+
+        return undefined;
+    }
+
     function renderProject(project: Project)
     {
         let readmeElement = renderReadme();
@@ -425,6 +465,7 @@ export default function ProjectPage() {
         let filesElement = renderFilesTree();
         let newWorkspaceButton = renderNewWorkspaceButton();
         let deleteBranchDialog = renderDeleteBranchDialog();
+        let addResourceDialog = renderAddResourceDialog();
 
         function tabProps(index: number) {
             return {
@@ -459,7 +500,8 @@ export default function ProjectPage() {
                             {readmeElement}
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={1}>
-                            <ResourcesSection projectid={project.id} branchId={selectedBranch!} resources={resources} />
+                            <ProjectResourcesSection projectid={project.id} showNewCard={canAddResource} branch={selectedBranch!} resources={resources} onNewClick={onAddResourceClick} />
+                            {addResourceDialog}
                         </CustomTabPanel>
                         <CustomTabPanel value={selectedTab} index={2}>
                             {filesElement}

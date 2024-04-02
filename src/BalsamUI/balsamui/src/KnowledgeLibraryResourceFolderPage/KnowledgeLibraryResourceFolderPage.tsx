@@ -8,11 +8,11 @@ import { postError } from '../Alerts/alertsSlice';
 import ResoruceFolder from '../ResourceFolder/ResourceFolder';
 import Resources from '../Resources/Resources';
 
-export default function ResoruceFolderPage() {
+export default function KnowLedgeLibraryResoruceFolderPage() {
     const [markdown, setMarkdown] = useState<string>();
     const [searchParams] = useSearchParams();
     const [resourceFolderName, setResourceFolderName] = useState<string>("");
-    const {projectId, branchId} = useParams<string>();
+    const {knowledgeLibraryId} = useParams<string>();
     const appContext = useContext(AppContext) as AppContextState;
     const [files, setFiles] = useState<Array<RepoFile>>();
     
@@ -22,11 +22,11 @@ export default function ResoruceFolderPage() {
         setResourceFolderName(searchParams.get("folder") || "" );
     }, [searchParams]);
 
-    function loadReadmeFileContent(projectId: string, branchId: string, readmeFile: RepoFile)
+    function loadReadmeFileContent(knowledgeLibraryId: string, readmeFile: RepoFile)
     {
         if (readmeFile.id)
         {
-            appContext.balsamApi.projectApi.getFile(projectId, branchId, readmeFile.id)
+            appContext.balsamApi.knowledgeLibraryApi.getKnowledgeLibraryFileContent(knowledgeLibraryId, readmeFile.id)
             .then((response) => 
             {   
                 setMarkdown(response.data);
@@ -42,12 +42,14 @@ export default function ResoruceFolderPage() {
         }  
     }
 
+
+
     useEffect(() => {
 
 
-        if (projectId !== undefined && branchId !== undefined && resourceFolderName !== undefined)
+        if (knowledgeLibraryId && resourceFolderName !== undefined && resourceFolderName.length > 0)
         {
-            appContext.balsamApi.projectApi.getFiles(projectId, branchId)
+            appContext.balsamApi.knowledgeLibraryApi.listKnowledgeLibraryFiles(knowledgeLibraryId)
             .then((response) => 
             {   
                 let axResponse = response as AxiosResponse<any[], any>;
@@ -61,7 +63,7 @@ export default function ResoruceFolderPage() {
 
                 if (readmeFile)
                 {
-                    loadReadmeFileContent(projectId, branchId, readmeFile);
+                    loadReadmeFileContent(knowledgeLibraryId, readmeFile);
                 }
                 else {
                     setMarkdown(`README.md saknas i mappen 'Resoruces/${resourceFolderName}'`); //TODO: Language   
@@ -72,7 +74,8 @@ export default function ResoruceFolderPage() {
             });
             
         }
-    
+       
+
     }, [resourceFolderName])
 
     useEffect(() => {

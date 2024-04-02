@@ -1,5 +1,5 @@
 import { toRepoFileTypeEnum } from "../ReposFiles/RepoFiles";
-import { RepoFile, RepoFileTypeEnum } from "../services/BalsamAPIServices";
+import { KnowledgeLibrary, RepoFile, RepoFileTypeEnum } from "../services/BalsamAPIServices";
 
 export enum ResourceType {
     Document,
@@ -10,8 +10,6 @@ export enum ResourceType {
 
 export interface Resource
 {
-    projectId: string,
-    branchId: string,
     name: string,
     description: string,
     type: ResourceType,
@@ -19,6 +17,19 @@ export interface Resource
     fileId?: string,
     fileName?: string,
     filePath: string,
+}
+
+export interface ProjectResource
+{
+    projectId: string,
+    branchId: string,
+    resource: Resource
+}
+
+export interface KnowledgeLibraryResource
+{
+    knowledgeLibrary: KnowledgeLibrary,
+    resource: Resource
 }
 
 export const getResourceType = (file: RepoFile): ResourceType => 

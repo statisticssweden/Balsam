@@ -1,21 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import KnowledgeLibraryCard from "../KnowledgeLibraryCard/KnowledgeLibraryCard";
-import { Library, librariesStaticData } from "../Model/Library";
+import AppContext, { AppContextState } from '../configuration/AppContext';
+import { KnowledgeLibrary } from '../services/BalsamAPIServices';
+import { useDispatch } from 'react-redux';
+import { postError } from '../Alerts/alertsSlice';
 
 export default function KnowledgeLibrariesPage()
 {
-    const [libraries, setLibraries] = useState<Array<Library>>();
+    const [libraries, setLibraries] = useState<Array<KnowledgeLibrary>>();
     const [loading, setLoading] = useState(true);
+    const appContext = useContext(AppContext) as AppContextState;
+    const dispatch = useDispatch();
 
     const loadData = () =>
     {
         setLoading(true);
         
-        //TODO: Get from API when implemented
-        const libraries = librariesStaticData;
-        
-        setLibraries(libraries);
-        setLoading(false);
+        appContext.balsamApi.knowledgeLibraryApi.listKnowledgeLibaries()
+        .then((response) => {
+            setLibraries(response?.data);
+            setLoading(false);
+        })
+        .catch(() => {
+            dispatch(postError("Det gick inte att ladda kunskapsbibliotek")); //TODO: Language
+        });
         
     }
 
@@ -23,14 +31,15 @@ export default function KnowledgeLibrariesPage()
         loadData();
     }, [])
 
-    function renderKnowledgeLibraries(libraries: Array<Library>)
+    function renderKnowledgeLibraries(libraries: Array<KnowledgeLibrary>)
     {
+
         return (
 
             <div className='cards' aria-labelledby="tabelLabel">         
                 {
                     libraries.map((library) => {
-                       return <KnowledgeLibraryCard knowledgeLibrary={library} key={library.id} />
+                    return <KnowledgeLibraryCard knowledgeLibrary={library} key={library.id} />
                     })
                 }
             </div>
@@ -39,7 +48,7 @@ export default function KnowledgeLibrariesPage()
 
     let contents = loading
         ? <p><em>Laddar...</em></p>
-        : renderKnowledgeLibraries(libraries as Array<Library>);
+        : renderKnowledgeLibraries(libraries as Array<KnowledgeLibrary>);
 
     return (
         <div>

@@ -1,0 +1,11 @@
+.secondaryText {
+    word-wrap:break-word;
+}
+.cardContent {
+    height: 112px;
+}
+
+.icon-container{
+    background-color: #fafafa;
+    text-align: center;
+}

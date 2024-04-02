@@ -39,6 +39,10 @@ div.app {
   gap: 20px;
 }
 
+.cards-tab{
+ background-color: 
+ #f7f7f7;
+}
 
 .MuiCard-root {
   display: flex;

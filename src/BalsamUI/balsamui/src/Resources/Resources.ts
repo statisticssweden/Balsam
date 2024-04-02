@@ -29,7 +29,26 @@ export function getResourceFiles(files: RepoFile[])
     return allFiles;
 }
 
-export async function convertToResources(files: RepoFile[], projectId: string, branchId: string, getContentCallback: (fileId: string) => Promise<string>) : Promise<Array<Resource>>
+function getFiles(files: Array<RepoFile>, resourceFolderName: string) : Array<RepoFile>
+{
+    let filesInResourceFolder = files.filter((file) => file.path.toLowerCase().startsWith(`Resources/${resourceFolderName}`.toLowerCase()));
+                
+    //Include Resources-folder to render tree correctly
+    let resourceFolder = files.find(f=> f.path === `Resources`);
+    if (resourceFolder)
+    {
+        filesInResourceFolder.push(resourceFolder);
+    }
+    return filesInResourceFolder;
+}
+
+function getReadmeFile(files: Array<RepoFile>, resourceFolderName: string) : RepoFile | undefined
+{
+    let readmeFile = files.find((file) => file.path.toLowerCase() === `Resources/${resourceFolderName}/readme.md`.toLowerCase());
+    return readmeFile;
+}
+
+export async function convertToResources(files: RepoFile[], getContentCallback: (fileId: string) => Promise<string>) : Promise<Array<Resource>>
 {
     let resourcesArray = await Promise.all(files.map( async (file): Promise<Resource> => {
         let name = file.name;
@@ -66,8 +85,6 @@ export async function convertToResources(files: RepoFile[], projectId: string, b
 
 
         return { 
-            projectId: projectId,
-            branchId: branchId,
             name: name,
             fileName: file.name,
             description: description,
@@ -82,7 +99,9 @@ export async function convertToResources(files: RepoFile[], projectId: string, b
 
 const Resources = {
     getResourceFiles,
-    convertToResources
+    convertToResources,
+    getFiles,
+    getReadmeFile
 }
 
 export default Resources;

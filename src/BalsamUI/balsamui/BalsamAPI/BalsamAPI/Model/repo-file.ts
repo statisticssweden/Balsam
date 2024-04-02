@@ -49,7 +49,7 @@ export interface RepoFile {
      * @type {string}
      * @memberof RepoFile
      */
-    'contentUrl'?: string;
+    'contentUrl'?: string | null;
 }
 
 export const RepoFileTypeEnum = {
