@@ -372,15 +372,15 @@ namespace Balsam.Api
         public async Task<BalsamBranch?> CreateBranch(string projectId, string fromBranch, string branchName, string description)
         {
             var project = await GetProject(projectId, false);
-            var branch = await GetBranch(projectId, fromBranch);
-     
+                var branch = await GetBranch(projectId, fromBranch);
+
             if (project is null || project.Git is null || branch is null || branch.GitBranch is null)
-            {
+                {
                 return null;
             }
 
             var response = await _repositoryApi.CreateBranchAsync(project.Git.Id, new GitProviderApiClient.Model.CreateBranchRequest(branchName, branch.GitBranch));
-            branchName = response.Name;
+            branchName = response.Name; 
 
             _hubRepositoryClient.PullChanges();
 
@@ -400,12 +400,6 @@ namespace Balsam.Api
             if (project.S3 is null || string.IsNullOrEmpty(project.S3.BucketName))
             {
                 return null;
-            }
-
-            if (_s3.Enabled)
-            {
-                await _s3Client.CreateFolderAsync(project.S3.BucketName, new CreateFolderRequest(branchName));
-                _logger.LogInformation($"Folder {branchName} created in bucket {project.S3.BucketName}.");
             }
 
             var branch = new BalsamBranch()
@@ -714,18 +708,6 @@ namespace Balsam.Api
             //Asure that the id are correct
             if (project == null || branch == null) return;
 
-
-            if (_s3.Enabled)
-            {
-                try
-                { 
-                    await _s3Client.DeleteFolderAsync(project.S3?.BucketName??"", branch.Name);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Could not delete s3 folder");
-                }
-            }
 
             if (_git.Enabled)
             {

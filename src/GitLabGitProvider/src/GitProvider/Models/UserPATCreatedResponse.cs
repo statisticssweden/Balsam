@@ -30,7 +30,7 @@ namespace GitProvider.Models
         /// The name of the token.
         /// </summary>
         /// <value>The name of the token.</value>
-        [DataMember(Name="name", EmitDefaultValue=true)]
+        [DataMember(Name="name", EmitDefaultValue=false)]
         public string? Name { get; set; }
 
         /// <summary>

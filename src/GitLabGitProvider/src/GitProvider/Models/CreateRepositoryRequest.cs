@@ -39,7 +39,7 @@ namespace GitProvider.Models
         /// </summary>
         /// <value>The description of the branch</value>
         [DataMember(Name="description", EmitDefaultValue=false)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// The branch from which this branch will be created. The default branch for the project will be used if not specified.

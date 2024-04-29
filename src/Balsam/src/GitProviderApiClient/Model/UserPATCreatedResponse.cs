@@ -29,7 +29,7 @@ namespace GitProviderApiClient.Model
     /// A PAT description
     /// </summary>
     [DataContract(Name = "UserPATCreatedResponse")]
-    public partial class UserPATCreatedResponse : IEquatable<UserPATCreatedResponse>, IValidatableObject
+    public partial class UserPATCreatedResponse : IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UserPATCreatedResponse" /> class.
@@ -56,7 +56,7 @@ namespace GitProviderApiClient.Model
         /// The name of the token.
         /// </summary>
         /// <value>The name of the token.</value>
-        [DataMember(Name = "name", EmitDefaultValue = true)]
+        [DataMember(Name = "name", EmitDefaultValue = false)]
         public string Name { get; set; }
 
         /// <summary>
@@ -87,61 +87,6 @@ namespace GitProviderApiClient.Model
         public virtual string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as UserPATCreatedResponse);
-        }
-
-        /// <summary>
-        /// Returns true if UserPATCreatedResponse instances are equal
-        /// </summary>
-        /// <param name="input">Instance of UserPATCreatedResponse to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(UserPATCreatedResponse input)
-        {
-            if (input == null)
-            {
-                return false;
-            }
-            return 
-                (
-                    this.Name == input.Name ||
-                    (this.Name != null &&
-                    this.Name.Equals(input.Name))
-                ) && 
-                (
-                    this.Token == input.Token ||
-                    (this.Token != null &&
-                    this.Token.Equals(input.Token))
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.Name != null)
-                {
-                    hashCode = (hashCode * 59) + this.Name.GetHashCode();
-                }
-                if (this.Token != null)
-                {
-                    hashCode = (hashCode * 59) + this.Token.GetHashCode();
-                }
-                return hashCode;
-            }
         }
 
         /// <summary>

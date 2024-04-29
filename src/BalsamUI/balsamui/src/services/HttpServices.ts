@@ -17,6 +17,8 @@ const configure = () => {
             };
             return KeyCloakService.UpdateToken(cb);
         }
+
+        return config;
     });
 };
 

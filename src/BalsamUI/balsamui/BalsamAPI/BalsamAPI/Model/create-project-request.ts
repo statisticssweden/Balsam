@@ -43,6 +43,6 @@ export interface CreateProjectRequest {
      * @type {string}
      * @memberof CreateProjectRequest
      */
-    'sourceLocation'?: string | null;
+    'sourceLocation'?: string;
 }
 

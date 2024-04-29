@@ -14,13 +14,13 @@
 
 
 import type { Configuration } from '../../configuration';
-import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../../common';
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../../base';
+import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../../base';
 // @ts-ignore
 import { CreateWorkspaceRequest } from '../../BalsamAPI/Model';
 // @ts-ignore
@@ -43,7 +43,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createWorkspace: async (createWorkspaceRequest?: CreateWorkspaceRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createWorkspace: async (createWorkspaceRequest?: CreateWorkspaceRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/workspaces`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -78,7 +78,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteWorkspace: async (projectId: string, branchId: string, workspaceId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteWorkspace: async (projectId: string, branchId: string, workspaceId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'projectId' is not null or undefined
             assertParamExists('deleteWorkspace', 'projectId', projectId)
             // verify required parameter 'branchId' is not null or undefined
@@ -122,7 +122,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listTemplates: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listTemplates: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/templates`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -154,7 +154,7 @@ export const WorkspaceApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listWorkspaces: async (projectId?: string, branchId?: string, all?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listWorkspaces: async (projectId?: string, branchId?: string, all?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/workspaces`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -206,9 +206,11 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createWorkspace(createWorkspaceRequest?: CreateWorkspaceRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WorkspaceCreatedResponse>> {
+        async createWorkspace(createWorkspaceRequest?: CreateWorkspaceRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WorkspaceCreatedResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createWorkspace(createWorkspaceRequest, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['WorkspaceApi.createWorkspace']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * Delete workspace
@@ -218,18 +220,22 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteWorkspace(projectId: string, branchId: string, workspaceId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async deleteWorkspace(projectId: string, branchId: string, workspaceId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteWorkspace(projectId, branchId, workspaceId, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['WorkspaceApi.deleteWorkspace']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * List available workspace templates
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listTemplates(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Template>>> {
+        async listTemplates(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Template>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.listTemplates(options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['WorkspaceApi.listTemplates']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * Get workspaces
@@ -239,9 +245,11 @@ export const WorkspaceApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listWorkspaces(projectId?: string, branchId?: string, all?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Workspace>>> {
+        async listWorkspaces(projectId?: string, branchId?: string, all?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Workspace>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.listWorkspaces(projectId, branchId, all, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['WorkspaceApi.listWorkspaces']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
 };
@@ -309,7 +317,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public createWorkspace(createWorkspaceRequest?: CreateWorkspaceRequest, options?: AxiosRequestConfig) {
+    public createWorkspace(createWorkspaceRequest?: CreateWorkspaceRequest, options?: RawAxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).createWorkspace(createWorkspaceRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -322,7 +330,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public deleteWorkspace(projectId: string, branchId: string, workspaceId: string, options?: AxiosRequestConfig) {
+    public deleteWorkspace(projectId: string, branchId: string, workspaceId: string, options?: RawAxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).deleteWorkspace(projectId, branchId, workspaceId, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -332,7 +340,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public listTemplates(options?: AxiosRequestConfig) {
+    public listTemplates(options?: RawAxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).listTemplates(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -345,7 +353,7 @@ export class WorkspaceApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WorkspaceApi
      */
-    public listWorkspaces(projectId?: string, branchId?: string, all?: boolean, options?: AxiosRequestConfig) {
+    public listWorkspaces(projectId?: string, branchId?: string, all?: boolean, options?: RawAxiosRequestConfig) {
         return WorkspaceApiFp(this.configuration).listWorkspaces(projectId, branchId, all, options).then((request) => request(this.axios, this.basePath));
     }
 }

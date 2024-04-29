@@ -29,7 +29,7 @@ namespace GitProviderApiClient.Model
     /// File information
     /// </summary>
     [DataContract(Name = "RepoFile")]
-    public partial class RepoFile : IEquatable<RepoFile>, IValidatableObject
+    public partial class RepoFile : IValidatableObject
     {
         /// <summary>
         /// Description of the template
@@ -152,84 +152,6 @@ namespace GitProviderApiClient.Model
         public virtual string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as RepoFile);
-        }
-
-        /// <summary>
-        /// Returns true if RepoFile instances are equal
-        /// </summary>
-        /// <param name="input">Instance of RepoFile to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(RepoFile input)
-        {
-            if (input == null)
-            {
-                return false;
-            }
-            return 
-                (
-                    this.Id == input.Id ||
-                    (this.Id != null &&
-                    this.Id.Equals(input.Id))
-                ) && 
-                (
-                    this.Path == input.Path ||
-                    (this.Path != null &&
-                    this.Path.Equals(input.Path))
-                ) && 
-                (
-                    this.Name == input.Name ||
-                    (this.Name != null &&
-                    this.Name.Equals(input.Name))
-                ) && 
-                (
-                    this.Type == input.Type ||
-                    this.Type.Equals(input.Type)
-                ) && 
-                (
-                    this.ContentUrl == input.ContentUrl ||
-                    (this.ContentUrl != null &&
-                    this.ContentUrl.Equals(input.ContentUrl))
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.Id != null)
-                {
-                    hashCode = (hashCode * 59) + this.Id.GetHashCode();
-                }
-                if (this.Path != null)
-                {
-                    hashCode = (hashCode * 59) + this.Path.GetHashCode();
-                }
-                if (this.Name != null)
-                {
-                    hashCode = (hashCode * 59) + this.Name.GetHashCode();
-                }
-                hashCode = (hashCode * 59) + this.Type.GetHashCode();
-                if (this.ContentUrl != null)
-                {
-                    hashCode = (hashCode * 59) + this.ContentUrl.GetHashCode();
-                }
-                return hashCode;
-            }
         }
 
         /// <summary>

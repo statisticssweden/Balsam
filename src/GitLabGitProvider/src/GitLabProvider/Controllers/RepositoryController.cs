@@ -39,7 +39,7 @@ namespace GitLabProvider.Controllers
             var branchName = SantitazeBranchName(createBranchRequest.Name);
             var fromBranch = createBranchRequest.FromBranch;
 
-            if (await _gitLabClient.CreateBranch(repositoryId, fromBranch, branchName))
+            if (await _gitLabClient.CreateBranch(repositoryId, fromBranch, branchName)) 
             {
                 return Ok(new BranchCreatedResponse() { Id = branchName, Name = branchName });
             }
@@ -90,11 +90,11 @@ namespace GitLabProvider.Controllers
 
             var filesResponse = files.Select(f => new GitProvider.Models.RepoFile()
             {
-                Id = f.id,
-                Name = f.name,
-                Path = f.path,
+                Id = f.id ?? "",
+                Name = f.name ?? "",
+                Path = f.path ?? "",
                 Type = string.Compare(f.type, "blob", true) == 0 ? GitProvider.Models.RepoFile.TypeEnum.FileEnum : GitProvider.Models.RepoFile.TypeEnum.FolderEnum,
-                ContentUrl = $"{_baseUrl}/api/v4/projects/{repositoryId}/repository/files/{Uri.EscapeDataString(f.path)}/raw?ref={branchId}"
+                ContentUrl = $"{_baseUrl}/api/v4/projects/{repositoryId}/repository/files/{Uri.EscapeDataString(f.path ?? "")}/raw?ref={branchId}"
             }); 
 
             return Ok(filesResponse.ToArray());

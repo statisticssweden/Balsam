@@ -37,6 +37,6 @@ export interface CreateBranchRequest {
      * @type {string}
      * @memberof CreateBranchRequest
      */
-    'fromBranch'?: string;
+    'fromBranch': string;
 }
 

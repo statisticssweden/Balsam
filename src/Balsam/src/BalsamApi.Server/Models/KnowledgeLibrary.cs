@@ -46,7 +46,7 @@ namespace BalsamApi.Server.Models
         /// Description of the knowledge library
         /// </summary>
         /// <value>Description of the knowledge library</value>
-        [DataMember(Name="description", EmitDefaultValue=true)]
+        [DataMember(Name="description", EmitDefaultValue=false)]
         public string? Description { get; set; }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace BalsamApi.Server.Models
         /// Friendly url to the repository that one can use to browse the content of the repository
         /// </summary>
         /// <value>Friendly url to the repository that one can use to browse the content of the repository</value>
-        [DataMember(Name="repositoryFriendlyUrl", EmitDefaultValue=true)]
+        [DataMember(Name="repositoryFriendlyUrl", EmitDefaultValue=false)]
         public string? RepositoryFriendlyUrl { get; set; }
 
         /// <summary>
