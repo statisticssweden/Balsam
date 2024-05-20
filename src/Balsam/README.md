@@ -119,6 +119,7 @@ Class | Method | HTTP request | Description
 *RepositoryApi* | [**CreateRepository**](docs/RepositoryApi.md#createrepository) | **POST** /repos | 
 *RepositoryApi* | [**DeleteRepository**](docs/RepositoryApi.md#deleterepository) | **DELETE** /repos/{repositoryId} | 
 *RepositoryApi* | [**DeleteRepositoryBranch**](docs/RepositoryApi.md#deleterepositorybranch) | **DELETE** /repos/{repositoryId}/branches/{branchId} | 
+*RepositoryApi* | [**GetBranches**](docs/RepositoryApi.md#getbranches) | **GET** /repos/{repositoryId}/branches | 
 *RepositoryApi* | [**GetFile**](docs/RepositoryApi.md#getfile) | **GET** /repos/{repositoryId}/branches/{branchId}/files/{fileId} | 
 *RepositoryApi* | [**GetFilesInBranch**](docs/RepositoryApi.md#getfilesinbranch) | **GET** /repos/{repositoryId}/branches/{branchId}/files | 
 *UserApi* | [**CreatePAT**](docs/UserApi.md#createpat) | **POST** /users/{id}/PAT | 

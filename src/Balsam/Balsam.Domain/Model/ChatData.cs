@@ -1,0 +1,14 @@
+﻿namespace Balsam.Model
+{
+    public class ChatData
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+
+        public ChatData(string id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
+    }
+}

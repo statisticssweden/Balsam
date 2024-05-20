@@ -763,7 +763,7 @@ components:
     Branch:
       type: object
       required: 
-        - "id"
+        - "id" 
         - "name"
         - "isDefault"
       properties:

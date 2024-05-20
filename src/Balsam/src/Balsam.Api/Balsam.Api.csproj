@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -9,17 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Handlebars.Net" Version="2.1.4" />
-    <PackageReference Include="LibGit2Sharp" Version="0.26.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.22" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.22" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-    <PackageReference Include="System.IO.Hashing" Version="6.0.2" />
-    <PackageReference Include="YamlDotNet" Version="13.7.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Balsam.Application\Balsam.Application.csproj" />
+    <ProjectReference Include="..\..\Balsam.Domain\Balsam.Domain.csproj" />
+    <ProjectReference Include="..\..\Balsam.Infrastructure\Balsam.Infrastructure.csproj" />
     <ProjectReference Include="..\BalsamApi.Server\BalsamApi.Server.csproj" />
     <ProjectReference Include="..\GitProviderApiClient\GitProviderApiClient.csproj" />
     <ProjectReference Include="..\OidcProviderApiClient\OidcProviderApiClient.csproj" />
