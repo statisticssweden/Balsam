@@ -14,5 +14,7 @@ namespace Balsam.Interfaces
         Task<List<BalsamRepoFile>?> GetGitBranchFiles(string projectId, string branchId);
         Task<BalsamProject?> GetProject(string projectId, bool includeBranches = true);
         Task<List<BalsamProject>> GetProjects(bool includeBranches = true);
+
+        Task<bool> ProjectExists(string preferredName);
     }
 }

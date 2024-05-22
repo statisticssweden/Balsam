@@ -9,6 +9,7 @@ using Balsam.Interfaces;
 using Balsam.Application.Authorization;
 using System.Net;
 using Balsam.Api.Extensions;
+using LibGit2Sharp;
 
 namespace Balsam.Api.Controllers
 {
@@ -46,13 +47,14 @@ namespace Balsam.Api.Controllers
                 return BadRequest(new Problem() { Status = (int)HttpStatusCode.BadRequest, Title = "Parameter error", Detail = "Missing parameters" });
             }
 
-            BranchCreatedResponse branchCreatedResponse;
             try
             {
                 var project = await _projectService.GetProject(projectId);
 
                 if (!_projectAuthorization.CanUserCreateBranch(this.User, project))
                 {
+                    var username = this.User.GetUserName();
+                    _logger.LogInformation($"User {username} not authorized to create branch on project {project.Id}");
                     return Unauthorized(new Problem() { Status = (int)HttpStatusCode.Unauthorized, Type = "Unauthorized", Title = "User cannot create branch" });
                 }
 
@@ -62,20 +64,20 @@ namespace Balsam.Api.Controllers
                     return BadRequest(new Problem() { Status = (int)HttpStatusCode.BadRequest, Title = "Could not create branch", Detail = "Branch could not be created" });
                 }
 
-                branchCreatedResponse = new BranchCreatedResponse
+                var branchCreatedResponse = new BranchCreatedResponse
                 {
                     Id = branch.Id,
                     Name = branch.Name,
                     ProjectId = projectId
                 };
+
+                return Ok(branchCreatedResponse);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Could not create branch");
                 return BadRequest(new Problem() { Status = (int)HttpStatusCode.InternalServerError, Title = "Could not create branch", Detail = "Branch could not be created" });
             }
-
-            return Ok(branchCreatedResponse);
         }
 
         public async override Task<IActionResult> CreateProject([FromBody] CreateProjectRequest? createProjectRequest)
@@ -84,23 +86,26 @@ namespace Balsam.Api.Controllers
             {
                 return BadRequest(new Problem() { Title = "Parameters missing", Status = (int)HttpStatusCode.BadRequest, Type = "Missing parameters" });
             }
-            _logger.LogInformation("Reading user information");
-            var username = this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
-            //_logger.LogInformation($"The user is {username}");
+
+            bool nameNotUnique = await _projectService.ProjectExists(createProjectRequest.Name);
+
+            if (nameNotUnique)
+            {
+                return BadRequest(new Problem() { Title = "Project with that name already exists", Status = (int)HttpStatusCode.BadRequest, Type = "Project duplication" });
+            }
+
             try
             {
+                var username = this.User.GetUserName();
+
                 BalsamProject? project = await _projectService.CreateProject(createProjectRequest.Name, createProjectRequest.Description, createProjectRequest.BranchName, username, createProjectRequest.SourceLocation);
 
-                if (project == null)
-                {
-                    return BadRequest(new Problem() { Title = "Project with that name already exists", Status = (int)HttpStatusCode.BadRequest, Type = "Project duplication" });
-                }
+                var response = new ProjectCreatedResponse();
+                response.Id = project.Id;
+                response.Name = project.Name;
+                //TODO: Set AuthGroup?
 
-                var evt = new ProjectCreatedResponse();
-                evt.Id = project.Id;
-                evt.Name = project.Name;
-
-                return Ok(evt);
+                return Ok(response);
 
             }
             catch (Exception ex)
@@ -152,7 +157,7 @@ namespace Balsam.Api.Controllers
 
             if (!listAll)
             {
-                var userGroups = User.Claims.Where(x => x.Type == "groups");
+                var userGroups = User.GetGroups();
                 projects = projects.Where(x => userGroups.Any(o => string.Equals(o.Value, x.Oidc?.GroupName, StringComparison.OrdinalIgnoreCase))).ToList();
             }
 
@@ -203,15 +208,23 @@ namespace Balsam.Api.Controllers
             try
             {
                 var project = await _projectService.GetProject(projectId);
-                var branch = await _projectService.GetBranch(projectId, branchId);
-
-                if (project is null || branch is null)
+                
+                if (project is null)
                 {
-                    return NotFound(new Problem() { Status = (int)HttpStatusCode.NotFound, Type = "Project/branch not found", Detail = "Can not find the project/branch" });
-
+                    return NotFound(new Problem() { Status = (int)HttpStatusCode.NotFound, Type = "Project not found", Detail = "Can not find the project" });
                 }
-                else if (!_projectAuthorization.CanUserDeleteBranch(this.User, project))
+
+                var branch = project.Branches.First(b => b.Id == branchId);
+
+                if (project is null)
                 {
+                    return NotFound(new Problem() { Status = (int)HttpStatusCode.NotFound, Type = "Branch not found", Detail = "Can not find the branch" });
+                }
+
+                if (!_projectAuthorization.CanUserDeleteBranch(this.User, project))
+                {
+                    var username = this.User.GetUserName();
+                    _logger.LogInformation($"User {username} not authorized to delete branch {branch.Id} on project {project.Id}");
                     return Unauthorized(new Problem() { Status = (int)HttpStatusCode.Unauthorized, Type = "Unauthorized", Detail = "User is not authorized to delete the branch" });
                 }
 
@@ -239,6 +252,8 @@ namespace Balsam.Api.Controllers
                 }
                 else if (!_projectAuthorization.CanUserDeleteProject(this.User, project))
                 {
+                    var username = this.User.GetUserName();
+                    _logger.LogInformation($"User {username} not authorized to delete project {project.Id}");
                     return Unauthorized(new Problem() { Status = (int)HttpStatusCode.Unauthorized, Type = "Unauthorized", Detail = "User is not authorized to delete the project" });
                 }
 
@@ -266,6 +281,8 @@ namespace Balsam.Api.Controllers
 
                 if (!_projectAuthorization.CanUserEditBranch(this.User, project))
                 {
+                    var username = this.User.GetUserName();
+                    _logger.LogInformation($"User {username} not authorized to edit branch {branchId} on project {project.Id}");
                     return Unauthorized(new Problem() { Status = (int)HttpStatusCode.Unauthorized, Type = "Unauthorized", Detail = "User is not authorized to edit project" });
                 }
 

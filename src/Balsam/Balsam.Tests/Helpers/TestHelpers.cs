@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Xunit.Sdk;
-using RepoFile = GitProviderApiClient.Model.RepoFile;
+
 
 namespace Balsam.Tests.Helpers
 {
@@ -16,10 +16,10 @@ namespace Balsam.Tests.Helpers
     {
         static int _balsamProjectUniqueId = 0;
 
-        public static BalsamProject NewBalsamProject(string name)
+        public static BalsamProject NewBalsamProject(string name, string description = "Test project")
         {
             int id = _balsamProjectUniqueId++;
-            return new BalsamProject(name, "Test project")
+            return new BalsamProject(name, description)
             {
                 Id = name + id,
                 Git = new GitData
@@ -37,6 +37,7 @@ namespace Balsam.Tests.Helpers
             };
         }
 
+
         public static BalsamWorkspace NewBalsamWorkspace(string name)
         {
             var id = _balsamWorkspaceUniqueId++;
@@ -49,17 +50,18 @@ namespace Balsam.Tests.Helpers
 
         }
 
+
         static int _balsamBranchUniqueId = 0;
-        public static BalsamBranch NewBalsamBranch(string name, bool isDefault)
+        public static BalsamBranch NewBalsamBranch(string name, bool isDefault, string description = "Description")
         {
             int id = _balsamBranchUniqueId++;
             return new BalsamBranch
             {
                 Id = name + id,
                 IsDefault = isDefault,
-                Description = "Description" + id,
+                Description = description,
                 Name = name,
-                GitBranch = "gitBranch" + id,
+                GitBranch = $"git_{name}{id}",
             };
         }
 
@@ -127,11 +129,11 @@ namespace Balsam.Tests.Helpers
         }
 
         static int repoFileUniqueId = 0;
-        internal static RepoFile NewRepoFile(string name, RepoFile.TypeEnum type)
+        internal static GitProviderApiClient.Model.RepoFile NewRepoFile(string name, GitProviderApiClient.Model.RepoFile.TypeEnum type)
         {
             repoFileUniqueId++;
 
-            return new RepoFile(id: repoFileUniqueId.ToString(),
+            return new GitProviderApiClient.Model.RepoFile(id: repoFileUniqueId.ToString(),
                                     path: "/" + name,
                                     name: name,
                                     type: type,
@@ -139,7 +141,31 @@ namespace Balsam.Tests.Helpers
 
         }
 
-        internal static void AssertRepoFile(GitProviderApiClient.Model.RepoFile repoFile, BalsamRepoFile actualFile)
+        static int balsamRepoFileUniqueId = 0;
+        internal static BalsamRepoFile NewBalsamRepoFile(string name, BalsamRepoFile.TypeEnum type)
+        {
+            balsamRepoFileUniqueId++;
+
+            return new BalsamRepoFile
+            {
+                Id = balsamRepoFileUniqueId.ToString(),
+                Path = "/" + name,
+                Name = name,
+                Type = type,
+                ContentUrl = "http://" + name,
+
+            };
+        }
+
+        internal static void AssertWorkspace(BalsamWorkspace expectedWorkspace, Workspace actualWorkspace)
+        {
+            Assert.Equal(expectedWorkspace.Name, actualWorkspace.Name);
+            Assert.Equal(expectedWorkspace.BranchId, actualWorkspace.BranchId);
+            Assert.Equal(expectedWorkspace.ProjectId, actualWorkspace.ProjectId);
+            Assert.Equal(expectedWorkspace.Url, actualWorkspace.Url);
+        }
+
+        internal static void AssertBalsamRepoFile(GitProviderApiClient.Model.RepoFile repoFile, BalsamRepoFile actualFile)
         {
             Assert.Equal(repoFile.Id, actualFile.Id);
             Assert.Equal(repoFile.Name, actualFile.Name);
@@ -153,6 +179,26 @@ namespace Balsam.Tests.Helpers
                     break;
                 case GitProviderApiClient.Model.RepoFile.TypeEnum.Folder:
                     Assert.Equal(BalsamRepoFile.TypeEnum.FolderEnum, actualFile.Type);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        internal static void AssertRepoFile(BalsamRepoFile balsamRepoFile, BalsamApi.Server.Models.RepoFile actualRepoFile)
+        {
+            Assert.Equal(balsamRepoFile.Id, actualRepoFile.Id);
+            Assert.Equal(balsamRepoFile.Name, actualRepoFile.Name);
+            Assert.Equal(balsamRepoFile.ContentUrl, actualRepoFile.ContentUrl);
+            Assert.Equal(balsamRepoFile.Path, actualRepoFile.Path);
+
+            switch (balsamRepoFile.Type)
+            {
+                case BalsamRepoFile.TypeEnum.FileEnum:
+                    Assert.Equal(BalsamApi.Server.Models.RepoFile.TypeEnum.FileEnum, actualRepoFile.Type);
+                    break;
+                case BalsamRepoFile.TypeEnum.FolderEnum:
+                    Assert.Equal(BalsamApi.Server.Models.RepoFile.TypeEnum.FolderEnum, actualRepoFile.Type);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -220,6 +266,13 @@ namespace Balsam.Tests.Helpers
                 RepositoryFriendlyUrl = $"http://{id}.somegit.html",
                 RepositoryUrl = $"http://{id}.somegit.git",
             };
+        }
+
+        internal static void AssertTemplate(WorkspaceTemplate expected, Template actual)
+        {
+            Assert.Equal(expected.Id, actual.Id);
+            Assert.Equal(expected.Name, actual.Name);
+            Assert.Equal(expected.Description, actual.Description);
         }
     }
 }

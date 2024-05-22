@@ -29,10 +29,7 @@ namespace Balsam.Repositories
                 DirectoryUtil.AssureDirectoryExists(projectPath);
             }
 
-            //var workspacePath = Path.Combine(projectPath, "workspaces", workspace.Id);
             var workspacePath = HubPaths.GetWorkspacePath(workspace.ProjectId, workspace.BranchId, workspace.Owner, workspace.Id);
-
-            //var user = new UserInfo(userName, userMail, gitPAT);
             var propPath = Path.Combine(workspacePath, "properties.json");
 
             _logger.LogDebug("Pulling changes");
@@ -68,7 +65,6 @@ namespace Balsam.Repositories
         public async Task DeleteWorkspace(string projectId, string branchId, string workspaceId, string userName)
         {
             _hubRepositoryClient.PullChanges();
-            //var workspacePath = Path.Combine(_hubRepositoryClient.Path, "hub", projectId, branchId, userName, workspaceId);
             var workspacePath = HubPaths.GetWorkspacePath(projectId, branchId, userName, workspaceId);
 
             var propPath = Path.Combine(workspacePath, "properties.json");
@@ -85,10 +81,10 @@ namespace Balsam.Repositories
 
             _hubRepositoryClient.PersistChanges($"Deleted workspace with id {workspaceId}");
         }
+        
         public async Task<BalsamWorkspace?> GetWorkspace(string projectId, string userId, string workspaceId)
         {
             var workspaces = await GetWorkspacesByProjectAndUser(projectId, userId);
-
             return workspaces.FirstOrDefault(w => w.Id == workspaceId);
         }
 
@@ -256,11 +252,8 @@ namespace Balsam.Repositories
 
         public async Task<List<BalsamWorkspace>> GetWorkspacesByProjectAndUser(string projectId, string userId)
         {
-            //var hubPath = Path.Combine(_hubRepositoryClient.Path, "hub");
-
             var workspaces = new List<BalsamWorkspace>();
 
-            //var projectPath = Path.Combine(hubPath, projectId);
             var projectPath = HubPaths.GetProjectPath(projectId);
 
             if (Directory.Exists(projectPath))

@@ -1,4 +1,5 @@
-﻿using Balsam.Application.Authorization;
+﻿using Balsam.Api.Extensions;
+using Balsam.Application.Authorization;
 using Balsam.Interfaces;
 using Balsam.Model;
 using BalsamApi.Server.Models;
@@ -39,13 +40,14 @@ namespace Balsam.Api.Controllers
             {
                 var project = await _projectService.GetProject(createWorkspaceRequest.ProjectId);
 
+                var username = this.User.GetUserName();
+                var mail = this.User.GetEmail();
+
                 if (!_workspaceAuthorization.CanUserCreateWorkspace(this.User, project))
                 {
+                    _logger.LogInformation($"User {username} not authorized to crate workspace in project {project.Id}.");
                     return Unauthorized(new Problem() { Status = (int)HttpStatusCode.Unauthorized, Type = "Unauthorized", Title = "User cannot create workspace" });
                 }
-
-                var username = this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
-                var mail = this.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
 
                 var workspace = await _workspaceService.CreateWorkspace(createWorkspaceRequest.ProjectId, createWorkspaceRequest.BranchId, createWorkspaceRequest.Name, createWorkspaceRequest.TemplateId, username, mail);
 
@@ -74,12 +76,13 @@ namespace Balsam.Api.Controllers
 
             try
             {
-                var userName = this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+                var userName = this.User.GetUserName();
                 var project = await _projectService.GetProject(projectId);
                 var workspace = await _workspaceService.GetWorkspace(projectId, userName, workspaceId);
 
                 if (!_workspaceAuthorization.CanUserDeleteWorkspace(this.User, project, workspace))
                 {
+                    _logger.LogInformation($"User {userName} not authorized to delete workspace {workspace.Id}.");
                     return Unauthorized(new Problem() { Status = ((int)HttpStatusCode.Unauthorized), Type = "Authentication error", Title = "User cannot delete workspace" });
                 }
 
@@ -99,22 +102,25 @@ namespace Balsam.Api.Controllers
         {
             var workspaceTemplates = await _workspaceService.ListWorkspaceTemplates();
             var templates = workspaceTemplates
-                .Select(x => new Template { Id = x.Id, Name = x.Name, Description = x.Description });
+                .Select(x => x.ToTemplate());
+            
             if (templates.Any())
             {
                 return await Task.FromResult<IActionResult>(Ok(templates));
             }
 
-            return await Task.FromResult<IActionResult>(BadRequest(new Problem
+            return BadRequest(new Problem
             {
                 Detail = "No workspace templates found in hub repository",
-                Status = 417,
-                Title = "No workspace template found"
-            }));
+                Status = (int)HttpStatusCode.ExpectationFailed,
+                Title = "No workspace templates found"
+            });
         }
 
         public async override Task<IActionResult> ListWorkspaces([FromQuery(Name = "projectId")] string? projectId, [FromQuery(Name = "branchId")] string? branchId, [FromQuery(Name = "all")] bool? all)
         {
+            //TODO: Rename and inverse "all" to "ownedByUser" 
+
             if (branchId != null && projectId is null)
             {
                 return BadRequest(new Problem() { Status = (int)HttpStatusCode.BadRequest, Type = "Parameter error", Title = "If BranchId is specified a ProjectId must also be specified" });
@@ -123,6 +129,15 @@ namespace Balsam.Api.Controllers
             List<BalsamWorkspace> workspaces;
             if (projectId != null)
             {
+                var username = this.User.GetUserName();
+                var project = await _projectService.GetProject(projectId);
+
+                if (!_workspaceAuthorization.CanUserGetWorkspaces(this.User, project))
+                {
+                    _logger.LogInformation($"User {username} not authorized to get workspaces for project {project.Id}.");
+                    return Unauthorized(new Problem() { Status = (int)HttpStatusCode.Unauthorized, Type = "Not authorized", Title = "You are not a member of the project" });
+                }
+
                 if (all ?? true)
                 {
                     if (branchId is null)
@@ -136,22 +151,13 @@ namespace Balsam.Api.Controllers
                 }
                 else
                 {
-                    var project = await _projectService.GetProject(projectId);
-
-                    if (!_workspaceAuthorization.CanUserGetWorkspaces(this.User, project))
-                    {
-                        //TODO: Return empty array?
-                        return Unauthorized(new Problem() { Status = (int)HttpStatusCode.Unauthorized, Type = "Not authorized", Title = "You are not a member of the project" });
-                    }
-
-                    var userId = this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
                     if (branchId is null)
                     {
-                        workspaces = await _workspaceService.GetWorkspacesByProjectAndUser(projectId, userId);
+                        workspaces = await _workspaceService.GetWorkspacesByProjectAndUser(projectId, username);
                     }
                     else
                     {
-                        workspaces = await _workspaceService.GetWorkspacesByProjectBranchAndUser(projectId, branchId, userId);
+                        workspaces = await _workspaceService.GetWorkspacesByProjectBranchAndUser(projectId, branchId, username);
                     }
                 }
             }
@@ -164,30 +170,16 @@ namespace Balsam.Api.Controllers
                 else
                 {
                     var projects = await _projectService.GetProjects(false);
-                    var groups = this.User.Claims.Where(c => c.Type == "groups").Select(c => c.Value).ToList();
-                    var userId = this.User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+                    var groups = this.User.GetGroups().Select(g => g.Value);
+                    var userId = this.User.GetUserName();
                     var projectIds = projects.Where(p => groups.Contains(p.Oidc.GroupName)).Select(p => p.Id).ToList();
                     workspaces = await _workspaceService.GetWorkspacesByUser(userId, projectIds);
                 }
             }
 
-            return base.Ok(workspaces.Select(w => ToWorkspace(w))
+            return base.Ok(workspaces.Select(w => w.ToWorkspace())
                             .OrderBy(w => w.Name).ToArray());
         }
 
-        //TODO: Move
-        private static Workspace ToWorkspace(BalsamWorkspace w)
-        {
-            return new Workspace
-            {
-                Id = w.Id,
-                Name = w.Name,
-                ProjectId = w.ProjectId,
-                BranchId = w.BranchId,
-                TemplateId = w.TemplateId,
-                Url = w.Url,
-                Owner = w.Owner
-            };
-        }
     }
 }

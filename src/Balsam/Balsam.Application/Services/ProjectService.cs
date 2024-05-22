@@ -13,6 +13,7 @@ using S3ProviderApiClient.Model;
 using System.ComponentModel.DataAnnotations;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
+using Balsam.Application.Extensions;
 
 namespace Balsam.Services
 {
@@ -77,6 +78,11 @@ namespace Balsam.Services
             return await _projectRepository.GetBranch(projectId, branchId);
         }
 
+        public async Task<bool> ProjectExists(string preferredName)
+        {
+            return await _projectRepository.ProjectExists(preferredName);
+        }
+
         public async Task<BalsamProject?> CreateProject(string preferredName, string description, string defaultBranchName, string username, string? sourceLocation = null)
         {
             //Check if there is a program with the same name.
@@ -84,9 +90,9 @@ namespace Balsam.Services
             _logger.LogDebug("Check for duplicate names");
             if (await _projectRepository.ProjectExists(preferredName))
             {
-                _logger.LogInformation($"Could not create project {preferredName}, due to name duplication");
-                //TODO: Throw exception
-                return null;
+                string errorMessage = $"Could not create project {preferredName}, due to name duplication";
+                _logger.LogInformation(errorMessage);
+                throw new ApplicationException(errorMessage);
             }
 
             _logger.LogDebug($"create project information");
@@ -210,37 +216,11 @@ namespace Balsam.Services
                 throw new ArgumentException(errorMessage);
             }
 
-            //TODO: Rename parameter branchId to branchName?
+
             return (await _repositoryApi.GetFilesInBranchAsync(project.Git.Id, branch.GitBranch))
-                                    .Select(f => ToBalsamRepoFile(f)).ToList();
+                                    .Select(f => f.ToBalsamRepoFile())
+                                    .ToList();
         }
-
-        //TODO: Centralize
-        private BalsamRepoFile ToBalsamRepoFile(RepoFile f)
-        {
-            return new BalsamRepoFile
-            {
-                Id = f.Id,
-                Name = f.Name,
-                ContentUrl = f.ContentUrl,
-                Path = f.Path,
-                Type = ToType(f.Type)
-            };         
-        }
-
-        private BalsamRepoFile.TypeEnum ToType(RepoFile.TypeEnum type)
-        {
-            switch (type)
-            {
-                case RepoFile.TypeEnum.File:
-                    return BalsamRepoFile.TypeEnum.FileEnum;
-                case RepoFile.TypeEnum.Folder:
-                    return BalsamRepoFile.TypeEnum.FolderEnum;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
 
         public async Task<FileContent> GetFile(string projectId, string branchId, string fileId)
         {

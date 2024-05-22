@@ -3,14 +3,11 @@ using Balsam.Model;
 using Balsam.Repositories;
 using Balsam.Services;
 using Balsam.Tests.Helpers;
-using BalsamApi.Server.Models;
 using GitProviderApiClient.Api;
 using GitProviderApiClient.Model;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Extensions.Logging;
 
 //using Castle.Core.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 using OidcProviderApiClient.Api;
 using OidcProviderApiClient.Model;
@@ -18,10 +15,6 @@ using RocketChatChatProviderApiClient.Api;
 using RocketChatChatProviderApiClient.Model;
 using S3ProviderApiClient.Api;
 using S3ProviderApiClient.Model;
-using System;
-using System.Formats.Asn1;
-using System.Reflection.Metadata.Ecma335;
-using Xunit.Sdk;
 using CreateBranchRequest = GitProviderApiClient.Model.CreateBranchRequest;
 
 namespace Balsam.Tests.Application;
@@ -487,8 +480,8 @@ public class Test_ProjectService
             var actualFile = files.First(f => f.Id == repoFile.Id);
             var actualFolder = files.First(f => f.Id == repoFolder.Id);
 
-            TestHelpers.AssertRepoFile(repoFile, actualFile);
-            TestHelpers.AssertRepoFile(repoFolder, actualFolder);
+            TestHelpers.AssertBalsamRepoFile(repoFile, actualFile);
+            TestHelpers.AssertBalsamRepoFile(repoFolder, actualFolder);
 
         }
 
