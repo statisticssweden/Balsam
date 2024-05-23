@@ -3,7 +3,6 @@ using Balsam.Repositories;
 using Balsam.Tests.Helpers;
 using Moq;
 using Balsam.Utility;
-using BalsamApi.Server.Models;
 
 namespace Balsam.Tests.Infrastrucutre;
 

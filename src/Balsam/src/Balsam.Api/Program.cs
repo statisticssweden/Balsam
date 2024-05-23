@@ -20,7 +20,14 @@ builder.Services.AddSingleton<HttpClient>();
 builder.Services.AddTransient<IProjectService, ProjectService>(); //TODO: Use AddScoped ?
 builder.Services.AddTransient<IWorkspaceService, WorkspaceService>(); //TODO: Use AddScoped ?
 builder.Services.AddSingleton<IHubRepositoryClient, HubRepositoryClient>();
+builder.Services.AddSingleton<IKnowledgeLibraryService, KnowledgeLibraryService>();
+
+builder.Services.AddTransient<IWorkspaceRepository, WorkspaceRepository>();
+builder.Services.AddTransient<IWorkspaceGitOpsRepository, WorkspaceGitOpsRepository>();
 builder.Services.AddSingleton<IKnowledgeLibraryContentRepository, KnowledgeLibraryContentRepository>();
+builder.Services.AddSingleton<IKnowledgeLibraryRepository, KnowledgeLibraryRepository>();
+builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
+builder.Services.AddTransient<IProjectGitOpsRepository, ProjectGitOpsRepository>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<GitProviderApiClient.Api.IRepositoryApi>(

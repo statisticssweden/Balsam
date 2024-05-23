@@ -347,28 +347,25 @@ public class Test_WorkspaceController
         workspaceController.ControllerContext.HttpContext = new DefaultHttpContext { User = user };
 
         var result = await workspaceController.ListWorkspaces(null, null, null);
-        AssertResponse(result, workspaces);
+        AssertListWorkspaceResponse(result, workspaces);
 
         result = await workspaceController.ListWorkspaces(null, null, false);
-        AssertResponse(result, workspaces.Where(w => w.Owner == testUserName).ToList());
+        AssertListWorkspaceResponse(result, workspaces.Where(w => w.Owner == testUserName).ToList());
 
         result = await workspaceController.ListWorkspaces(project1.Id, null, null);
-        AssertResponse(result, workspaces.Where(w => w.ProjectId == project1.Id).ToList());
+        AssertListWorkspaceResponse(result, workspaces.Where(w => w.ProjectId == project1.Id).ToList());
 
         result = await workspaceController.ListWorkspaces(project1.Id, null, false);
-        AssertResponse(result, workspaces.Where(w => w.ProjectId == project1.Id && w.Owner == testUserName).ToList());
+        AssertListWorkspaceResponse(result, workspaces.Where(w => w.ProjectId == project1.Id && w.Owner == testUserName).ToList());
 
         result = await workspaceController.ListWorkspaces(project1.Id, branch1.Id, null);
-        AssertResponse(result, workspaces.Where(w => w.ProjectId == project1.Id && w.BranchId == branch1.Id).ToList());
+        AssertListWorkspaceResponse(result, workspaces.Where(w => w.ProjectId == project1.Id && w.BranchId == branch1.Id).ToList());
 
         result = await workspaceController.ListWorkspaces(project1.Id, branch1.Id, false);
-        AssertResponse(result, workspaces.Where(w => w.ProjectId == project1.Id && w.BranchId == branch1.Id && w.Owner == testUserName).ToList());
-
-
-
+        AssertListWorkspaceResponse(result, workspaces.Where(w => w.ProjectId == project1.Id && w.BranchId == branch1.Id && w.Owner == testUserName).ToList());
     }
 
-    private static void AssertResponse(IActionResult result, List<BalsamWorkspace> expectedWorkspaces)
+    private static void AssertListWorkspaceResponse(IActionResult result, List<BalsamWorkspace> expectedWorkspaces)
     {
         Assert.NotNull(result);
 
@@ -389,145 +386,73 @@ public class Test_WorkspaceController
         }
     }
 
+    [Theory]
+    [InlineData("")]
+    [InlineData("NonProjectGroup")]
+    public async void Test_ListWorkspaces_Authentication(string userGroupName)
+    {
+        var loggerMock = new Mock<ILogger<WorkspaceController>>();
+        var capabilityOptionsSnapshotMock = TestHelpers.CreateCapabilityOptionsSnapshotMock(true, true, true, true);
+        var projectServiceMock = new Mock<IProjectService>();
+        var project1 = TestHelpers.NewBalsamProject("project1");
+        var branch1 = TestHelpers.NewBalsamBranch("branch1", true);
 
-    //[Theory]
-    //[InlineData("")]
-    //[InlineData("project1Group")]
-    //public async void Test_ListWorkspace_With_Authentication(string userGroupName)
-    //{
-    //    var loggerMock = new Mock<ILogger<WorkspaceController>>();
-    //    var capabilityOptionsSnapshotMock = TestHelpers.CreateCapabilityOptionsSnapshotMock(true, true, true, true);
-    //    var projectServiceMock = new Mock<IProjectService>();
-    //    var project1 = TestHelpers.NewBalsamProject("project1");
-    //    var project2 = TestHelpers.NewBalsamProject("project2");
-    //    var branch1 = TestHelpers.NewBalsamBranch("branch1", true);
-    //    var branch2 = TestHelpers.NewBalsamBranch("branch2", true);
-    //    var template = TestHelpers.NewWorkspaceTemplate("template1");
+        var template = TestHelpers.NewWorkspaceTemplate("template1");
 
-    //    var projects = new List<BalsamProject> { project1, project2 };
+        var projects = new List<BalsamProject> { project1 };
 
-    //    var testUserName = "test_user";
-    //    var testEmail = "x@y.z";
+        var testUserName = "test_user";
+        var testEmail = "x@y.z";
 
-    //    var otherUserName = "other_user";
-    //    var otherEmail = "a@b.c";
-
-    //    project1.Branches.Add(branch);
-    //    project1.Oidc.GroupName = "project1Group";
-
-    //    project1.Branches.Add(branch);
-    //    project1.Oidc.GroupName = "project2Group";
-
-    //    projectServiceMock.Setup(m => m.GetProject(It.IsAny<string>(),
-    //                                            It.IsAny<bool>()))
-    //                        .ReturnsAsync((string projectId, bool includeBranches) =>
-    //                        {
-    //                            return projects.First(p => p.Id == projectId);
-    //                        });
-
-
-    //    projectServiceMock.Setup(m => m.GetProjects(It.IsAny<bool>()))
-    //                        .ReturnsAsync(() => projects);
-
-
-    //    var ownedWorkspace1 = TestHelpers.NewBalsamWorkspace("workspace1", template.Id, project1.Id, branch1.Id, testUserName);
-    //    var notOwnedWorkspace1 = TestHelpers.NewBalsamWorkspace("workspace2", template.Id, project2.Id, branch2.Id, otherUserName);
-    //    var ownedWorkspace2 = TestHelpers.NewBalsamWorkspace("workspace1", template.Id, project1.Id, branch1.Id, testUserName);
-    //    var notOwnedWorkspace2 = TestHelpers.NewBalsamWorkspace("workspace2", template.Id, project2.Id, branch2.Id, otherUserName);
-
-    //    var workspaces = new List<BalsamWorkspace>()
-    //    {
-    //        ownedWorkspace1,
-    //        ownedWorkspace2,
-    //        notOwnedWorkspace1,
-    //        notOwnedWorkspace2
-    //    };
-
-    //    var workspaceServiceMock = new Mock<IWorkspaceService>();
-    //    workspaceServiceMock.Setup(m => m.GetWorkspacesByProject(It.IsAny<string>()))
-    //                            .ReturnsAsync((string projectId) => workspaces.Where(w => w.ProjectId == projectId).ToList());
-    //    workspaceServiceMock.Setup(m => m.GetWorkspacesByProjectAndBranch(It.IsAny<string>(), 
-    //                                                                        It.IsAny<string>()))
-    //                           .ReturnsAsync((string projectId, string branchId) 
-    //                                            => workspaces.Where(w => w.ProjectId == projectId && w.BranchId == branchId).ToList());
-
-
-    //    workspaceServiceMock.Setup(m => m.GetWorkspacesByProjectAndBranch(It.IsAny<string>(),
-    //                                                                It.IsAny<string>()))
-    //                           .ReturnsAsync((string projectId, string username) 
-    //                                            => workspaces.Where(w => w.ProjectId == projectId && w.Owner == username).ToList());
-
-    //    workspaceServiceMock.Setup(m => m.GetWorkspacesByProjectBranchAndUser(It.IsAny<string>(),
-    //                                                               It.IsAny<string>(),
-    //                                                               It.IsAny<string>()))
-    //                              .ReturnsAsync((string projectId, string branchId, string username) 
-    //                                                => workspaces.Where(w => w.ProjectId == projectId && w.BranchId == branchId && w.Owner == username).ToList());
-
-    //    workspaceServiceMock.Setup(m => m.GetWorkspaces())
-    //                              .ReturnsAsync(() => workspaces);
-
-
-    //    workspaceServiceMock.Setup(m => m.GetWorkspacesByUser(It.IsAny<string>(),
-    //                                                        It.IsAny<List<string>>()))
-    //                       .ReturnsAsync((string userName, List<string> projectId)
-    //                                         => workspaces.Where(w => w.ProjectId && w.BranchId == branchId && w.Owner == username).ToList());
-
-
-    //    var workspaceController = new WorkspaceController(loggerMock.Object,
-    //                                                  projectServiceMock.Object,
-    //                                                  workspaceServiceMock.Object);
-
-
-    //    var claims = new[]
-    //        {
-
-    //            new Claim("preferred_username", testUserName),
-    //            new Claim("groups", userGroupName),
-    //            new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", testEmail)
-
-    //        };
-
-    //    var user = new ClaimsPrincipal(new ClaimsIdentity(claims));
-
-    //    workspaceController.ControllerContext.HttpContext = new DefaultHttpContext { User = user };
+        project1.Branches.Add(branch1);
+        project1.Oidc.GroupName = "project1Group";
 
 
 
-    //    var response = await workspaceController.CreateWorkspace(createWorkspaceRequest);
-
-    //    bool userInGroup = projectGroupName == userGroupName;
-
-    //    Times verifyCallTimes = userInGroup ? Times.Once() : Times.Never();
-
-    //    workspaceServiceMock.Verify(m => m.CreateWorkspace(It.IsAny<string>(),
-    //                                                        It.IsAny<string>(),
-    //                                                        It.IsAny<string>(),
-    //                                                        It.IsAny<string>(),
-    //                                                        It.IsAny<string>(),
-    //                                                        It.IsAny<string>()),
-    //                                        verifyCallTimes);
-
-    //    Assert.NotNull(response);
-
-    //    if (userInGroup)
-    //    {
-    //        var okObjectResult = response as OkObjectResult;
-    //        Assert.NotNull(okObjectResult);
-
-    //        var workspaceResponse = okObjectResult.Value as WorkspaceCreatedResponse;
-    //        Assert.NotNull(workspaceResponse);
-
-    //        Assert.Equal(workspaceResponse.Name, workspace.Name);
-    //        Assert.Equal(workspaceResponse.BranchId, workspace.BranchId);
-    //        Assert.Equal(workspaceResponse.ProjectId, workspace.ProjectId);
-    //        Assert.Equal(workspaceResponse.Url, workspace.Url);
+        projectServiceMock.Setup(m => m.GetProject(It.IsAny<string>(),
+                                                It.IsAny<bool>()))
+                            .ReturnsAsync((string projectId, bool includeBranches) =>
+                            {
+                                return projects.First(p => p.Id == projectId);
+                            });
 
 
-    //    }
-    //    else
-    //    {
-    //        Assert.NotNull(response as UnauthorizedObjectResult);
-    //    }
+        projectServiceMock.Setup(m => m.GetProjects(It.IsAny<bool>()))
+                            .ReturnsAsync(() => projects);
 
-    //}
+
+        var workspaceServiceMock = new Mock<IWorkspaceService>();
+      
+
+        var workspaceController = new WorkspaceController(loggerMock.Object,
+                                                      projectServiceMock.Object,
+                                                      workspaceServiceMock.Object);
+
+        var claims = new[]
+            {
+
+                new Claim("preferred_username", testUserName),
+                new Claim("groups", userGroupName),
+                new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", testEmail)
+
+            };
+
+        var user = new ClaimsPrincipal(new ClaimsIdentity(claims));
+
+        workspaceController.ControllerContext.HttpContext = new DefaultHttpContext { User = user };
+
+
+        var result = await workspaceController.ListWorkspaces(project1.Id, null, null);
+        Assert.NotNull(result as UnauthorizedObjectResult);
+
+        result = await workspaceController.ListWorkspaces(project1.Id, null, false);
+        Assert.NotNull(result as UnauthorizedObjectResult);
+
+        result = await workspaceController.ListWorkspaces(project1.Id, branch1.Id, null);
+        Assert.NotNull(result as UnauthorizedObjectResult);
+
+        result = await workspaceController.ListWorkspaces(project1.Id, branch1.Id, false);
+        Assert.NotNull(result as UnauthorizedObjectResult);
+    }
+
 }

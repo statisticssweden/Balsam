@@ -1,32 +1,16 @@
 using Balsam.Api.Controllers;
 using Balsam.Interfaces;
 using Balsam.Model;
-using Balsam.Repositories;
-using Balsam.Services;
 using Balsam.Tests.Helpers;
 using BalsamApi.Server.Models;
 using GitProviderApiClient.Api;
-using GitProviderApiClient.Model;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 //using Castle.Core.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
-using OidcProviderApiClient.Api;
-using OidcProviderApiClient.Model;
-using RocketChatChatProviderApiClient.Api;
-using RocketChatChatProviderApiClient.Model;
-using S3ProviderApiClient.Api;
-using S3ProviderApiClient.Model;
-using System;
-using System.Formats.Asn1;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
-using Xunit.Sdk;
 using BranchCreatedResponse = BalsamApi.Server.Models.BranchCreatedResponse;
 using CreateBranchRequest = BalsamApi.Server.Models.CreateBranchRequest;
 

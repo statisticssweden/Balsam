@@ -134,6 +134,7 @@ namespace Balsam.Api.Controllers
 
                 if (!_workspaceAuthorization.CanUserGetWorkspaces(this.User, project))
                 {
+                    //TODO: Return empty list?
                     _logger.LogInformation($"User {username} not authorized to get workspaces for project {project.Id}.");
                     return Unauthorized(new Problem() { Status = (int)HttpStatusCode.Unauthorized, Type = "Not authorized", Title = "You are not a member of the project" });
                 }

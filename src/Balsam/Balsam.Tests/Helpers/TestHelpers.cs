@@ -1,13 +1,9 @@
 ﻿using Balsam.Model;
 using BalsamApi.Server.Models;
-using GitProviderApiClient.Model;
 using Microsoft.Extensions.Options;
 using Moq;
-using Newtonsoft.Json;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using Xunit.Sdk;
 
 
 namespace Balsam.Tests.Helpers
