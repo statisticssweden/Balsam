@@ -29,7 +29,7 @@ namespace OidcProviderApiClient.Model
     /// Group name
     /// </summary>
     [DataContract(Name = "AddUserToGroupRequest")]
-    public partial class AddUserToGroupRequest : IEquatable<AddUserToGroupRequest>, IValidatableObject
+    public partial class AddUserToGroupRequest : IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AddUserToGroupRequest" /> class.
@@ -77,52 +77,6 @@ namespace OidcProviderApiClient.Model
         public virtual string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as AddUserToGroupRequest);
-        }
-
-        /// <summary>
-        /// Returns true if AddUserToGroupRequest instances are equal
-        /// </summary>
-        /// <param name="input">Instance of AddUserToGroupRequest to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(AddUserToGroupRequest input)
-        {
-            if (input == null)
-            {
-                return false;
-            }
-            return 
-                (
-                    this.UserName == input.UserName ||
-                    (this.UserName != null &&
-                    this.UserName.Equals(input.UserName))
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.UserName != null)
-                {
-                    hashCode = (hashCode * 59) + this.UserName.GetHashCode();
-                }
-                return hashCode;
-            }
         }
 
         /// <summary>

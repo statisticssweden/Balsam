@@ -111,21 +111,6 @@ namespace GitProvider.Controllers
         /// <summary>
         /// 
         /// </summary>
-        /// <remarks>Get git branches</remarks>
-        /// <param name="repositoryId">The id of the repository.</param>
-        /// <response code="200">Success</response>
-        /// <response code="400">Error respsone for 400</response>
-        [HttpGet]
-        [Route("/api/v1/repos/{repositoryId}/branches")]
-        [ValidateModelState]
-        [SwaggerOperation("GetBranches")]
-        [SwaggerResponse(statusCode: 200, type: typeof(List<string>), description: "Success")]
-        [SwaggerResponse(statusCode: 400, type: typeof(Problem), description: "Error respsone for 400")]
-        public abstract Task<IActionResult> GetBranches([FromRoute (Name = "repositoryId")][Required]string repositoryId);
-
-        /// <summary>
-        /// 
-        /// </summary>
         /// <remarks>Get file contents</remarks>
         /// <param name="repositoryId">The id of the repository.</param>
         /// <param name="branchId">The identity of the branch.</param>

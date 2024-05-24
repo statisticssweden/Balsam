@@ -29,7 +29,7 @@ namespace S3ProviderApiClient.Model
     /// Access key created description
     /// </summary>
     [DataContract(Name = "AccessKeyCreatedResponse")]
-    public partial class AccessKeyCreatedResponse : IEquatable<AccessKeyCreatedResponse>, IValidatableObject
+    public partial class AccessKeyCreatedResponse : IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AccessKeyCreatedResponse" /> class.
@@ -92,61 +92,6 @@ namespace S3ProviderApiClient.Model
         public virtual string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as AccessKeyCreatedResponse);
-        }
-
-        /// <summary>
-        /// Returns true if AccessKeyCreatedResponse instances are equal
-        /// </summary>
-        /// <param name="input">Instance of AccessKeyCreatedResponse to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(AccessKeyCreatedResponse input)
-        {
-            if (input == null)
-            {
-                return false;
-            }
-            return 
-                (
-                    this.AccessKey == input.AccessKey ||
-                    (this.AccessKey != null &&
-                    this.AccessKey.Equals(input.AccessKey))
-                ) && 
-                (
-                    this.SecretKey == input.SecretKey ||
-                    (this.SecretKey != null &&
-                    this.SecretKey.Equals(input.SecretKey))
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.AccessKey != null)
-                {
-                    hashCode = (hashCode * 59) + this.AccessKey.GetHashCode();
-                }
-                if (this.SecretKey != null)
-                {
-                    hashCode = (hashCode * 59) + this.SecretKey.GetHashCode();
-                }
-                return hashCode;
-            }
         }
 
         /// <summary>

@@ -29,7 +29,7 @@ namespace OidcProviderApiClient.Model
     /// Problem
     /// </summary>
     [DataContract(Name = "Problem")]
-    public partial class Problem : IEquatable<Problem>, IValidatableObject
+    public partial class Problem : IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Problem" /> class.
@@ -111,84 +111,6 @@ namespace OidcProviderApiClient.Model
         public virtual string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as Problem);
-        }
-
-        /// <summary>
-        /// Returns true if Problem instances are equal
-        /// </summary>
-        /// <param name="input">Instance of Problem to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(Problem input)
-        {
-            if (input == null)
-            {
-                return false;
-            }
-            return 
-                (
-                    this.Type == input.Type ||
-                    (this.Type != null &&
-                    this.Type.Equals(input.Type))
-                ) && 
-                (
-                    this.Title == input.Title ||
-                    (this.Title != null &&
-                    this.Title.Equals(input.Title))
-                ) && 
-                (
-                    this.Status == input.Status ||
-                    this.Status.Equals(input.Status)
-                ) && 
-                (
-                    this.Detail == input.Detail ||
-                    (this.Detail != null &&
-                    this.Detail.Equals(input.Detail))
-                ) && 
-                (
-                    this.Instance == input.Instance ||
-                    (this.Instance != null &&
-                    this.Instance.Equals(input.Instance))
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.Type != null)
-                {
-                    hashCode = (hashCode * 59) + this.Type.GetHashCode();
-                }
-                if (this.Title != null)
-                {
-                    hashCode = (hashCode * 59) + this.Title.GetHashCode();
-                }
-                hashCode = (hashCode * 59) + this.Status.GetHashCode();
-                if (this.Detail != null)
-                {
-                    hashCode = (hashCode * 59) + this.Detail.GetHashCode();
-                }
-                if (this.Instance != null)
-                {
-                    hashCode = (hashCode * 59) + this.Instance.GetHashCode();
-                }
-                return hashCode;
-            }
         }
 
         /// <summary>

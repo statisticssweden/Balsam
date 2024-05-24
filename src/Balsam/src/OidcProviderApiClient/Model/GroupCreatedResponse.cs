@@ -29,7 +29,7 @@ namespace OidcProviderApiClient.Model
     /// Group created response
     /// </summary>
     [DataContract(Name = "GroupCreatedResponse")]
-    public partial class GroupCreatedResponse : IEquatable<GroupCreatedResponse>, IValidatableObject
+    public partial class GroupCreatedResponse : IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GroupCreatedResponse" /> class.
@@ -87,61 +87,6 @@ namespace OidcProviderApiClient.Model
         public virtual string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as GroupCreatedResponse);
-        }
-
-        /// <summary>
-        /// Returns true if GroupCreatedResponse instances are equal
-        /// </summary>
-        /// <param name="input">Instance of GroupCreatedResponse to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(GroupCreatedResponse input)
-        {
-            if (input == null)
-            {
-                return false;
-            }
-            return 
-                (
-                    this.Name == input.Name ||
-                    (this.Name != null &&
-                    this.Name.Equals(input.Name))
-                ) && 
-                (
-                    this.Id == input.Id ||
-                    (this.Id != null &&
-                    this.Id.Equals(input.Id))
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.Name != null)
-                {
-                    hashCode = (hashCode * 59) + this.Name.GetHashCode();
-                }
-                if (this.Id != null)
-                {
-                    hashCode = (hashCode * 59) + this.Id.GetHashCode();
-                }
-                return hashCode;
-            }
         }
 
         /// <summary>

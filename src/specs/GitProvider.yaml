@@ -94,27 +94,27 @@ paths:
                   name: demo-repot
         '400':
           $ref: '#/components/responses/ErrorResponse400NoRepo'    
-    get: 
-      tags:
-        - Repository
-      operationId: GetBranches
-      description: Get git branches
-      parameters: 
-        - name: repositoryId
-          in: path
-          description: The id of the repository.
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BranchListResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse400NoRepo'
+    # get: 
+    #   tags:
+    #     - Repository
+    #   operationId: GetBranches
+    #   description: Get git branches
+    #   parameters: 
+    #     - name: repositoryId
+    #       in: path
+    #       description: The id of the repository.
+    #       required: true
+    #       schema:
+    #         type: string
+    #   responses:
+    #     '200':
+    #       description: Success
+    #       content:
+    #         application/json:
+    #           schema:
+    #             $ref: '#/components/schemas/BranchListResponse'
+    #     '400':
+    #       $ref: '#/components/responses/ErrorResponse400NoRepo'
 
   /repos/{repositoryId}/branches/{branchId}:
     delete:
@@ -287,10 +287,10 @@ components:
       items:
         $ref: '#/components/schemas/RepoFile' 
 
-    BranchListResponse:
-      type: array
-      items:
-        type: string 
+    # BranchListResponse:
+    #   type: array
+    #   items:
+    #     type: string 
 
     RepoFile:
       type: object
