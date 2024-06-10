@@ -18,10 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Balsam.Application\Balsam.Application.csproj" />
-    <ProjectReference Include="..\Balsam.Domain\Balsam.Domain.csproj" />
-    <ProjectReference Include="..\Balsam.Infrastructure\Balsam.Infrastructure.csproj" />
-    <ProjectReference Include="..\src\Balsam.Api\Balsam.Api.csproj" />
+    <ProjectReference Include="..\Balsam.Api\Balsam.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

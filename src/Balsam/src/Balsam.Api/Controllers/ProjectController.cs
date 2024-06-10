@@ -9,7 +9,6 @@ using Balsam.Interfaces;
 using Balsam.Application.Authorization;
 using System.Net;
 using Balsam.Api.Extensions;
-using LibGit2Sharp;
 
 namespace Balsam.Api.Controllers
 {

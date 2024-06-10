@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Balsam.Domain\Balsam.Domain.csproj" />
-    <ProjectReference Include="..\src\GitProviderApiClient\GitProviderApiClient.csproj" />
+    <ProjectReference Include="..\GitProviderApiClient\GitProviderApiClient.csproj" />
   </ItemGroup>
 
 </Project>

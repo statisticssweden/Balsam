@@ -12,10 +12,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Balsam.Domain\Balsam.Domain.csproj" />
-    <ProjectReference Include="..\src\GitProviderApiClient\GitProviderApiClient.csproj" />
-    <ProjectReference Include="..\src\OidcProviderApiClient\OidcProviderApiClient.csproj" />
-    <ProjectReference Include="..\src\RocketChatChatProviderApiClient\RocketChatChatProviderApiClient.csproj" />
-    <ProjectReference Include="..\src\S3ProviderApiClient\S3ProviderApiClient.csproj" />
+    <ProjectReference Include="..\GitProviderApiClient\GitProviderApiClient.csproj" />
+    <ProjectReference Include="..\OidcProviderApiClient\OidcProviderApiClient.csproj" />
+    <ProjectReference Include="..\RocketChatChatProviderApiClient\RocketChatChatProviderApiClient.csproj" />
+    <ProjectReference Include="..\S3ProviderApiClient\S3ProviderApiClient.csproj" />
   </ItemGroup>
 
 </Project>

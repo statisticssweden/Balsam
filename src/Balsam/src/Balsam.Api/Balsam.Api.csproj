@@ -16,14 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Balsam.Application\Balsam.Application.csproj" />
-    <ProjectReference Include="..\..\Balsam.Domain\Balsam.Domain.csproj" />
-    <ProjectReference Include="..\..\Balsam.Infrastructure\Balsam.Infrastructure.csproj" />
+    <ProjectReference Include="..\Balsam.Application\Balsam.Application.csproj" />
+    <ProjectReference Include="..\Balsam.Domain\Balsam.Domain.csproj" />
+    <ProjectReference Include="..\Balsam.Infrastructure\Balsam.Infrastructure.csproj" />
     <ProjectReference Include="..\BalsamApi.Server\BalsamApi.Server.csproj" />
-    <ProjectReference Include="..\GitProviderApiClient\GitProviderApiClient.csproj" />
-    <ProjectReference Include="..\OidcProviderApiClient\OidcProviderApiClient.csproj" />
-    <ProjectReference Include="..\RocketChatChatProviderApiClient\RocketChatChatProviderApiClient.csproj" />
-    <ProjectReference Include="..\S3ProviderApiClient\S3ProviderApiClient.csproj" />
   </ItemGroup>
 
 </Project>
