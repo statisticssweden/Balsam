@@ -24,10 +24,14 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0.400-1-alpine3.16-amd64 AS build
 WORKDIR /src
 
 COPY . .
+RUN dotnet restore "Balsam.Domain/Balsam.Domain.csproj"
+RUN dotnet restore "Balsam.Infrastructure/Balsam.Infrastructure.csproj"
+RUN dotnet restore "Balsam.Application/Balsam.Application.csproj"
 RUN dotnet restore "Balsam.Api/Balsam.Api.csproj"
 
 WORKDIR "/src/Balsam.Api"
-RUN dotnet build "Balsam.Api.csproj" -c Release -o /app/build
+#TODO: Remove build because publish builds?
+#RUN dotnet build "Balsam.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish
 RUN dotnet publish "Balsam.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
