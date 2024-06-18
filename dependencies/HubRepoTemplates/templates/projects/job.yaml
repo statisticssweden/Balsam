@@ -1,0 +1,38 @@
+{{#Project.Git.HasTemplate}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-jobb
+  namespace: proj-{{Project.Id}}
+spec:
+  backoffLimit: 3
+  # ttlSecondsAfterFinished: 45 ##Vill vi deleta jobbet eller ha kvar det i namespacet för felsökning efteråt?
+  template:
+    metadata:
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: elyra-sa
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 100
+        runAsGroup: 100
+      containers:
+      - command: ["sh", "-c"]
+        args:
+        - | ##Med vilka credentials ska man pusha till privat gitlab? det här händer när ett projekt skapas, men en PAT har inte skapats än, får bli ett svc-konto isåfall.
+          git clone http://svc_gitprovider:glpat-zQiZMLgSUAp1uiV3vSKc@balsam-gitlab-pilot.tanzu.scb.intra/pilot/{{Project.Git.Name}}.git /tmp/newproject
+          git clone {{Project.Git.SourceLocation}} /tmp/mallproject ##https://github.com/statisticssweden/knowledge-library.git
+          rm /tmp/mallproject/.gitignore
+          rm /tmp/mallproject/.gitconfig
+          rm /tmp/mallproject/.gitattributes
+          cp -r /tmp/mallproject/* /tmp/newproject
+          cd /tmp/newproject
+          git config user.email "svc_gitprovider@balsam.local"
+          git config user.name "svc_gitprovider"
+          git add .
+          git commit -m "copied file from mallrepository and added to the new project"
+          git push
+        image: alpine/git
+        name: test-jobb
+      restartPolicy: Never
+{{/Project.Git.HasTemplate}}
