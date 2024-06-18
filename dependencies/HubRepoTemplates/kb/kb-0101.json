@@ -1,0 +1,7 @@
+{
+    "Id": "kb-0101",
+    "Name": "SCB",
+    "Description": "SCB:s kunskapsbibliotek",
+    "RepositoryUrl": "https://github.com/statisticssweden/knowledge-library.git",
+    "RepositoryFriendlyUrl": "https://github.com/statisticssweden/knowledge-library"
+}
