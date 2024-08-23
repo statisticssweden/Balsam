@@ -41,17 +41,17 @@ namespace Balsam.Repositories
             //Clone repo
             var cloneOptions = new CloneOptions
             {
-                FetchOptions =
-                {
-                    CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = _userId, Password = _password }
-                }
+                //FetchOptions =
+                //{
+                //    CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = _userId, Password = _password }
+                //}
+                CredentialsProvider = (_url, _user, _cred) => new UsernamePasswordCredentials { Username = _userId, Password = _password }
             };
 
             _logger.LogInformation("Begin clone Hub repo");
 
             _logger.LogInformation("RemoteUrl: " + options.Value.RemoteUrl);
             _logger.LogInformation("_userId: " + _userId);
-            _logger.LogInformation("_password: " + _password);
             _logger.LogInformation("basePath: " + basePath);
 
             _repositoryPath = Repository.Clone(options.Value.RemoteUrl, basePath, cloneOptions);
