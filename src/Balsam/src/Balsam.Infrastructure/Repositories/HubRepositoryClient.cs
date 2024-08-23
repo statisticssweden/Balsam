@@ -48,6 +48,12 @@ namespace Balsam.Repositories
             };
 
             _logger.LogInformation("Begin clone Hub repo");
+
+            _logger.LogInformation("RemoteUrl: " + options.Value.RemoteUrl);
+            _logger.LogInformation("_userId: " + _userId);
+            _logger.LogInformation("_password: " + _password);
+            _logger.LogInformation("basePath: " + basePath);
+
             _repositoryPath = Repository.Clone(options.Value.RemoteUrl, basePath, cloneOptions);
             _logger.LogInformation("End clone Hub repo");
             _repository = new Repository(_repositoryPath);
