@@ -67,11 +67,15 @@ namespace Balsam.Repositories
 
             Commands.Stage(_repository, "*");
 
-            _repository.Commit(commitMessage, namesig, namesig);
+            RepositoryStatus status = _repository.RetrieveStatus();
 
-            var remote = _repository.Network.Remotes["origin"];
+            if (status.IsDirty) { 
+                _repository.Commit(commitMessage, namesig, namesig);
 
-            _repository.Network.Push(remote, _repository.Head.CanonicalName, pushOptions);
+                var remote = _repository.Network.Remotes["origin"];
+
+                _repository.Network.Push(remote, _repository.Head.CanonicalName, pushOptions);
+            }
         }
 
         public void PullChanges()

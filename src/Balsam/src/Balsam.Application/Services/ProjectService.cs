@@ -244,6 +244,7 @@ namespace Balsam.Services
 
                 try
                 {
+                    _logger.LogDebug($"Deleting branch in git");
                     await _repositoryApi.DeleteRepositoryBranchAsync(project.Git?.Id ?? "", branch.GitBranch);
                 }
                 catch (Exception ex)
@@ -252,7 +253,10 @@ namespace Balsam.Services
                 }
             }
 
+            _logger.LogDebug($"Deleting branch information");
             await _projectRepository.DeleteBranch(projectId, branchId);
+            _logger.LogDebug($"Deleting branch manifests");
+
             await _projectGitOpsRepository.DeleteBranchManifests(projectId, branchId);
 
             _logger.LogInformation($"Deleted branch {branchId} for project {projectId}");
