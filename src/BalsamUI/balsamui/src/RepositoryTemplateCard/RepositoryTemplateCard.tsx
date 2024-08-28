@@ -9,7 +9,7 @@ import { OpenInNew } from '@mui/icons-material';
 import './RepositoryTemplateCard.css';
 import { RepositoryTemplate } from '../Model/RepositoryTemplate';
 import { Box, Chip, Stack } from '@mui/material';
-
+import templateImage from '../assets/template.png'
 
 export interface RepositoryTemplateCardProperties {
     knowledgeLibraryId: string,
@@ -36,7 +36,7 @@ export default function RepositoryTemplateCard( props : RepositoryTemplateCardPr
                 <CardMedia
                     component="img"
                     sx={{ flex:"0 1 0", objectFit: "contain", height:"100%" }}
-                    image="/src/assets/template.png"
+                    image={templateImage}
                     alt="Template" />  
                 <Box sx={{ flex: '1 1 auto', position:"relative"}}>
                     <CardContent sx={{padding:"8px"}}  >

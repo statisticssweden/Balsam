@@ -46,7 +46,7 @@ namespace Balsam.Model
 
         public string GetProjectsTemplatesPath()
         {
-            return Path.Combine(GetWorkspacesTemplatesPath(), "projects");
+            return Path.Combine(GetTemplatesPath(), "projects");
         }
 
         public string GetWorkspacesTemplatesPath()
