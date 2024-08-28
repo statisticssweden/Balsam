@@ -43,6 +43,8 @@ namespace Balsam.Services
         {
             var workspaceId = _workspaceRepository.GenerateWorkspaceId(name);
             var workspace = new BalsamWorkspace(workspaceId, name, templateId, projectId, branchId, userName);
+            
+            await CreateWorkspaceManifests(projectId, branchId, templateId, userName, userMail, workspace);
 
             var template = await _workspaceRepository.GetWorkspaceTemplate(workspace.TemplateId);
 
@@ -59,10 +61,7 @@ namespace Balsam.Services
                 throw new ArgumentException(errorMessage);
             }
 
-            var createdWorkspace = await _workspaceRepository.CreateWorkspace(workspace);
-
-            
-            await CreateWorkspaceManifests(projectId, branchId, templateId, userName, userMail, createdWorkspace);
+            await _workspaceRepository.CreateWorkspace(workspace);
 
             _logger.LogInformation("Workspace created");
             return workspace;
