@@ -51,8 +51,6 @@ namespace Balsam.Services
             if (template != null)
             {
                 workspace.Url = await _workspaceGitOpsService.GetWorkspaceUrl(projectId, branchId, userName, workspaceId, template.UrlConfig);
-                _logger.LogDebug("Workspace url: " + workspace.Url);
-                _logger.LogDebug("Template config file: " + template.UrlConfig);
             }
             else
             {

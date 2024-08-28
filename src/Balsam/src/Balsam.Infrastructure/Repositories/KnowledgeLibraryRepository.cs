@@ -25,7 +25,7 @@ namespace Balsam.Repositories
             var knowledgeLibraries = new List<BalsamKnowledgeLibrary>();
 
             var kbPath = HubPaths.GetKnowledgeLibrariesPath();
-
+            _logger.LogDebug("kbPath: " + kbPath);
             foreach (var knowledgelibraryFile in Directory.GetFiles(kbPath))
             {
                 try
