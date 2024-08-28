@@ -44,6 +44,7 @@ namespace Balsam.Repositories
             return await Task.Run(() =>
             {
                 string manifestFilePath = GetWorkspaceManifestFilePath(projectId, branchId, userName, workspaceId, urlConfigFile);
+ 
                 return ManifestUtil.GetAnnotation(manifestFilePath, WorkspaceUrlAnnotationKey);
             });
         }
