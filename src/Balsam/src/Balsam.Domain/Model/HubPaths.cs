@@ -56,7 +56,7 @@ namespace Balsam.Model
 
         public string GetKnowledgeLibrariesPath()
         {
-            return Path.Combine(GetHubPath(), "kb");
+            return Path.Combine(BasePath, "kb");
         }
 
         public string GetKnowledgeLibraryFilePath(string knowledgeLibraryFileId)
