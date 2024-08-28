@@ -132,12 +132,13 @@ namespace Balsam.Api.Controllers
                 var username = this.User.GetUserName();
                 var project = await _projectService.GetProject(projectId);
 
-                if (!_workspaceAuthorization.CanUserGetWorkspaces(this.User, project))
-                {
-                    //TODO: Return empty list?
-                    _logger.LogInformation($"User {username} not authorized to get workspaces for project {project.Id}.");
-                    return Unauthorized(new Problem() { Status = (int)HttpStatusCode.Unauthorized, Type = "Not authorized", Title = "You are not a member of the project" });
-                }
+                //Removed authorization so that you can see workspaces for other project, but workspaces are still authorized elsewhere
+                //if (!_workspaceAuthorization.CanUserGetWorkspaces(this.User, project))
+                //{
+                //    //TODO: Return empty list?
+                //    _logger.LogInformation($"User {username} not authorized to get workspaces for project {project.Id}.");
+                //    return Unauthorized(new Problem() { Status = (int)HttpStatusCode.Unauthorized, Type = "Not authorized", Title = "You are not a member of the project" });
+                //}
 
                 if (all ?? true)
                 {
