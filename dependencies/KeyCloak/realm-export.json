@@ -788,7 +788,7 @@
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "<YOUR-SECRET>",
       "redirectUris": [
         "http://*",
         "https://*"
@@ -812,7 +812,7 @@
         "client.secret.creation.time": "1683105794",
         "backchannel.logout.session.required": "true",
         "login_theme": "keycloak",
-        "post.logout.redirect.uris": "http://demo-balsam-ui.your.domain/*",
+        "post.logout.redirect.uris": "http://<YOUR-DOMAIN-FOR-BALSAM-UI>/*",
         "display.on.consent.screen": "false",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
@@ -888,7 +888,7 @@
       "name": "gitlab",
       "description": "klient för gitlab-saml koppling",
       "rootUrl": "",
-      "adminUrl": "http://YOUR-GITLAB-URL/users/auth/saml/callback",
+      "adminUrl": "http://<YOUR-GITLAB-URL>/users/auth/saml/callback",
       "baseUrl": "",
       "surrogateAuthRequired": false,
       "enabled": true,
@@ -898,7 +898,7 @@
         ""
       ],
       "webOrigins": [
-        "http://YOUR-GITLAB-URL"
+        "http://<YOUR-GITLAB-URL>"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -912,7 +912,7 @@
       "protocol": "saml",
       "attributes": {
         "saml.force.post.binding": "true",
-        "post.logout.redirect.uris": "http://YOUR-GITLAB-URL/users/auth/saml/callback##",
+        "post.logout.redirect.uris": "http://<YOUR-GITLAB-URL>/users/auth/saml/callback##",
         "saml.server.signature.keyinfo.ext": "false",
         "saml.signing.certificate": "MIICmzCCAYMCBgGLN3qpUTANBgkqhkiG9w0BAQsFADARMQ8wDQYDVQQDDAZnaXRsYWIwHhcNMjMxMDE2MDc1MjQ3WhcNMzMxMDE2MDc1NDI3WjARMQ8wDQYDVQQDDAZnaXRsYWIwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDiU9ejDmCd7MnWOJYvwJm31hIbELXn40giizF0CwB6Bv8k2ZwLqBEylcfuIi0MbZqF4Sluo5gi/GCs5OgwqXi9rMS8E7KmmNZ/0hbhJ94xBIccy1YqWF/PL0l2DclBVolp5qBVEFx2hUKJOGOe+lkgN8mSXHAVTTwHrLnNG968re1dWhMg2wgyi/X3EUqnJM/QnpFqieQIDYgoKs0e0qJP6DmPvEW6B/dM3eg86FokCw647hCCVy+JSkvt2EE8i9s5Xyb/fJ9GLUJB8jouvY6R9qmmkgBqnD/Hcqc7THVHMw0yFmsSWT8T+ucFIjCeo7mg/RkBcF7lpdYEAO/lGeyjAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAH9RVGMC7qGadXL2Swv2qoEjfpVN61tCJL7JtrmbqGQKPznUDWgvTZxV7AbI47/4ceV5m+mMSntuldfRJbPuLC7/rW4r3FimF8p+BnZHbhQWtUVBPSrpr386WfwzhXENdqEytKplVmviP7CrM+Bx9dRD5zaFkxIcUX597cTf+BS/1pnCKSICV2saJZxLlB+hCbFBmu0jgzNmt9wNVEUQBdZRDqFk87fK+xOik7/W1c5QtgKaYf32WrN8MDSfu3+ayK/1nejn4skHZqqmeSrQLqirqEdeHVglQB/IeJeB8YzJ1z36EbE/VZ41QJDw6lFJUJaf+2muQBo3AQxUtQz5ThE=",
         "saml.signature.algorithm": "RSA_SHA256",
@@ -921,11 +921,11 @@
         "saml.allow.ecp.flow": "false",
         "saml.server.signature.keyinfo.xmlSigKeyInfoKeyNameTransformer": "NONE",
         "saml.assertion.signature": "false",
-        "saml_single_logout_service_url_post": "http://YOUR-KEYCLOAK-URL/realms/Balsam/protocol/saml",
+        "saml_single_logout_service_url_post": "http://<YOUR-KEYCLOAK-URL>/realms/Balsam/protocol/saml",
         "saml.encrypt": "false",
         "login_theme": "keycloak",
-        "saml_assertion_consumer_url_post": "http://YOUR-GITLAB-URL/users/auth/saml/callback",
-        "saml_idp_initiated_sso_url_name": "YOUR-GITLAB-URL",
+        "saml_assertion_consumer_url_post": "http://<YOUR-GITLAB-URL>/users/auth/saml/callback",
+        "saml_idp_initiated_sso_url_name": "<YOUR-GITLAB-URL>",
         "saml.server.signature": "true",
         "saml.artifact.binding.identifier": "Mi8xYx3ma89xvWwZm0FgbVFv4/k=",
         "saml.artifact.binding": "false",
@@ -990,19 +990,19 @@
       "clientId": "rocket-chat",
       "name": "Client for rocket-lab",
       "description": "",
-      "rootUrl": "http://YOUR-ROCKETCHAT-URL",
+      "rootUrl": "<http://YOUR-ROCKETCHAT-URL>",
       "adminUrl": "",
       "baseUrl": "",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "**********",
+      "secret": "<YOUR-SECRET>",
       "redirectUris": [
-        "http://YOUR-ROCKETCHAT-URL/*"
+        "http://<YOUR-ROCKETCHAT-URL>/*"
       ],
       "webOrigins": [
-        "http://YOUR-ROCKETCHAT-URL"
+        "http://<YOUR-ROCKETCHAT-URL>"
       ],
       "notBefore": 0,
       "bearerOnly": false,
