@@ -13,7 +13,9 @@ global:
   ingress:
     apiVersion: ""
     configureCertmanager: false
-
+    provider: <YOUR-INGRESS-CLASS-NAME>
+    ingressClassName: <YOUR-INGRESS-CLASS-NAME>
+    class: <YOUR-INGRESS-CLASS-NAME>
 
     ## https://docs.gitlab.com/charts/charts/globals#omniauth
     omniauth:

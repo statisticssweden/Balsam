@@ -49,7 +49,7 @@ kubectl create cm keycloak-realm --namespace=keycloak --from-file=realm-export.j
 ```
 1. Install KeyCloak with Helm from Bitnami see [https://bitnami.com/stack/keycloak/helm](https://bitnami.com/stack/keycloak/helm) and use the following values.yaml file:
 
-  ```yaml
+```yaml
 auth:
   adminUser: ##add admin user
   adminPassword: ##add admin password
@@ -85,7 +85,7 @@ extraEnvVars:
   - name: MY_CLIENT_SECRET
     value: ""##add Clientsecret
 
-  ```
+```
 
 
 ### Install and configure GitLab
@@ -132,9 +132,12 @@ global:
   ingress:
     apiVersion: ""
     configureCertmanager: false
+    provider: <YOUR-INGRESS-CLASS-NAME>
+    ingressClassName: <YOUR-INGRESS-CLASS-NAME>
+    class: <YOUR-INGRESS-CLASS-NAME>
 
 
-    ## https://docs.gitlab.com/charts/charts/globals#omniauth
+  ## https://docs.gitlab.com/charts/charts/globals#omniauth
   appConfig:
     omniauth:
       enabled: true
@@ -160,7 +163,7 @@ certmanager:
   install: false
 
 gitlab-runner:
-  install: true
+  install: false
 ```
 
 4. Install GitLab with Helm
