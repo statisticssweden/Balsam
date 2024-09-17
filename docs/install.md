@@ -1,14 +1,15 @@
 # Installation instructions for installing a demo Balsam hub
-# ⚠️ Only for demo purposes ⚠️
+
+## ⚠️ Only for demo purposes ⚠️
 
 ## Prerequisites
 
-* Knowledge of Helm Kubernetes etc.
-* A Kubernetes cluster with
-  * storage driver that can provision PV and a default storage class defined.
-  * a could provider that can provide external IP adresses for services in the cluster.
-* A wild card DNS entry in your local DNS för all services in the cluster. Or a DNS zone in your local DNS and external DNS configured so that it can uppdate DNS entries there.
-* A least a cluster of X vCPU:s and Y GB of memory.
+* Knowledge of Helm and Kubernetes
+* A Kubernetes cluster with:
+    * Storage driver that can provision PV and a default storage class defined
+    * DNS provider that can provide external IP adresses for services in the cluster
+* A wild card DNS entry in your local DNS för all services in the cluster. Or a DNS zone in your local DNS and external DNS configured so that it can update DNS entries there.
+* A least a cluster of X vCPU:s and Y GB of memory
 * Helm 3
 
 ## General instructions
@@ -20,220 +21,234 @@ Replace `<YOUR-DOMAIN>` with your own DNS-entry
 ### Install and configure ArgoCD
 
 1. Install ArgoCD following the instruction at [https://argo-cd.readthedocs.io/en/stable/getting_started/](https://argo-cd.readthedocs.io/en/stable/getting_started/)
-2. Add an ingress to ArgoCD with the following definition
+1. Add an ingress to ArgoCD with the following definition
 
-```yaml
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: argocd-ingress
-  namespace: argocd
-spec:
-  rules:
-  - host: argo-cd.<YOUR-DOMAIN>
-    http:
-      paths:
-      - backend:
-          serviceName: argocd-server
-          servicePort: http
-```
+    ```yaml
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: argocd-ingress
+      namespace: argocd
+    spec:
+      rules:
+      - host: argo-cd.<YOUR-DOMAIN>
+        http:
+          paths:
+          - backend:
+              serviceName: argocd-server
+              servicePort: http
+    ```
 
-3. Sign in to ArgoCD and verify that it is running.
+1. Sign in to ArgoCD and verify that it is running.
 
 ### Install and configure KeyCloak
-Prerequisites: To be able to get a demo functionality in keycloak you will have to create a realm named Balsam. We have prepared this for you in the realm.json file. For the helm deployment to work you will
-have to create a ConfigMap to import the realm to the keycloak installation. You do this with the following command: 
+
+Prerequisites: To be able to get a demo functionality in keycloak you will have to create a realm named Balsam. We have prepared this for you in the `realm.json` file. For the helm deployment to work you will
+have to create a `ConfigMap` to import the realm to the keycloak installation. You do this with the following command:
+
 ```bash
 kubectl create ns keycloak
 kubectl create cm keycloak-realm --namespace=keycloak --from-file=realm-export.json
 ```
-1. Install KeyCloak with Helm from Bitnami see [https://bitnami.com/stack/keycloak/helm](https://bitnami.com/stack/keycloak/helm) and use the following values.yaml file:
 
-  ```yaml
-auth:
-  adminUser: ##add admin user
-  adminPassword: ##add admin password
+1. Install KeyCloak with Helm from `Bitnami` see [https://bitnami.com/stack/keycloak/helm](https://bitnami.com/stack/keycloak/helm) and use the following `values.yaml` file:
 
-ingress:
-  enabled: false ##enable by setting this to true
-  hostname: ##add hostname
+    ```yaml
+    auth:
+      adminUser: ##add admin user
+      adminPassword: ##add admin password
 
-postgresql:
-  enabled: true
-  auth:
-    username: bn_keycloak
-    password: ##add password
-    database: bitnami_keycloak
-    existingSecret: ""
-  architecture: standalone
+    ingress:
+      enabled: false ##enable by setting this to true
+      hostname: ##add hostname
 
+    postgresql:
+      enabled: true
+      auth:
+        username: bn_keycloak
+        password: ##add password
+        database: bitnami_keycloak
+        existingSecret: ""
+      architecture: standalone
 
-extraStartupArgs: "--import-realm"
+    extraStartupArgs: "--import-realm"
 
-extraVolumeMounts:
-  - name: config
-    mountPath: "/opt/bitnami/keycloak/data/import"
-    readOnly: true
-extraVolumes:
-  - name: config
-    configMap:
-      name: keycloak-realm
-      items:
-      - key: "realm-export.json"
-        path: "realm-export.json"
-extraEnvVars:
-  - name: MY_CLIENT_SECRET
-    value: ""##add Clientsecret
-
-  ```
-
+    extraVolumeMounts:
+      - name: config
+        mountPath: "/opt/bitnami/keycloak/data/import"
+        readOnly: true
+    extraVolumes:
+      - name: config
+        configMap:
+          name: keycloak-realm
+          items:
+          - key: "realm-export.json"
+            path: "realm-export.json"
+    extraEnvVars:
+      - name: MY_CLIENT_SECRET
+        value: ""##add Clientsecret
+    ```
 
 ### Install and configure GitLab
 
 1. Configure Keycloak by following these [instructions](https://medium.com/@panda1100/gitlab-sso-using-keycloak-as-saml-2-0-idp-86b75abadaab) in the Keycloak realm of `Balsam`
-   
-2. Add the GitLab repo to Helm with 
 
-  ```bash
-  helm repo add gitlab https://charts.gitlab.io/
-  ```
+1. Add the GitLab repo to Helm with
 
-3. Create a secret to connect Gitlab to Keycloak via SAML 
-```yaml
-name: saml
-label: 'Keycloak Login'
-args:
-  assertion_consumer_service_url: 'http://gitlab.<YOUR-DOMAIN>/users/auth/saml/callback'
-  idp_cert_fingerprint: '' ## Get the fingerprint using the instructions: https://medium.com/@panda1100/gitlab-sso-using-keycloak-as-saml-2-0-idp-86b75abadaab
-  idp_sso_target_url: 'http://keycloak.<YOUR-DOMAIN>/realms/Balsam/protocol/saml/clients/gitlab.<YOUR-DOMAIN>'
-  issuer: 'gitlab'
-  name_identifier_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
-```
-```bash
-kubectl create ns gitlab
-kubectl create secret generic gitlab-saml -n gitlab --from-file=provider=provider.yaml
-```
+    ```bash
+    helm repo add gitlab https://charts.gitlab.io/
+    ```
 
-4. Create a values.yaml file for GitLab as follows
+1. Create a secret to connect GitLab to Keycloak via SAML:
 
-```yaml
-global:
-  hosts:
-    domain: <YOUR-DOMAIN>
-    hostSuffix:
-    https: false
-    externalIP:
-    ssh: ~
-    gitlab:
-      name: gitlab.<YOUR-DOMAIN>
-      https: false
+    ```yaml
+    name: saml
+    label: 'Keycloak Login'
+    args:
+      assertion_consumer_service_url: 'http://gitlab.<YOUR-DOMAIN>/users/auth/saml/callback'
+      idp_cert_fingerprint: '' ## Get the fingerprint using the instructions: https://medium.com/@panda1100/gitlab-sso-using-keycloak-as-saml-2-0-idp-86b75abadaab
+      idp_sso_target_url: 'http://keycloak.<YOUR-DOMAIN>/realms/Balsam/protocol/saml/clients/gitlab.<YOUR-DOMAIN>'
+      issuer: 'gitlab'
+      name_identifier_format: 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent'
+    ```
 
-  ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
-  ingress:
-    apiVersion: ""
-    configureCertmanager: false
+    ```bash
+    kubectl create ns gitlab
+    kubectl create secret generic gitlab-saml -n gitlab --from-file=provider=provider.yaml
+    ```
 
+1. Create a `values.yaml` file for GitLab as follows:
 
-    ## https://docs.gitlab.com/charts/charts/globals#omniauth
-  appConfig:
-    omniauth:
-      enabled: true
-      autoSignInWithProvider:
-      syncProfileFromProvider: []
-      syncProfileAttributes: ['email','first_name','last_name', 'roles']
-      allowSingleSignOn: [saml]
-      blockAutoCreatedUsers: false
-      autoLinkLdapUser: false
-      autoLinkSamlUser: true
-      autoLinkUser: []
-      externalProviders: []
-      allowBypassTwoFactor: []
-      providers:
-        - secret: gitlab-saml
-          key: provider
+    ```yaml
+    global:
+      hosts:
+        domain: <YOUR-DOMAIN>
+        hostSuffix:
+        https: false
+        externalIP:
+        ssh: ~
+        gitlab:
+          name: gitlab.<YOUR-DOMAIN>
+          https: false
 
-  ## https://docs.gitlab.com/charts/charts/gitlab/kas/
-  kas:
-    enabled: false
+      ## https://docs.gitlab.com/charts/charts/globals#configure-ingress-settings
+      ingress:
+        apiVersion: ""
+        configureCertmanager: false
 
-certmanager:
-  install: false
+        ## https://docs.gitlab.com/charts/charts/globals#omniauth
+      appConfig:
+        omniauth:
+          enabled: true
+          autoSignInWithProvider:
+          syncProfileFromProvider: []
+          syncProfileAttributes: ['email','first_name','last_name', 'roles']
+          allowSingleSignOn: [saml]
+          blockAutoCreatedUsers: false
+          autoLinkLdapUser: false
+          autoLinkSamlUser: true
+          autoLinkUser: []
+          externalProviders: []
+          allowBypassTwoFactor: []
+          providers:
+            - secret: gitlab-saml
+              key: provider
 
-gitlab-runner:
-  install: true
-```
+      ## https://docs.gitlab.com/charts/charts/gitlab/kas/
+      kas:
+        enabled: false
 
-4. Install GitLab with Helm
+    certmanager:
+      install: false
 
-```bash
-helm install gitlab gitlab/gitlab -f GitLab/values.yaml --namespace=gitlab
-```
+    gitlab-runner:
+      install: true
+    ```
+
+1. Install GitLab with Helm
+
+    ```bash
+    helm install gitlab gitlab/gitlab -f GitLab/values.yaml --namespace=gitlab
+    ```
 
 ### Install and configure MinIO
 
-1. Add Bitnami Helm repo
-  
-```bash
-helm repo add bitnami https://charts.bitnami.com/bitnami
-```
-2. Change the values.yaml for MinIO to match your environment
+1. Add `Bitnami` Helm repo
 
-3. Install the helmchart for minio
-```bash
-helm install minio bitnami/minio -f MinIO/values.yaml --namespace=minio
-```
+    ```bash
+    helm repo add bitnami https://charts.bitnami.com/bitnami
+    ```
+
+1. Change the `values.yaml` for MinIO to match your environment
+1. Install the helmchart for MinIO:
+
+    ```bash
+    helm install minio bitnami/minio -f MinIO/values.yaml --namespace=minio
+    ```
 
 ### Install and configure RocketChat
-1. helm repo add rocketchat https://rocketchat.github.io/helm-charts
-2. Under dependencies, change the values.yaml to match your environment
-3. Install the helmchart for minio
-```bash
-helm install rocketchat rocketchat/rocketchat -f RocketChat/values.yaml --namespace=rocketchat
-```
-4. For Oauth to work, you may need to disable the option of two factor authentication if you have not setup an smtp server to send out a verification code.
-  - You will need to log into RocketChat as an administrator and disable two factor authentication. You can do this by going to the Admin Page > Account > Two Factor Authentication and then disabling it.
 
+1. helm repo add [rocketchat](https://rocketchat.github.io/helm-charts)
+1. Under dependencies, change the `values.yaml` to match your environment
+1. Install the helmchart for MinIO:
+
+    ```bash
+    helm install rocketchat rocketchat/rocketchat -f RocketChat/values.yaml --namespace=rocketchat
+    ```
+
+1. For OAuth to work, you may need to disable the option of two factor authentication if you have not setup an SMTP server to send out a verification code
+    * You will need to log into RocketChat as an administrator and disable two factor authentication. You can do this by going to the Admin Page > Account > Two Factor Authentication and then disabling it
 
 ## Configure and install a Balsam hub
+
 ### Configure GitLab
-1. Sign in with the KeyCloak user for GitLab and sign out (So that the user is created in GitLab).
-2. Sign in with the root account in GitLab. Password is in secret `gitlab-gitlab-initial-root-password`. 
-3. Make KeyCloak user an admin.
-4. Sign in with KeyCloak user and create a personal access token.
-5. Create a new Group.
-6. Remove the branch protection rules in the new group.
+
+1. Sign in with the KeyCloak user for GitLab and sign out (So that the user is created in GitLab)
+1. Sign in with the root account in GitLab. Password is in secret `gitlab-gitlab-initial-root-password`
+1. Make KeyCloak user an admin
+1. Sign in with KeyCloak user and create a personal access token
+1. Create a new Group
+1. Remove the branch protection rules in the new group
 
 ### Prepare hub repository
-1. Create a private Git repository (will conatin sensitive information so keep it private)
-2. Copy the files from `dependencies/HubRepoTemplates` and changes the placeholder in the templates in the format `<PLACEHOLDER>` and commit it to the repository
-3. Create a user that has access to read and write to the repository
+
+1. Create a private Git repository (will contain sensitive information so keep it private)
+1. Copy the files from `dependencies/HubRepoTemplates` and changes the placeholder in the templates in the format `<PLACEHOLDER>` and commit it to the repository
+1. Create a user that has access to read and write to the repository
 
 ### Configure KeyCloak
-1. Sign in to the admin console and change the URL:s in gitlab and rocketchat client.
-2. Add a user that should be admin in MiniIO. Add that user to the group `consoleAdmin`.
-3. Add a user that should be admin in GitLab.
-4. Add a user in KeyCloak that should be admin form `Balsam` realm
+
+1. Sign in to the admin console and change the URL:s in GitLab and rocketchat client
+1. Add a user that should be admin in MiniIO. Add that user to the group `consoleAdmin`
+1. Add a user that should be admin in GitLab
+1. Add a user in KeyCloak that should be admin form `Balsam` realm
 
 ### Configure MinIO
-1. Sign in with the userer from keycloak in MinIO console.
-2. Create a accesskey with full rights.
+
+1. Sign in with the user from keycloak in MinIO console
+1. Create an access key with full rights
 
 ### Configure RocketChat
-1. Sign in as admin.
-2. Create PAT.
+
+1. Sign in as admin
+1. Create PAT
 
 ### Configure ArgoCD
+
 1. Add a new application. Point it to the hub repository.
-2. Enable auto sync.
+1. Enable auto sync
 
 ## Install Balsam
-Use helm to install Balsam
+
+Use helm to install Balsam:
+
 ```bash
 helm install balsam oci://registry-1.docker.io/statisticssweden/balsam-chart --version 0.1.2 -f YOUR-VALUES-FILE.yaml
 ```
-Use the following values template and replace the placeholder with your settings.
 
 ### Values template for Balsam
+
+Use the following values template and replace the placeholder with your settings:
 
 ```yaml
 balsamApi:
@@ -252,11 +267,11 @@ balsamApi:
       host: <BALSAM-API-URL>
 
 balsamUi:
-  ingress:    
+  ingress:
     hosts:
       host: <BALSAM-UI-URL>
 
-s3Provider:  
+s3Provider:
   secret:
     name: minio-s3-provider-secret
     data:
@@ -268,7 +283,7 @@ s3Provider:
       API__DOMAIN: <MINIO-URL> ##balsam-minio-pilot-api.tanzu.scb.intra
       API__PROTOCOL: http
 
-gitProvider:  
+gitProvider:
   secret:
     name: gitlab-provider-secret
     data:
@@ -280,7 +295,7 @@ gitProvider:
       API__BaseUrl: <GITLAB-URL>
       API__TemplatePath: /app/templates
 
-oidcProvider:  
+oidcProvider:
   secret:
     name: keycloak-provider-secret
     data:
@@ -294,7 +309,7 @@ oidcProvider:
       KEYCLOAK__Realm: "Balsam"
       KEYCLOAK__ClientId: "demo"
 
-chatProvider: 
+chatProvider:
   secret:
     name: rocketchat-provider-secret
     data:
