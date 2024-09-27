@@ -6,9 +6,11 @@ RUN apk add --no-cache icu-libs
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 COPY KeycloakOidcProvider/certs/SCB_ROOT_CA6.crt /usr/local/share/ca-certificates/SCB_ROOT_CA6.crt
 COPY KeycloakOidcProvider/certs/SCB_SUB_CA6.crt /usr/local/share/ca-certificates/SCB_SUB_CA6.crt
+COPY KeycloakOidcProvider/certs/AI_SWEDEN.crt /usr/local/share/ca-certificates/AI_SWEDEN.crt
 
 RUN cat /usr/local/share/ca-certificates/SCB_ROOT_CA6.crt >> /etc/ssl/certs/ca-certificates.crt
 RUN cat /usr/local/share/ca-certificates/SCB_SUB_CA6.crt >> /etc/ssl/certs/ca-certificates.crt
+RUN cat /usr/local/share/ca-certificates/AI_SWEDEN.crt >> /etc/ssl/certs/ca-certificates.crt
 
 #EXPOSE 80
 #EXPOSE 443

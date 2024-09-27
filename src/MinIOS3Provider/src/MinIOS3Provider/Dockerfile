@@ -5,6 +5,9 @@ WORKDIR /app
 
 RUN apk add --no-cache icu-libs curl
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+COPY MinIOS3Provider/certs/AI_SWEDEN.crt /usr/local/share/ca-certificates/AI_SWEDEN.crt
+
+RUN cat /usr/local/share/ca-certificates/AI_SWEDEN.crt >> /etc/ssl/certs/ca-certificates.crt
 
 #RUN ping harbor-dev.scb.intra
 

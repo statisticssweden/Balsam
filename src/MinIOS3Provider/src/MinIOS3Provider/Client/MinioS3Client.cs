@@ -14,6 +14,7 @@ namespace MinIOS3Provider.Client
         private readonly string _apiUrl;
         private readonly string _accessKey;
         private readonly string _secretKey;
+        private readonly string _protcol;
 
         public MinioS3Client(IOptions<ApiOptions> options, ILogger<MinioS3Client> logger)
         {
@@ -21,7 +22,8 @@ namespace MinIOS3Provider.Client
             var api = options.Value;
             _apiUrl = api.Domain; 
             _accessKey = api.AccessKey; 
-            _secretKey = api.SecretKey; 
+            _secretKey = api.SecretKey;
+            _protcol = api.Protocol;
             //_directoryStructure = options.Value.S3DirectoryStructure; 
             var s3Mc = $"{api.Protocol}://{api.Domain}";
 
@@ -52,10 +54,7 @@ namespace MinIOS3Provider.Client
         {
             try
             {
-                var client = new MinioClient()
-                    .WithEndpoint(_apiUrl)
-                    .WithCredentials(accessKey: _accessKey, _secretKey)
-                    .Build();
+                var client = CreateClient();
 
                 var existArgs = new BucketExistsArgs().WithBucket(bucketName);
                 var found = await client.BucketExistsAsync(existArgs);
@@ -77,6 +76,24 @@ namespace MinIOS3Provider.Client
             }
         }
 
+        private MinioClient CreateClient()
+        {
+
+            if (string.Compare(_protcol, "https", true) == 0)
+            {
+                return new MinioClient()
+                    .WithEndpoint(_apiUrl)
+                    .WithCredentials(accessKey: _accessKey, _secretKey)
+                    .WithSSL()
+                    .Build();
+            }
+
+            return new MinioClient()
+                .WithEndpoint(_apiUrl)
+                .WithCredentials(accessKey: _accessKey, _secretKey)
+                .Build();
+        }
+
         /// <summary>
         /// Creates a virtual directory in a bucket and places a readme.txt as dummy file.
         /// </summary>
@@ -88,10 +105,7 @@ namespace MinIOS3Provider.Client
             var fileName = "readme.txt";
             try
             {
-                var client = new MinioClient()
-                    .WithEndpoint(_apiUrl)
-                    .WithCredentials(accessKey: _accessKey, _secretKey)
-                    .Build();
+                var client = CreateClient();
 
                 var existArgs = new BucketExistsArgs().WithBucket(bucket);
                 var found = await client.BucketExistsAsync(existArgs);

@@ -8,9 +8,13 @@ RUN apk add --no-cache icu-libs
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 COPY certs/SCB_ROOT_CA6.crt /usr/local/share/ca-certificates/SCB_ROOT_CA6.crt
 COPY certs/SCB_SUB_CA6.crt /usr/local/share/ca-certificates/SCB_SUB_CA6.crt
+COPY certs/AI_SWEDEN.crt /usr/local/share/ca-certificates/AI_SWEDEN.crt
+COPY certs/GITLAB_CA.crt /usr/local/share/ca-certificates/GITLAB_CA.crt
 
 RUN cat /usr/local/share/ca-certificates/SCB_ROOT_CA6.crt >> /etc/ssl/certs/ca-certificates.crt && apk --no-cache add curl
 RUN cat /usr/local/share/ca-certificates/SCB_SUB_CA6.crt >> /etc/ssl/certs/ca-certificates.crt && apk --no-cache add curl
+RUN cat /usr/local/share/ca-certificates/AI_SWEDEN.crt >> /etc/ssl/certs/ca-certificates.crt && apk --no-cache add curl
+RUN cat /usr/local/share/ca-certificates/GITLAB_CA.crt >> /etc/ssl/certs/ca-certificates.crt && apk --no-cache add curl
 
 #EXPOSE 80
 
