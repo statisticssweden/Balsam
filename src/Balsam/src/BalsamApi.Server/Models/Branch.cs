@@ -47,7 +47,7 @@ namespace BalsamApi.Server.Models
         /// </summary>
         /// <value>Description of the branch</value>
         [DataMember(Name="description", EmitDefaultValue=false)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// If the branch is the default branch of the project

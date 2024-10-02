@@ -47,21 +47,21 @@ namespace BalsamApi.Server.Models
         /// </summary>
         /// <value>Description of the project</value>
         [DataMember(Name="description", EmitDefaultValue=false)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Url to the repository
         /// </summary>
         /// <value>Url to the repository</value>
         [DataMember(Name="gitUrl", EmitDefaultValue=false)]
-        public string GitUrl { get; set; }
+        public string? GitUrl { get; set; }
 
         /// <summary>
         /// Authorized group name
         /// </summary>
         /// <value>Authorized group name</value>
         [DataMember(Name="authGroup", EmitDefaultValue=false)]
-        public string AuthGroup { get; set; }
+        public string? AuthGroup { get; set; }
 
         /// <summary>
         /// Gets or Sets Branches

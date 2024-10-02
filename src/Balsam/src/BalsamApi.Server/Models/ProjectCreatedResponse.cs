@@ -47,7 +47,7 @@ namespace BalsamApi.Server.Models
         /// </summary>
         /// <value>Authorized group name</value>
         [DataMember(Name="authGroup", EmitDefaultValue=false)]
-        public string AuthGroup { get; set; }
+        public string? AuthGroup { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object

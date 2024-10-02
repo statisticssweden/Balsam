@@ -39,7 +39,7 @@ namespace BalsamApi.Server.Models
         /// </summary>
         /// <value>The description of the project</value>
         [DataMember(Name="description", EmitDefaultValue=false)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Name of the default branch
@@ -53,7 +53,7 @@ namespace BalsamApi.Server.Models
         /// the location to a git-repository containing files that the repository will be initiated with
         /// </summary>
         /// <value>the location to a git-repository containing files that the repository will be initiated with</value>
-        [DataMember(Name="sourceLocation", EmitDefaultValue=true)]
+        [DataMember(Name="sourceLocation", EmitDefaultValue=false)]
         public string? SourceLocation { get; set; }
 
         /// <summary>

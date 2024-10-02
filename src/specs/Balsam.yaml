@@ -489,7 +489,7 @@ components:
           description: Name of the default branch
         sourceLocation:
           type: string
-          nullable: true
+          #nullable: true #Cannot be not requiered and nullable after new OpenApi generator update
           description: the location to a git-repository containing files that the repository will be initiated with
 
     CreateBranchRequest:
@@ -497,6 +497,7 @@ components:
       description: Payload for creating new branch
       required:
         - "name"
+        - "fromBranch"
       properties:
         name:
           type: string
@@ -665,7 +666,6 @@ components:
             - Folder
         contentUrl:
           type: string
-          nullable: true
           description: Url to the raw content of the file
 
     WorkspaceListResponse:
@@ -700,14 +700,12 @@ components:
           description: The name
         description:
           type: string
-          nullable: true
           description: Description of the knowledge library
         repositoryUrl:
           type: string
           description: Url to the repository that one can use to clone the library
         repositoryFriendlyUrl:
           type: string
-          nullable: true
           description: Friendly url to the repository that one can use to browse the content of the repository
 
     Template:
@@ -765,7 +763,7 @@ components:
     Branch:
       type: object
       required: 
-        - "id"
+        - "id" 
         - "name"
         - "isDefault"
       properties:

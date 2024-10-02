@@ -1,8 +1,9 @@
 using Balsam.Api;
-using Balsam.Api.Models;
+using Balsam.Interfaces;
+using Balsam.Model;
+using Balsam.Repositories;
+using Balsam.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.HttpLogging;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,9 +17,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<HttpClient>();
-builder.Services.AddTransient<HubClient>();
-builder.Services.AddSingleton<HubRepositoryClient>();
-builder.Services.AddSingleton<KnowledgeLibraryClient>();
+builder.Services.AddTransient<IProjectService, ProjectService>(); //TODO: Use AddScoped ?
+builder.Services.AddTransient<IWorkspaceService, WorkspaceService>(); //TODO: Use AddScoped ?
+builder.Services.AddSingleton<IHubRepositoryClient, HubRepositoryClient>();
+builder.Services.AddSingleton<IKnowledgeLibraryService, KnowledgeLibraryService>();
+
+builder.Services.AddTransient<IWorkspaceRepository, WorkspaceRepository>();
+builder.Services.AddTransient<IWorkspaceGitOpsRepository, WorkspaceGitOpsRepository>();
+builder.Services.AddSingleton<IKnowledgeLibraryContentRepository, KnowledgeLibraryContentRepository>();
+builder.Services.AddSingleton<IKnowledgeLibraryRepository, KnowledgeLibraryRepository>();
+builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
+builder.Services.AddTransient<IProjectGitOpsRepository, ProjectGitOpsRepository>();
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<GitProviderApiClient.Api.IRepositoryApi>(

@@ -29,7 +29,7 @@ namespace OidcProviderApiClient.Model
     /// Group name
     /// </summary>
     [DataContract(Name = "CreateGroupRequest")]
-    public partial class CreateGroupRequest : IEquatable<CreateGroupRequest>, IValidatableObject
+    public partial class CreateGroupRequest : IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateGroupRequest" /> class.
@@ -77,52 +77,6 @@ namespace OidcProviderApiClient.Model
         public virtual string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as CreateGroupRequest);
-        }
-
-        /// <summary>
-        /// Returns true if CreateGroupRequest instances are equal
-        /// </summary>
-        /// <param name="input">Instance of CreateGroupRequest to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(CreateGroupRequest input)
-        {
-            if (input == null)
-            {
-                return false;
-            }
-            return 
-                (
-                    this.Name == input.Name ||
-                    (this.Name != null &&
-                    this.Name.Equals(input.Name))
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.Name != null)
-                {
-                    hashCode = (hashCode * 59) + this.Name.GetHashCode();
-                }
-                return hashCode;
-            }
         }
 
         /// <summary>

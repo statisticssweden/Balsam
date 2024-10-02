@@ -29,7 +29,7 @@ namespace GitProviderApiClient.Model
     /// Payload for creating new repository
     /// </summary>
     [DataContract(Name = "CreateRepositoryRequest")]
-    public partial class CreateRepositoryRequest : IEquatable<CreateRepositoryRequest>, IValidatableObject
+    public partial class CreateRepositoryRequest : IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateRepositoryRequest" /> class.
@@ -102,70 +102,6 @@ namespace GitProviderApiClient.Model
         public virtual string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as CreateRepositoryRequest);
-        }
-
-        /// <summary>
-        /// Returns true if CreateRepositoryRequest instances are equal
-        /// </summary>
-        /// <param name="input">Instance of CreateRepositoryRequest to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(CreateRepositoryRequest input)
-        {
-            if (input == null)
-            {
-                return false;
-            }
-            return 
-                (
-                    this.Name == input.Name ||
-                    (this.Name != null &&
-                    this.Name.Equals(input.Name))
-                ) && 
-                (
-                    this.Description == input.Description ||
-                    (this.Description != null &&
-                    this.Description.Equals(input.Description))
-                ) && 
-                (
-                    this.DefaultBranchName == input.DefaultBranchName ||
-                    (this.DefaultBranchName != null &&
-                    this.DefaultBranchName.Equals(input.DefaultBranchName))
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.Name != null)
-                {
-                    hashCode = (hashCode * 59) + this.Name.GetHashCode();
-                }
-                if (this.Description != null)
-                {
-                    hashCode = (hashCode * 59) + this.Description.GetHashCode();
-                }
-                if (this.DefaultBranchName != null)
-                {
-                    hashCode = (hashCode * 59) + this.DefaultBranchName.GetHashCode();
-                }
-                return hashCode;
-            }
         }
 
         /// <summary>

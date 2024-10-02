@@ -37,7 +37,7 @@ export interface KnowledgeLibrary {
      * @type {string}
      * @memberof KnowledgeLibrary
      */
-    'description'?: string | null;
+    'description'?: string;
     /**
      * Url to the repository that one can use to clone the library
      * @type {string}
@@ -49,6 +49,6 @@ export interface KnowledgeLibrary {
      * @type {string}
      * @memberof KnowledgeLibrary
      */
-    'repositoryFriendlyUrl'?: string | null;
+    'repositoryFriendlyUrl'?: string;
 }
 

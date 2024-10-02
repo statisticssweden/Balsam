@@ -1,6 +1,8 @@
-﻿using BalsamApi.Server.Models;
+﻿using Balsam.Api.Extensions;
+using Balsam.Interfaces;
+using Balsam.Model;
+using BalsamApi.Server.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 
 namespace Balsam.Api.Controllers
@@ -9,25 +11,25 @@ namespace Balsam.Api.Controllers
     [ApiController]
     public class KnowledgeLibraryController : BalsamApi.Server.Controllers.KnowledgeLibraryApiController
     {
-        private readonly HubClient _hubClient;
         private readonly ILogger<KnowledgeLibraryController> _logger;
-        private readonly KnowledgeLibraryClient _knowledgeLibraryClient;
+        private readonly IKnowledgeLibraryService _knowledgeLibraryService;
 
-        public KnowledgeLibraryController(ILogger<KnowledgeLibraryController> logger, HubClient hubClient, KnowledgeLibraryClient knowledgeLibraryClient)
+        public KnowledgeLibraryController(ILogger<KnowledgeLibraryController> logger, IKnowledgeLibraryService knowledgeLibraryService)
         {
-            _hubClient = hubClient;
             _logger = logger;
-            _knowledgeLibraryClient = knowledgeLibraryClient;
+            _knowledgeLibraryService = knowledgeLibraryService;
         }
         public async override Task<IActionResult> ListKnowledgeLibaries() //A. Implementera
         {
             _logger.LogInformation("calling endpoint: Listing Knowledgelibraries");
             try
             {
-                var knowledgeLibraries = await _hubClient.ListKnowledgeLibraries();
+                var balsamKnowledgeLibraries = await _knowledgeLibraryService.ListKnowledgeLibraries();
+
+                var knowledgeLibraries = balsamKnowledgeLibraries.Select(bkl => bkl.ToKnowledgeLibrary());
                 return Ok(knowledgeLibraries);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error listing knowledgelibraries");
                 return BadRequest(ex);
@@ -38,13 +40,16 @@ namespace Balsam.Api.Controllers
         {
             try
             {
+                //TODO: Pull knowledge library repo
+
+                //TODO: Move stream to knowledgeLibraryService?
                 string filePath = string.Empty;
-                filePath = _knowledgeLibraryClient.GetRepositoryFilePath(libraryId, fileId);
+                filePath = _knowledgeLibraryService.GetRepositoryFilePath(libraryId, fileId);
 
                 // Open the file
                 var stream = System.IO.File.OpenRead(filePath);
 
-                
+
                 // Determine the content type
                 var provider = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
                 if (!provider.TryGetContentType(fileId, out var contentType))
@@ -69,16 +74,12 @@ namespace Balsam.Api.Controllers
         {
             try
             {
-                var knowledgeLibrary = (await _hubClient.ListKnowledgeLibraries()).FirstOrDefault(kb => kb.Id == libraryId);
+                var balsamRepofiles = await _knowledgeLibraryService.GetRepositoryFileTree(libraryId);
+                var repoFiles = balsamRepofiles.Select(rf => rf.ToRepoFile());
 
-                if (knowledgeLibrary is null)
-                {
-                    return BadRequest(new Problem() { Status = 404, Title = "Knowledge library not found", Detail = "Knowledge library not found" });
-                }
-
-                var contents = _knowledgeLibraryClient.GetRepositoryContent(libraryId, knowledgeLibrary.RepositoryUrl);
-                return Ok(contents.ToArray());
-            } catch (Exception ex)
+                return Ok(repoFiles.ToArray());
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error listing knowledge library files");
                 return BadRequest(new Problem() { Status = 404, Title = "Error fetching knowledge libraries", Detail = "Error fetching knowledge libraries" });

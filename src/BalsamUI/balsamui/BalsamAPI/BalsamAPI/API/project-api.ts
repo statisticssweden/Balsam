@@ -14,13 +14,13 @@
 
 
 import type { Configuration } from '../../configuration';
-import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
+import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../../common';
 // @ts-ignore
-import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError } from '../../base';
+import { BASE_PATH, COLLECTION_FORMATS, RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../../base';
 // @ts-ignore
 import { BranchCreatedResponse } from '../../BalsamAPI/Model';
 // @ts-ignore
@@ -52,7 +52,7 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        copyFromKnowleadgeLibrary: async (projectId: string, branchId: string, libraryId: string, fileId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        copyFromKnowleadgeLibrary: async (projectId: string, branchId: string, libraryId: string, fileId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'projectId' is not null or undefined
             assertParamExists('copyFromKnowleadgeLibrary', 'projectId', projectId)
             // verify required parameter 'branchId' is not null or undefined
@@ -101,7 +101,7 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createBranch: async (projectId: string, createBranchRequest?: CreateBranchRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createBranch: async (projectId: string, createBranchRequest?: CreateBranchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'projectId' is not null or undefined
             assertParamExists('createBranch', 'projectId', projectId)
             const localVarPath = `/projects/{projectId}/branches`
@@ -137,7 +137,7 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createProject: async (createProjectRequest?: CreateProjectRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createProject: async (createProjectRequest?: CreateProjectRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/projects`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -171,7 +171,7 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteBranch: async (projectId: string, branchId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteBranch: async (projectId: string, branchId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'projectId' is not null or undefined
             assertParamExists('deleteBranch', 'projectId', projectId)
             // verify required parameter 'branchId' is not null or undefined
@@ -207,7 +207,7 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        deleteProject: async (projectId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        deleteProject: async (projectId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'projectId' is not null or undefined
             assertParamExists('deleteProject', 'projectId', projectId)
             const localVarPath = `/projects/{projectId}`
@@ -242,7 +242,7 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFile: async (projectId: string, branchId: string, fileId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getFile: async (projectId: string, branchId: string, fileId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'projectId' is not null or undefined
             assertParamExists('getFile', 'projectId', projectId)
             // verify required parameter 'branchId' is not null or undefined
@@ -282,7 +282,7 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getFiles: async (projectId: string, branchId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getFiles: async (projectId: string, branchId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'projectId' is not null or undefined
             assertParamExists('getFiles', 'projectId', projectId)
             // verify required parameter 'branchId' is not null or undefined
@@ -318,7 +318,7 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getProject: async (projectId: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getProject: async (projectId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'projectId' is not null or undefined
             assertParamExists('getProject', 'projectId', projectId)
             const localVarPath = `/projects/{projectId}`
@@ -351,7 +351,7 @@ export const ProjectApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        listProjects: async (all?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        listProjects: async (all?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/projects`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -398,9 +398,11 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async copyFromKnowleadgeLibrary(projectId: string, branchId: string, libraryId: string, fileId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async copyFromKnowleadgeLibrary(projectId: string, branchId: string, libraryId: string, fileId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.copyFromKnowleadgeLibrary(projectId, branchId, libraryId, fileId, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProjectApi.copyFromKnowleadgeLibrary']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * Create a new branch for a project
@@ -409,9 +411,11 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createBranch(projectId: string, createBranchRequest?: CreateBranchRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BranchCreatedResponse>> {
+        async createBranch(projectId: string, createBranchRequest?: CreateBranchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BranchCreatedResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createBranch(projectId, createBranchRequest, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProjectApi.createBranch']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * Creates a new project
@@ -419,9 +423,11 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createProject(createProjectRequest?: CreateProjectRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectCreatedResponse>> {
+        async createProject(createProjectRequest?: CreateProjectRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectCreatedResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createProject(createProjectRequest, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProjectApi.createProject']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * Deletes branch of project
@@ -430,9 +436,11 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteBranch(projectId: string, branchId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async deleteBranch(projectId: string, branchId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteBranch(projectId, branchId, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProjectApi.deleteBranch']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * Deletes a project
@@ -440,9 +448,11 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async deleteProject(projectId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async deleteProject(projectId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.deleteProject(projectId, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProjectApi.deleteProject']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * Get file contents
@@ -452,9 +462,11 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFile(projectId: string, branchId: string, fileId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
+        async getFile(projectId: string, branchId: string, fileId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<string>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getFile(projectId, branchId, fileId, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProjectApi.getFile']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * Get files for a branch for a project
@@ -463,9 +475,11 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getFiles(projectId: string, branchId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<RepoFile>>> {
+        async getFiles(projectId: string, branchId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<RepoFile>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getFiles(projectId, branchId, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProjectApi.getFiles']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * Gets project information
@@ -473,9 +487,11 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getProject(projectId: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectResponse>> {
+        async getProject(projectId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getProject(projectId, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProjectApi.getProject']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * Gets a list of all available projects
@@ -483,9 +499,11 @@ export const ProjectApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async listProjects(all?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectListResponse>> {
+        async listProjects(all?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ProjectListResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.listProjects(all, options);
-            return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['ProjectApi.listProjects']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
 };
@@ -606,7 +624,7 @@ export class ProjectApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProjectApi
      */
-    public copyFromKnowleadgeLibrary(projectId: string, branchId: string, libraryId: string, fileId: string, options?: AxiosRequestConfig) {
+    public copyFromKnowleadgeLibrary(projectId: string, branchId: string, libraryId: string, fileId: string, options?: RawAxiosRequestConfig) {
         return ProjectApiFp(this.configuration).copyFromKnowleadgeLibrary(projectId, branchId, libraryId, fileId, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -618,7 +636,7 @@ export class ProjectApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProjectApi
      */
-    public createBranch(projectId: string, createBranchRequest?: CreateBranchRequest, options?: AxiosRequestConfig) {
+    public createBranch(projectId: string, createBranchRequest?: CreateBranchRequest, options?: RawAxiosRequestConfig) {
         return ProjectApiFp(this.configuration).createBranch(projectId, createBranchRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -629,7 +647,7 @@ export class ProjectApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProjectApi
      */
-    public createProject(createProjectRequest?: CreateProjectRequest, options?: AxiosRequestConfig) {
+    public createProject(createProjectRequest?: CreateProjectRequest, options?: RawAxiosRequestConfig) {
         return ProjectApiFp(this.configuration).createProject(createProjectRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -641,7 +659,7 @@ export class ProjectApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProjectApi
      */
-    public deleteBranch(projectId: string, branchId: string, options?: AxiosRequestConfig) {
+    public deleteBranch(projectId: string, branchId: string, options?: RawAxiosRequestConfig) {
         return ProjectApiFp(this.configuration).deleteBranch(projectId, branchId, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -652,7 +670,7 @@ export class ProjectApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProjectApi
      */
-    public deleteProject(projectId: string, options?: AxiosRequestConfig) {
+    public deleteProject(projectId: string, options?: RawAxiosRequestConfig) {
         return ProjectApiFp(this.configuration).deleteProject(projectId, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -665,7 +683,7 @@ export class ProjectApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProjectApi
      */
-    public getFile(projectId: string, branchId: string, fileId: string, options?: AxiosRequestConfig) {
+    public getFile(projectId: string, branchId: string, fileId: string, options?: RawAxiosRequestConfig) {
         return ProjectApiFp(this.configuration).getFile(projectId, branchId, fileId, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -677,7 +695,7 @@ export class ProjectApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProjectApi
      */
-    public getFiles(projectId: string, branchId: string, options?: AxiosRequestConfig) {
+    public getFiles(projectId: string, branchId: string, options?: RawAxiosRequestConfig) {
         return ProjectApiFp(this.configuration).getFiles(projectId, branchId, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -688,7 +706,7 @@ export class ProjectApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProjectApi
      */
-    public getProject(projectId: string, options?: AxiosRequestConfig) {
+    public getProject(projectId: string, options?: RawAxiosRequestConfig) {
         return ProjectApiFp(this.configuration).getProject(projectId, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -699,7 +717,7 @@ export class ProjectApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProjectApi
      */
-    public listProjects(all?: boolean, options?: AxiosRequestConfig) {
+    public listProjects(all?: boolean, options?: RawAxiosRequestConfig) {
         return ProjectApiFp(this.configuration).listProjects(all, options).then((request) => request(this.axios, this.basePath));
     }
 }

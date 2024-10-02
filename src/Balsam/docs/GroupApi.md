@@ -6,6 +6,7 @@ All URIs are relative to *http://oidc-provider.balsam-system.svc.cluster.local/a
 |--------|--------------|-------------|
 | [**AddUserToGroup**](GroupApi.md#addusertogroup) | **POST** /groups/{groupId}/users |  |
 | [**CreateGroup**](GroupApi.md#creategroup) | **POST** /groups |  |
+| [**DeleteGroup**](GroupApi.md#deletegroup) | **DELETE** /groups/{groupId} |  |
 
 <a id="addusertogroup"></a>
 # **AddUserToGroup**
@@ -175,6 +176,92 @@ No authorization required
 
  - **Content-Type**: application/json
  - **Accept**: application/json, application/problem+json
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Success |  -  |
+| **400** | Error respsone for 400 |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a id="deletegroup"></a>
+# **DeleteGroup**
+> void DeleteGroup (string groupId)
+
+
+
+Deletes a user group
+
+### Example
+```csharp
+using System.Collections.Generic;
+using System.Diagnostics;
+using OidcProviderApiClient.Api;
+using OidcProviderApiClient.Client;
+using OidcProviderApiClient.Model;
+
+namespace Example
+{
+    public class DeleteGroupExample
+    {
+        public static void Main()
+        {
+            Configuration config = new Configuration();
+            config.BasePath = "http://oidc-provider.balsam-system.svc.cluster.local/api/v1";
+            var apiInstance = new GroupApi(config);
+            var groupId = "groupId_example";  // string | The id for the group
+
+            try
+            {
+                apiInstance.DeleteGroup(groupId);
+            }
+            catch (ApiException  e)
+            {
+                Debug.Print("Exception when calling GroupApi.DeleteGroup: " + e.Message);
+                Debug.Print("Status Code: " + e.ErrorCode);
+                Debug.Print(e.StackTrace);
+            }
+        }
+    }
+}
+```
+
+#### Using the DeleteGroupWithHttpInfo variant
+This returns an ApiResponse object which contains the response data, status code and headers.
+
+```csharp
+try
+{
+    apiInstance.DeleteGroupWithHttpInfo(groupId);
+}
+catch (ApiException e)
+{
+    Debug.Print("Exception when calling GroupApi.DeleteGroupWithHttpInfo: " + e.Message);
+    Debug.Print("Status Code: " + e.ErrorCode);
+    Debug.Print(e.StackTrace);
+}
+```
+
+### Parameters
+
+| Name | Type | Description | Notes |
+|------|------|-------------|-------|
+| **groupId** | **string** | The id for the group |  |
+
+### Return type
+
+void (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/problem+json
 
 
 ### HTTP response details

@@ -47,7 +47,7 @@ namespace BalsamApi.Server.Models
         /// </summary>
         /// <value>Description of the template</value>
         [DataMember(Name="description", EmitDefaultValue=false)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object

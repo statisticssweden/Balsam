@@ -39,7 +39,7 @@ namespace OidcProvider.Models
         /// </summary>
         /// <value>The id to the group that can be used for accessing it.</value>
         [DataMember(Name="id", EmitDefaultValue=false)]
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object

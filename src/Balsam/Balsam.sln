@@ -23,6 +23,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RocketChatChatProviderApiCl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BalsamApi.Server", "src\BalsamApi.Server\BalsamApi.Server.csproj", "{CCE90D11-C8D4-4F76-9730-506B23B1CD9E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balsam.Application", "src\Balsam.Application\Balsam.Application.csproj", "{AAAA20E8-E584-401D-A7B4-6741E1316301}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balsam.Domain", "src\Balsam.Domain\Balsam.Domain.csproj", "{AE263A3F-7988-4491-8339-89899DF6E08F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balsam.Infrastructure", "src\Balsam.Infrastructure\Balsam.Infrastructure.csproj", "{98CB6D20-3EDC-4AA5-A477-83835FCD3EC7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Balsam.Tests", "src\Balsam.Tests\Balsam.Tests.csproj", "{FEE2F533-5550-4F4C-9FCB-A3695018307E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +77,22 @@ Global
 		{CCE90D11-C8D4-4F76-9730-506B23B1CD9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCE90D11-C8D4-4F76-9730-506B23B1CD9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCE90D11-C8D4-4F76-9730-506B23B1CD9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAAA20E8-E584-401D-A7B4-6741E1316301}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAAA20E8-E584-401D-A7B4-6741E1316301}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAAA20E8-E584-401D-A7B4-6741E1316301}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAAA20E8-E584-401D-A7B4-6741E1316301}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE263A3F-7988-4491-8339-89899DF6E08F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE263A3F-7988-4491-8339-89899DF6E08F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE263A3F-7988-4491-8339-89899DF6E08F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE263A3F-7988-4491-8339-89899DF6E08F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98CB6D20-3EDC-4AA5-A477-83835FCD3EC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98CB6D20-3EDC-4AA5-A477-83835FCD3EC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98CB6D20-3EDC-4AA5-A477-83835FCD3EC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98CB6D20-3EDC-4AA5-A477-83835FCD3EC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEE2F533-5550-4F4C-9FCB-A3695018307E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEE2F533-5550-4F4C-9FCB-A3695018307E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEE2F533-5550-4F4C-9FCB-A3695018307E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEE2F533-5550-4F4C-9FCB-A3695018307E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

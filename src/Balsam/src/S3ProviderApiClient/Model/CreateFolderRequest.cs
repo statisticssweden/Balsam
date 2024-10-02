@@ -29,7 +29,7 @@ namespace S3ProviderApiClient.Model
     /// Folder name
     /// </summary>
     [DataContract(Name = "CreateFolderRequest")]
-    public partial class CreateFolderRequest : IEquatable<CreateFolderRequest>, IValidatableObject
+    public partial class CreateFolderRequest : IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateFolderRequest" /> class.
@@ -77,52 +77,6 @@ namespace S3ProviderApiClient.Model
         public virtual string ToJson()
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-        }
-
-        /// <summary>
-        /// Returns true if objects are equal
-        /// </summary>
-        /// <param name="input">Object to be compared</param>
-        /// <returns>Boolean</returns>
-        public override bool Equals(object input)
-        {
-            return this.Equals(input as CreateFolderRequest);
-        }
-
-        /// <summary>
-        /// Returns true if CreateFolderRequest instances are equal
-        /// </summary>
-        /// <param name="input">Instance of CreateFolderRequest to be compared</param>
-        /// <returns>Boolean</returns>
-        public bool Equals(CreateFolderRequest input)
-        {
-            if (input == null)
-            {
-                return false;
-            }
-            return 
-                (
-                    this.Name == input.Name ||
-                    (this.Name != null &&
-                    this.Name.Equals(input.Name))
-                );
-        }
-
-        /// <summary>
-        /// Gets the hash code
-        /// </summary>
-        /// <returns>Hash code</returns>
-        public override int GetHashCode()
-        {
-            unchecked // Overflow is fine, just wrap
-            {
-                int hashCode = 41;
-                if (this.Name != null)
-                {
-                    hashCode = (hashCode * 59) + this.Name.GetHashCode();
-                }
-                return hashCode;
-            }
         }
 
         /// <summary>

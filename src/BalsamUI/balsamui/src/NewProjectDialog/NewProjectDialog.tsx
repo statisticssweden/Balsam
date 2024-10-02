@@ -181,7 +181,7 @@ export default function NewProjectDialog(props: NewProjectDialogProperties ) {
     }
 
     const handleCreate = () => {
-        let sourceLocation = template !== null ? template.git : null;
+        let sourceLocation = template !== null ? template.git : undefined;
 
         let project : CreateProjectRequest = {
             name: projectName,

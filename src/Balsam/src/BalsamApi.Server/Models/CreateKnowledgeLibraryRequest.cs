@@ -39,7 +39,7 @@ namespace BalsamApi.Server.Models
         /// </summary>
         /// <value>The desciption of the knowledge library</value>
         [DataMember(Name="description", EmitDefaultValue=false)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// The url to the git repository
